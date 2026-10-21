@@ -1,22 +1,28 @@
 {
+  "mode": "active_income",
   "starting_cash": 10000.0,
   "fee_per_trade": 1.0,
-  "take_profit_pct": 100.0,
-  "dip_trigger_pct": -10.0,
+  "take_profit_pct": 5.0,
+  "partial_tp_fraction": 0.4,
+  "dip_trigger_pct": -15.0,
   "max_dip_buys_per_ticker": 2,
-  "max_position_pct_of_equity": 45.0,
-  "dip_cash_fraction": 0.3,
-  "min_score_for_dip": -25,
-  "min_score_for_new_buy": 10,
-  "min_score_hold_thesis": -40,
+  "max_position_pct_of_equity": 50.0,
+  "dip_cash_fraction": 0.4,
+  "min_score_for_dip": -30,
+  "min_score_for_new_buy": 8,
+  "min_score_hold_thesis": -35,
   "reinvest_idle_cash": true,
-  "reinvest_cash_fraction": 0.5,
+  "reinvest_cash_fraction": 0.4,
   "max_new_buys_per_month": 2,
+  "weekly_tp_check": true,
+  "min_monthly_skim_pct": 5.0,
+  "monthly_skim_fraction": 0.25,
+  "memory_enabled": true,
   "universe": [
     "SAP.DE",
     "HNR1.DE",
     "MUV2.DE",
     "ENR.DE"
   ],
-  "notes": "v2: Dip leichter erlauben, weniger aggressiv Neukauf, idle Cash stärker in bestehende/beste Scores"
+  "notes": "Active Income: öfter Teilgewinne realisieren, kein Buy&Hold-TP100"
 }
