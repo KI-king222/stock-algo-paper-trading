@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Täglicher Algo-Lauf v3: Bericht + Momentum + Gehirn + strengere Regeln."""
+"""Täglicher Algo-Lauf v4."""
 from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -40,6 +40,8 @@ def load_ctx() -> RunContext:
             d = json.loads(CTX_FILE.read_text(encoding="utf-8"))
             for t, s in (d.get("recently_sold") or {}).items():
                 ctx.recently_sold[t] = datetime.fromisoformat(s)
+            for t, p in (d.get("peaks") or {}).items():
+                ctx.peaks[t] = float(p)
         except Exception:
             pass
     return ctx
@@ -48,7 +50,10 @@ def load_ctx() -> RunContext:
 def save_ctx(ctx: RunContext):
     CTX_FILE.write_text(
         json.dumps(
-            {"recently_sold": {k: v.isoformat() for k, v in ctx.recently_sold.items()}},
+            {
+                "recently_sold": {k: v.isoformat() for k, v in ctx.recently_sold.items()},
+                "peaks": ctx.peaks,
+            },
             indent=2,
         ),
         encoding="utf-8",
@@ -92,18 +97,27 @@ def main() -> None:
             fee_per_trade=float(cfg.get("fee_per_trade", 1.0)),
         )
         prices0 = get_prices(universe)
-        per = pf.cash / max(len(prices0), 1)
         now = datetime.now()
+        # Score-gewichteter Start
+        weights = {}
+        for t in prices0:
+            fund = get_fundamentals(t)
+            report = get_financial_report(t)
+            sc, _, _ = score_combined(fund, report, price_momentum(t))
+            weights[t] = max(sc, 5.0)
+        total_w = sum(weights.values()) or 1.0
         for t, p in prices0.items():
-            n = int((per - pf.fee_per_trade) // p)
+            budget = pf.cash * (weights[t] / total_w) * 0.95
+            n = int((budget - pf.fee_per_trade) // p)
             if n > 0:
-                pf.buy(t, float(n), p, now, reason="Algo: Erste Aufteilung")
+                pf.buy(t, float(n), p, now, reason=f"Algo: Start Score-Gewicht ({weights[t]:.0f})")
+                ctx.update_peak(t, p)
 
     tickers = list(set(universe) | set(pf.positions.keys()))
     prices = get_prices(tickers)
 
     scores, details, report_texts, reports_out = {}, {}, {}, {}
-    print("=== Analyse v3 ===")
+    print("=== Analyse v4 ===")
     for t in tickers:
         fund = get_fundamentals(t)
         report = get_financial_report(t)
@@ -114,20 +128,15 @@ def main() -> None:
         report_texts[t] = rtext
         reports_out[t] = {
             "findings": report.get("findings"),
-            "data_quality": report.get("data_quality"),
             "momentum": mom,
             "score": round(sc, 1),
             "lessons": mem.lessons_for(t) if mem else "",
         }
         print(f"\n{t} Score {sc:+.1f} mom={mom}")
-        for line in report.get("findings") or []:
-            print(f"  · {line}")
 
     now = datetime.now()
     force_skim = now.day <= 3
-    decisions = decide(
-        pf, prices, scores, details, cfg, now, mem, force_skim, ctx
-    )
+    decisions = decide(pf, prices, scores, details, cfg, now, mem, force_skim, ctx)
     log_entries = apply_decisions(pf, decisions, prices, now, mem, ctx)
 
     if mem is not None:
@@ -148,9 +157,6 @@ def main() -> None:
                 outcome="offen",
                 lesson="",
             )
-        for t, pos in pf.positions.items():
-            if pos.dip_buy_count > 0:
-                mem.record_dip_underwater(t, pos.unrealized_pnl_pct < -5)
 
     pf.update_prices(prices)
     pf.save(STATE_FILE)
@@ -166,7 +172,7 @@ def main() -> None:
 
     run = {
         "date": now.isoformat(timespec="seconds"),
-        "source": f"Algo: {now.strftime('%d.%m.%Y %H:%M')} – v3 Bericht+Momentum+Gehirn",
+        "source": f"Algo: {now.strftime('%d.%m.%Y %H:%M')} – v4 Regime+Trailing+TP4.5",
         "scores": {k: round(float(v), 1) for k, v in scores.items()},
         "score_details": details,
         "report_summaries": report_texts,
@@ -180,19 +186,21 @@ def main() -> None:
     if LOG_FILE.exists():
         history = json.loads(LOG_FILE.read_text(encoding="utf-8")).get("runs", [])
     history.append(run)
-    LOG_FILE.write_text(json.dumps({"runs": history[-200:]}, indent=2, ensure_ascii=False), encoding="utf-8")
+    LOG_FILE.write_text(
+        json.dumps({"runs": history[-200:]}, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
 
     status = {
         "last_run": now.isoformat(timespec="seconds"),
         "headline": (
-            f"Algo v3 {now.strftime('%d.%m.%Y %H:%M')} | "
+            f"Algo v4 {now.strftime('%d.%m.%Y %H:%M')} | "
             f"Vermögen {pf.total_wealth():,.0f} € | Lohn {pf.external_profit:,.0f} €"
         ),
         "cash": round(pf.cash, 2),
         "equity": round(pf.total_equity(), 2),
         "external_profit": round(pf.external_profit, 2),
         "wealth": round(pf.total_wealth(), 2),
-        "hinweis": "v3: kein Nachschuss ins Minus, Cooldown nach Verkauf, Momentum im Score.",
+        "hinweis": "v4: TP ab ~4,5%, Trailing, kein Kauf bei schwachem Markt-Momentum.",
         "n_decisions": len(log_entries),
         "actions_summary": [f"{e.get('aktion')} {e.get('ticker', '')}" for e in log_entries][:12],
     }
