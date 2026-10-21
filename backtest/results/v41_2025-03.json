@@ -1,0 +1,461 @@
+{
+  "version": "v4.1",
+  "tag": "2025-03",
+  "period": {
+    "start": "2025-03-03",
+    "end": "2025-03-31",
+    "trading_days": 21
+  },
+  "end": {
+    "wealth": 10061.28,
+    "equity": 9906.69,
+    "cash": 4761.9,
+    "external_profit": 154.59,
+    "return_pct": 0.61,
+    "trades": 17,
+    "positions": {
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 7.0,
+        "avg_cost": 264.62628173828125,
+        "current_price": 238.1685333251953,
+        "dip_buy_count": 0
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 1.0,
+        "avg_cost": 244.21099853515625,
+        "current_price": 253.34127807617188,
+        "dip_buy_count": 0
+      },
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 6.0,
+        "avg_cost": 522.583750406901,
+        "current_price": 537.3776245117188,
+        "dip_buy_count": 0
+      }
+    }
+  },
+  "daily": [
+    {
+      "date": "2025-03-04",
+      "wealth": 9762.39,
+      "cash": 3876.94,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-05",
+      "wealth": 9956.62,
+      "cash": 3876.94,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-06",
+      "wealth": 10012.33,
+      "cash": 4373.96,
+      "external_profit": 26.06,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "teilverkauf",
+          "stück": 9.0,
+          "grund": "Teilverkauf: +5.4% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-07",
+      "wealth": 9915.05,
+      "cash": 4373.96,
+      "external_profit": 26.06,
+      "actions": []
+    },
+    {
+      "date": "2025-03-10",
+      "wealth": 9752.58,
+      "cash": 3330.32,
+      "external_profit": 26.06,
+      "actions": [
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "reinvestition",
+          "stück": 2.0,
+          "grund": "Reinvestition in MUV2.DE (Score 44)"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-11",
+      "wealth": 9757.84,
+      "cash": 3330.32,
+      "external_profit": 26.06,
+      "actions": []
+    },
+    {
+      "date": "2025-03-12",
+      "wealth": 9946.8,
+      "cash": 3330.32,
+      "external_profit": 26.06,
+      "actions": []
+    },
+    {
+      "date": "2025-03-13",
+      "wealth": 9911.43,
+      "cash": 3330.32,
+      "external_profit": 26.06,
+      "actions": []
+    },
+    {
+      "date": "2025-03-14",
+      "wealth": 10004.8,
+      "cash": 3661.66,
+      "external_profit": 47.76,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "teilverkauf",
+          "stück": 6.0,
+          "grund": "Teilverkauf: +6.9% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-17",
+      "wealth": 10068.34,
+      "cash": 3343.26,
+      "external_profit": 68.27,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "teilverkauf",
+          "stück": 4.0,
+          "grund": "Teilverkauf: +9.7% ≥ +4.5% → ca. 35%"
+        },
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "reinvestition",
+          "stück": 1.0,
+          "grund": "Reinvestition in MUV2.DE (Score 46)"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-18",
+      "wealth": 10074.84,
+      "cash": 3508.94,
+      "external_profit": 83.34,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "teilverkauf",
+          "stück": 3.0,
+          "grund": "Teilverkauf: +9.7% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-19",
+      "wealth": 10061.15,
+      "cash": 3619.39,
+      "external_profit": 97.28,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "teilverkauf",
+          "stück": 2.0,
+          "grund": "Teilverkauf: +13.5% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-20",
+      "wealth": 10042.96,
+      "cash": 3674.61,
+      "external_profit": 102.14,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "teilverkauf",
+          "stück": 1.0,
+          "grund": "Teilverkauf: +10.6% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-21",
+      "wealth": 10082.04,
+      "cash": 3729.83,
+      "external_profit": 107.47,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "teilverkauf",
+          "stück": 1.0,
+          "grund": "Teilverkauf: +11.5% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-24",
+      "wealth": 10080.76,
+      "cash": 3785.06,
+      "external_profit": 111.57,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "teilverkauf",
+          "stück": 1.0,
+          "grund": "Teilverkauf: +9.2% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-25",
+      "wealth": 10173.43,
+      "cash": 3785.06,
+      "external_profit": 111.57,
+      "actions": []
+    },
+    {
+      "date": "2025-03-26",
+      "wealth": 10122.56,
+      "cash": 4273.48,
+      "external_profit": 133.26,
+      "actions": [
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "teilverkauf",
+          "stück": 2.0,
+          "grund": "Teilverkauf: +4.6% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-27",
+      "wealth": 10129.87,
+      "cash": 4517.69,
+      "external_profit": 144.25,
+      "actions": [
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "teilverkauf",
+          "stück": 1.0,
+          "grund": "Teilverkauf: +4.9% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-28",
+      "wealth": 10108.31,
+      "cash": 4761.9,
+      "external_profit": 154.59,
+      "actions": [
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "teilverkauf",
+          "stück": 1.0,
+          "grund": "Teilverkauf: +4.6% ≥ +4.5% → ca. 35%"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-31",
+      "wealth": 10061.28,
+      "cash": 4761.9,
+      "external_profit": 154.59,
+      "actions": []
+    }
+  ],
+  "trades": [
+    {
+      "date": "2025-03-03T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "buy",
+      "shares": 7.0,
+      "price": 264.62628173828125,
+      "fee": 1.0,
+      "reason": "Start Score 32",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-03T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "buy",
+      "shares": 5.0,
+      "price": 244.21099853515625,
+      "fee": 1.0,
+      "reason": "Start Score 29",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-03T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "buy",
+      "shares": 3.0,
+      "price": 518.185546875,
+      "fee": 1.0,
+      "reason": "Start Score 48",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-03T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 27.0,
+      "price": 55.2244987487793,
+      "fee": 1.0,
+      "reason": "Start Score 46",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-06T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "sell",
+      "shares": 9.0,
+      "price": 58.2316780090332,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +5.4% ≥ +4.5% → ca. 35%",
+      "locked_profit": 26.06,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-10T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "buy",
+      "shares": 2.0,
+      "price": 521.32275390625,
+      "fee": 1.0,
+      "reason": "Algo: Reinvestition in MUV2.DE (Score 44)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-14T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "sell",
+      "shares": 6.0,
+      "price": 59.00836181640625,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +6.9% ≥ +4.5% → ca. 35%",
+      "locked_profit": 21.7,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-17T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "sell",
+      "shares": 4.0,
+      "price": 60.60157012939453,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +9.7% ≥ +4.5% → ca. 35%",
+      "locked_profit": 20.51,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-17T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "buy",
+      "shares": 1.0,
+      "price": 538.3003540039062,
+      "fee": 1.0,
+      "reason": "Algo: Reinvestition in MUV2.DE (Score 46)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-18T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "sell",
+      "shares": 3.0,
+      "price": 60.58165740966797,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +9.7% ≥ +4.5% → ca. 35%",
+      "locked_profit": 15.07,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-19T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "sell",
+      "shares": 2.0,
+      "price": 62.69265365600586,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +13.5% ≥ +4.5% → ca. 35%",
+      "locked_profit": 13.94,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-20T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "sell",
+      "shares": 1.0,
+      "price": 61.079532623291016,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +10.6% ≥ +4.5% → ca. 35%",
+      "locked_profit": 4.86,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-21T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "sell",
+      "shares": 1.0,
+      "price": 61.5574951171875,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +11.5% ≥ +4.5% → ca. 35%",
+      "locked_profit": 5.33,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-24T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "sell",
+      "shares": 1.0,
+      "price": 60.32276153564453,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +9.2% ≥ +4.5% → ca. 35%",
+      "locked_profit": 4.1,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-26T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "sell",
+      "shares": 2.0,
+      "price": 255.5546417236328,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +4.6% ≥ +4.5% → ca. 35%",
+      "locked_profit": 21.69,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-27T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "sell",
+      "shares": 1.0,
+      "price": 256.2001953125,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +4.9% ≥ +4.5% → ca. 35%",
+      "locked_profit": 10.99,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-28T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "sell",
+      "shares": 1.0,
+      "price": 255.5546417236328,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +4.6% ≥ +4.5% → ca. 35%",
+      "locked_profit": 10.34,
+      "tax_paid": 0.0
+    }
+  ]
+}

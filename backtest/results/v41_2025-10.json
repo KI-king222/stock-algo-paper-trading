@@ -1,0 +1,271 @@
+{
+  "version": "v4.1",
+  "tag": "2025-10",
+  "period": {
+    "start": "2025-10-06",
+    "end": "2025-11-03",
+    "trading_days": 21
+  },
+  "end": {
+    "wealth": 9847.12,
+    "equity": 9847.12,
+    "cash": 2088.07,
+    "external_profit": 0.0,
+    "return_pct": -1.53,
+    "trades": 6,
+    "positions": {
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 8.0,
+        "avg_cost": 227.73484802246094,
+        "current_price": 225.03074645996094,
+        "dip_buy_count": 0
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 5.0,
+        "avg_cost": 252.46958923339844,
+        "current_price": 235.1432342529297,
+        "dip_buy_count": 0
+      },
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 4.0,
+        "avg_cost": 537.1501922607422,
+        "current_price": 511.1897888183594,
+        "dip_buy_count": 0
+      },
+      "ENR.DE": {
+        "ticker": "ENR.DE",
+        "shares": 25.0,
+        "avg_cost": 106.92403198242188,
+        "current_price": 109.53290557861328,
+        "dip_buy_count": 0
+      }
+    }
+  },
+  "daily": [
+    {
+      "date": "2025-10-07",
+      "wealth": 10000.32,
+      "cash": 3589.27,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-08",
+      "wealth": 10101.8,
+      "cash": 3589.27,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-09",
+      "wealth": 10081.52,
+      "cash": 3589.27,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-10",
+      "wealth": 9953.69,
+      "cash": 3589.27,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-13",
+      "wealth": 9987.97,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "reinvestition",
+          "stück": 9.0,
+          "grund": "Reinvestition in ENR.DE (Score 59)"
+        }
+      ]
+    },
+    {
+      "date": "2025-10-14",
+      "wealth": 9964.49,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-15",
+      "wealth": 9942.23,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-16",
+      "wealth": 9858.03,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-17",
+      "wealth": 9687.88,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-20",
+      "wealth": 9792.3,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-21",
+      "wealth": 9763.66,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-22",
+      "wealth": 9662.8,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-23",
+      "wealth": 9761.87,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-24",
+      "wealth": 9827.37,
+      "cash": 2615.91,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-27",
+      "wealth": 9830.06,
+      "cash": 2088.07,
+      "external_profit": 0.0,
+      "actions": [
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "reinvestition",
+          "stück": 1.0,
+          "grund": "Reinvestition in MUV2.DE (Score 39)"
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "wealth": 9812.19,
+      "cash": 2088.07,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-29",
+      "wealth": 9796.22,
+      "cash": 2088.07,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-30",
+      "wealth": 9794.7,
+      "cash": 2088.07,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-31",
+      "wealth": 9750.25,
+      "cash": 2088.07,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-11-03",
+      "wealth": 9847.12,
+      "cash": 2088.07,
+      "external_profit": 0.0,
+      "actions": []
+    }
+  ],
+  "trades": [
+    {
+      "date": "2025-10-06T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "buy",
+      "shares": 8.0,
+      "price": 227.73484802246094,
+      "fee": 1.0,
+      "reason": "Start Score 34",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-06T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "buy",
+      "shares": 5.0,
+      "price": 252.46958923339844,
+      "fee": 1.0,
+      "reason": "Start Score 29",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-06T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "buy",
+      "shares": 3.0,
+      "price": 540.5861206054688,
+      "fee": 1.0,
+      "reason": "Start Score 47",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-06T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 16.0,
+      "price": 106.29670715332031,
+      "fee": 1.0,
+      "reason": "Start Score 61",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-13T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 9.0,
+      "price": 108.03927612304688,
+      "fee": 1.0,
+      "reason": "Algo: Reinvestition in ENR.DE (Score 59)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-27T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "buy",
+      "shares": 1.0,
+      "price": 526.8424072265625,
+      "fee": 1.0,
+      "reason": "Algo: Reinvestition in MUV2.DE (Score 39)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    }
+  ]
+}

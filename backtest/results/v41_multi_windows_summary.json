@@ -1,0 +1,54 @@
+{
+  "version": "v4.1",
+  "features": [
+    "Kursverlauf 5/10/20 Tage im Score",
+    "Dauerfall-Abzug, Erholungs-Bonus",
+    "TP 4.5% + Trailing",
+    "Regime-Filter"
+  ],
+  "windows": [
+    {
+      "tag": "2025-03",
+      "period": {
+        "start": "2025-03-03",
+        "end": "2025-03-31",
+        "trading_days": 21
+      },
+      "wealth": 10061.28,
+      "return_pct": 0.61,
+      "external_profit": 154.59,
+      "cash": 4761.9,
+      "trades": 17,
+      "file": "v41_2025-03.json"
+    },
+    {
+      "tag": "2025-10",
+      "period": {
+        "start": "2025-10-06",
+        "end": "2025-11-03",
+        "trading_days": 21
+      },
+      "wealth": 9847.12,
+      "return_pct": -1.53,
+      "external_profit": 0.0,
+      "cash": 2088.07,
+      "trades": 6,
+      "file": "v41_2025-10.json"
+    },
+    {
+      "tag": "2026-10-2w",
+      "period": {
+        "start": "2026-09-30",
+        "end": "2026-10-20",
+        "trading_days": 15
+      },
+      "wealth": 9922.29,
+      "return_pct": -0.78,
+      "external_profit": 254.15,
+      "cash": 4354.06,
+      "trades": 20,
+      "file": "v41_2026-10-2w.json"
+    }
+  ],
+  "timestamp": "2026-10-21T20:52:03"
+}
