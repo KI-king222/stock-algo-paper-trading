@@ -1,0 +1,22 @@
+{
+  "starting_cash": 10000.0,
+  "fee_per_trade": 1.0,
+  "take_profit_pct": 100.0,
+  "dip_trigger_pct": -10.0,
+  "max_dip_buys_per_ticker": 2,
+  "max_position_pct_of_equity": 45.0,
+  "dip_cash_fraction": 0.3,
+  "min_score_for_dip": -25,
+  "min_score_for_new_buy": 10,
+  "min_score_hold_thesis": -40,
+  "reinvest_idle_cash": true,
+  "reinvest_cash_fraction": 0.5,
+  "max_new_buys_per_month": 2,
+  "universe": [
+    "SAP.DE",
+    "HNR1.DE",
+    "MUV2.DE",
+    "ENR.DE"
+  ],
+  "notes": "v2: Dip leichter erlauben, weniger aggressiv Neukauf, idle Cash stärker in bestehende/beste Scores"
+}

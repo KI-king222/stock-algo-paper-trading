@@ -1,0 +1,830 @@
+{
+  "target_wealth": 20000.0,
+  "max_trials": 40,
+  "achieved": true,
+  "best_wealth": 20915.71,
+  "best_params": {
+    "take_profit_pct": 100.0,
+    "dip_trigger_pct": -10.0,
+    "max_dip_buys_per_ticker": 2,
+    "dip_cash_fraction": 0.3,
+    "min_score_for_dip": -25,
+    "min_score_for_new_buy": 10,
+    "reinvest_cash_fraction": 0.5,
+    "max_new_buys_per_month": 2,
+    "max_position_pct_of_equity": 45.0
+  },
+  "best_drawdown_pct": -26.7,
+  "best_trades": 31,
+  "trials_run": 38,
+  "warning": "Overfitting-Risiko: Optimierung auf einem historischen Pfad. Nicht als Zukunftsgarantie verwenden.",
+  "timestamp": "2026-10-21T07:50:34",
+  "all_trials": [
+    {
+      "trial": 0,
+      "params": {
+        "take_profit_pct": 12.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.35,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 15,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 1,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 15430.22,
+      "return_pct": 54.3,
+      "max_drawdown_pct": -26.83,
+      "trades": 86
+    },
+    {
+      "trial": 1,
+      "params": {
+        "take_profit_pct": 10.0,
+        "dip_trigger_pct": -8.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 15,
+        "reinvest_cash_fraction": 0.0,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 35.0
+      },
+      "wealth": 11505.84,
+      "return_pct": 15.06,
+      "max_drawdown_pct": -27.71,
+      "trades": 12,
+      "tp": 4,
+      "dip": 4
+    },
+    {
+      "trial": 2,
+      "params": {
+        "take_profit_pct": 8.0,
+        "dip_trigger_pct": -8.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 999,
+        "reinvest_cash_fraction": 0.0,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 10878.41,
+      "return_pct": 8.78,
+      "max_drawdown_pct": -20.01,
+      "trades": 8,
+      "tp": 4,
+      "dip": 0
+    },
+    {
+      "trial": 3,
+      "params": {
+        "take_profit_pct": 12.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.35,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 1,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 15709.62,
+      "return_pct": 57.1,
+      "max_drawdown_pct": -26.83,
+      "trades": 100,
+      "tp": 30,
+      "dip": 6
+    },
+    {
+      "trial": 4,
+      "params": {
+        "take_profit_pct": 10.0,
+        "dip_trigger_pct": -15.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.35,
+        "min_score_for_dip": -15,
+        "min_score_for_new_buy": 999,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 0,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 12338.94,
+      "return_pct": 23.39,
+      "max_drawdown_pct": -44.91,
+      "trades": 17,
+      "tp": 4,
+      "dip": 0
+    },
+    {
+      "trial": 5,
+      "params": {
+        "take_profit_pct": 50.0,
+        "dip_trigger_pct": -8.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.35,
+        "min_score_for_dip": 0,
+        "min_score_for_new_buy": 15,
+        "reinvest_cash_fraction": 0.0,
+        "max_new_buys_per_month": 0,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 14189.63,
+      "return_pct": 41.9,
+      "max_drawdown_pct": -26.8,
+      "trades": 10,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 6,
+      "params": {
+        "take_profit_pct": 12.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.35,
+        "min_score_for_dip": -40,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 1,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 15709.62,
+      "return_pct": 57.1,
+      "max_drawdown_pct": -26.83,
+      "trades": 100,
+      "tp": 30,
+      "dip": 6
+    },
+    {
+      "trial": 7,
+      "params": {
+        "take_profit_pct": 12.0,
+        "dip_trigger_pct": -20.0,
+        "max_dip_buys_per_ticker": 1,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -5,
+        "min_score_for_new_buy": 40,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 11757.24,
+      "return_pct": 17.57,
+      "max_drawdown_pct": -25.14,
+      "trades": 16,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 8,
+      "params": {
+        "take_profit_pct": 12.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.35,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 1,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 15709.62,
+      "return_pct": 57.1,
+      "max_drawdown_pct": -26.83,
+      "trades": 100,
+      "tp": 30,
+      "dip": 6
+    },
+    {
+      "trial": 9,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 999,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 17919.8,
+      "return_pct": 79.2,
+      "max_drawdown_pct": -30.54,
+      "trades": 17,
+      "tp": 3,
+      "dip": 2
+    },
+    {
+      "trial": 10,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 3,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 999,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 17938.91,
+      "return_pct": 79.39,
+      "max_drawdown_pct": -30.51,
+      "trades": 18,
+      "tp": 3,
+      "dip": 3
+    },
+    {
+      "trial": 11,
+      "params": {
+        "take_profit_pct": 10.0,
+        "dip_trigger_pct": -15.0,
+        "max_dip_buys_per_ticker": 3,
+        "dip_cash_fraction": 0.45,
+        "min_score_for_dip": 0,
+        "min_score_for_new_buy": 25,
+        "reinvest_cash_fraction": 0.0,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 35.0
+      },
+      "wealth": 11366.3,
+      "return_pct": 13.66,
+      "max_drawdown_pct": -20.81,
+      "trades": 10,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 12,
+      "params": {
+        "take_profit_pct": 20.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.35,
+        "min_score_for_dip": -5,
+        "min_score_for_new_buy": 15,
+        "reinvest_cash_fraction": 0.7,
+        "max_new_buys_per_month": 0,
+        "max_position_pct_of_equity": 55.0
+      },
+      "wealth": 13831.45,
+      "return_pct": 38.31,
+      "max_drawdown_pct": -26.76,
+      "trades": 12,
+      "tp": 4,
+      "dip": 0
+    },
+    {
+      "trial": 13,
+      "params": {
+        "take_profit_pct": 12.0,
+        "dip_trigger_pct": -20.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.35,
+        "min_score_for_dip": 0,
+        "min_score_for_new_buy": 999,
+        "reinvest_cash_fraction": 0.3,
+        "max_new_buys_per_month": 0,
+        "max_position_pct_of_equity": 55.0
+      },
+      "wealth": 12319.09,
+      "return_pct": 23.19,
+      "max_drawdown_pct": -34.87,
+      "trades": 22,
+      "tp": 4,
+      "dip": 0
+    },
+    {
+      "trial": 14,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -8.0,
+        "max_dip_buys_per_ticker": 3,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 999,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 17938.91,
+      "return_pct": 79.39,
+      "max_drawdown_pct": -30.51,
+      "trades": 18,
+      "tp": 3,
+      "dip": 3
+    },
+    {
+      "trial": 15,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -8.0,
+        "max_dip_buys_per_ticker": 1,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -5,
+        "min_score_for_new_buy": 999,
+        "reinvest_cash_fraction": 0.3,
+        "max_new_buys_per_month": 1,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 17769.99,
+      "return_pct": 77.7,
+      "max_drawdown_pct": -28.97,
+      "trades": 19,
+      "tp": 3,
+      "dip": 1
+    },
+    {
+      "trial": 16,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 3,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 18749.92,
+      "return_pct": 87.5,
+      "max_drawdown_pct": -26.78,
+      "trades": 24,
+      "tp": 4,
+      "dip": 3
+    },
+    {
+      "trial": 17,
+      "params": {
+        "take_profit_pct": 15.0,
+        "dip_trigger_pct": -20.0,
+        "max_dip_buys_per_ticker": 1,
+        "dip_cash_fraction": 0.2,
+        "min_score_for_dip": -40,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.3,
+        "max_new_buys_per_month": 0,
+        "max_position_pct_of_equity": 35.0
+      },
+      "wealth": 12071.68,
+      "return_pct": 20.72,
+      "max_drawdown_pct": -23.62,
+      "trades": 16,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 18,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 3,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 1,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 18749.92,
+      "return_pct": 87.5,
+      "max_drawdown_pct": -26.78,
+      "trades": 24,
+      "tp": 4,
+      "dip": 3
+    },
+    {
+      "trial": 19,
+      "params": {
+        "take_profit_pct": 15.0,
+        "dip_trigger_pct": -8.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.45,
+        "min_score_for_dip": -15,
+        "min_score_for_new_buy": 40,
+        "reinvest_cash_fraction": 0.7,
+        "max_new_buys_per_month": 1,
+        "max_position_pct_of_equity": 35.0
+      },
+      "wealth": 12226.23,
+      "return_pct": 22.26,
+      "max_drawdown_pct": -25.92,
+      "trades": 16,
+      "tp": 4,
+      "dip": 0
+    },
+    {
+      "trial": 20,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 18795.44,
+      "return_pct": 87.95,
+      "max_drawdown_pct": -26.7,
+      "trades": 24,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 21,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.45,
+        "min_score_for_dip": 0,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.0,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 35.0
+      },
+      "wealth": 18001.05,
+      "return_pct": 80.01,
+      "max_drawdown_pct": -26.43,
+      "trades": 8,
+      "tp": 4,
+      "dip": 0
+    },
+    {
+      "trial": 22,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 18795.44,
+      "return_pct": 87.95,
+      "max_drawdown_pct": -26.7,
+      "trades": 24,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 23,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 3,
+        "dip_cash_fraction": 0.45,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 15,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 0,
+        "max_position_pct_of_equity": 35.0
+      },
+      "wealth": 18683.87,
+      "return_pct": 86.84,
+      "max_drawdown_pct": -26.91,
+      "trades": 12,
+      "tp": 4,
+      "dip": 3
+    },
+    {
+      "trial": 24,
+      "params": {
+        "take_profit_pct": 8.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.2,
+        "min_score_for_dip": 0,
+        "min_score_for_new_buy": 40,
+        "reinvest_cash_fraction": 0.3,
+        "max_new_buys_per_month": 0,
+        "max_position_pct_of_equity": 35.0
+      },
+      "wealth": 11179.88,
+      "return_pct": 11.8,
+      "max_drawdown_pct": -28.08,
+      "trades": 13,
+      "tp": 4,
+      "dip": 0
+    },
+    {
+      "trial": 25,
+      "params": {
+        "take_profit_pct": 10.0,
+        "dip_trigger_pct": -20.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -5,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.3,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 35.0
+      },
+      "wealth": 15753.94,
+      "return_pct": 57.54,
+      "max_drawdown_pct": -25.48,
+      "trades": 104,
+      "tp": 34,
+      "dip": 0
+    },
+    {
+      "trial": 26,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -5,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 18792.61,
+      "return_pct": 87.93,
+      "max_drawdown_pct": -26.73,
+      "trades": 24,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 27,
+      "params": {
+        "take_profit_pct": 25.0,
+        "dip_trigger_pct": -8.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.45,
+        "min_score_for_dip": 0,
+        "min_score_for_new_buy": 999,
+        "reinvest_cash_fraction": 0.0,
+        "max_new_buys_per_month": 0,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 12424.83,
+      "return_pct": 24.25,
+      "max_drawdown_pct": -26.43,
+      "trades": 8,
+      "tp": 4,
+      "dip": 0
+    },
+    {
+      "trial": 28,
+      "params": {
+        "take_profit_pct": 12.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 0,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -15,
+        "min_score_for_new_buy": 25,
+        "reinvest_cash_fraction": 0.3,
+        "max_new_buys_per_month": 1,
+        "max_position_pct_of_equity": 55.0
+      },
+      "wealth": 14910.24,
+      "return_pct": 49.1,
+      "max_drawdown_pct": -25.43,
+      "trades": 78,
+      "tp": 18,
+      "dip": 0
+    },
+    {
+      "trial": 29,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.35,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 18751.09,
+      "return_pct": 87.51,
+      "max_drawdown_pct": -26.76,
+      "trades": 23,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 30,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 18795.44,
+      "return_pct": 87.95,
+      "max_drawdown_pct": -26.7,
+      "trades": 24,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 31,
+      "params": {
+        "take_profit_pct": 12.0,
+        "dip_trigger_pct": -15.0,
+        "max_dip_buys_per_ticker": 3,
+        "dip_cash_fraction": 0.2,
+        "min_score_for_dip": -40,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.3,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 35.0
+      },
+      "wealth": 15903.5,
+      "return_pct": 59.03,
+      "max_drawdown_pct": -26.38,
+      "trades": 100,
+      "tp": 31,
+      "dip": 8
+    },
+    {
+      "trial": 32,
+      "params": {
+        "take_profit_pct": 12.0,
+        "dip_trigger_pct": -15.0,
+        "max_dip_buys_per_ticker": 1,
+        "dip_cash_fraction": 0.2,
+        "min_score_for_dip": -15,
+        "min_score_for_new_buy": 25,
+        "reinvest_cash_fraction": 0.0,
+        "max_new_buys_per_month": 1,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 11381.6,
+      "return_pct": 13.82,
+      "max_drawdown_pct": -21.94,
+      "trades": 10,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 33,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 40,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 17919.8,
+      "return_pct": 79.2,
+      "max_drawdown_pct": -30.54,
+      "trades": 17,
+      "tp": 3,
+      "dip": 2
+    },
+    {
+      "trial": 34,
+      "params": {
+        "take_profit_pct": 15.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 1,
+        "dip_cash_fraction": 0.2,
+        "min_score_for_dip": -5,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.7,
+        "max_new_buys_per_month": 0,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 12554.56,
+      "return_pct": 25.55,
+      "max_drawdown_pct": -27.85,
+      "trades": 16,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 35,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -12.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 18795.44,
+      "return_pct": 87.95,
+      "max_drawdown_pct": -26.7,
+      "trades": 24,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 36,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 70.0
+      },
+      "wealth": 18795.44,
+      "return_pct": 87.95,
+      "max_drawdown_pct": -26.7,
+      "trades": 24,
+      "tp": 4,
+      "dip": 2
+    },
+    {
+      "trial": 37,
+      "params": {
+        "take_profit_pct": 100.0,
+        "dip_trigger_pct": -10.0,
+        "max_dip_buys_per_ticker": 2,
+        "dip_cash_fraction": 0.3,
+        "min_score_for_dip": -25,
+        "min_score_for_new_buy": 10,
+        "reinvest_cash_fraction": 0.5,
+        "max_new_buys_per_month": 2,
+        "max_position_pct_of_equity": 45.0
+      },
+      "wealth": 20915.71,
+      "return_pct": 109.16,
+      "max_drawdown_pct": -26.7,
+      "trades": 31,
+      "tp": 6,
+      "dip": 5
+    }
+  ],
+  "best_strategy": {
+    "final_equity": 10334.11,
+    "external_profit": 10581.6,
+    "total_wealth": 20915.71,
+    "cash": 316.83,
+    "taxes_paid_total": 2733.98,
+    "return_wealth_pct": 109.16,
+    "trades": 31,
+    "take_profit_events": 6,
+    "dip_buy_events": 5,
+    "new_buy_events": 5,
+    "reinvest_events": 11,
+    "monthly_decision_days": 60,
+    "open_positions": {
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 9.0,
+        "avg_cost": 472.00379435221356,
+        "current_price": 542.7999877929688,
+        "dip_buy_count": 0
+      },
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 12.0,
+        "avg_cost": 236.0701471964518,
+        "current_price": 199.83999633789062,
+        "dip_buy_count": 2
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 10.0,
+        "avg_cost": 257.72936859130857,
+        "current_price": 273.3999938964844,
+        "dip_buy_count": 1
+      }
+    }
+  },
+  "best_benchmark": {
+    "final_value": 29817.81,
+    "return_pct": 198.18,
+    "holdings_end": {
+      "SAP.DE": 21.0,
+      "HNR1.DE": 19.0,
+      "MUV2.DE": 12.0,
+      "ENR.DE": 103.0
+    },
+    "cash_end": 199.55
+  }
+}
