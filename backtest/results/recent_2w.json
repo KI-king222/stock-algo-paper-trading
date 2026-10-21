@@ -1,0 +1,649 @@
+{
+  "period": {
+    "start": "2026-09-30",
+    "end": "2026-10-20",
+    "trading_days": 15
+  },
+  "analysis": {
+    "SAP.DE": {
+      "score": 57.7,
+      "findings": [
+        "Umsatz YoY: +8.8% (wachsend)",
+        "Gewinn YoY: +8.8%",
+        "Nettomarge QoQ: +1.85 Prozentpunkte",
+        "Verschuldung QoQ: +33.6%",
+        "Cashflow (letzte Periode): positiv (3,038,000,000)"
+      ],
+      "text": "Umsatz YoY: +8.8% (wachsend) | Gewinn YoY: +8.8% | Nettomarge QoQ: +1.85 Prozentpunkte | Verschuldung QoQ: +33.6% | Cashflow (letzte Periode): positiv (3,038,000,000)"
+    },
+    "HNR1.DE": {
+      "score": 30.8,
+      "findings": [
+        "Umsatz YoY: +9.0% (wachsend)",
+        "Gewinn YoY: +6.8%",
+        "Nettomarge QoQ: +0.43 Prozentpunkte",
+        "Cashflow (letzte Periode): positiv (1,735,400,000)"
+      ],
+      "text": "Umsatz YoY: +9.0% (wachsend) | Gewinn YoY: +6.8% | Nettomarge QoQ: +0.43 Prozentpunkte | Cashflow (letzte Periode): positiv (1,735,400,000)"
+    },
+    "MUV2.DE": {
+      "score": 53.3,
+      "findings": [
+        "Umsatz YoY: +8.4% (wachsend)",
+        "Gewinn YoY: +10.5%",
+        "Nettomarge QoQ: +1.88 Prozentpunkte",
+        "Verschuldung QoQ: -1.7%"
+      ],
+      "text": "Umsatz YoY: +8.4% (wachsend) | Gewinn YoY: +10.5% | Nettomarge QoQ: +1.88 Prozentpunkte | Verschuldung QoQ: -1.7%"
+    },
+    "ENR.DE": {
+      "score": 66.3,
+      "findings": [
+        "Umsatz YoY: +9.8% (wachsend)",
+        "Gewinn YoY: +544.6%",
+        "Nettomarge QoQ: +2.02 Prozentpunkte",
+        "Verschuldung QoQ: -20.7%",
+        "Cashflow (letzte Periode): positiv (2,111,000,000)"
+      ],
+      "text": "Umsatz YoY: +9.8% (wachsend) | Gewinn YoY: +544.6% | Nettomarge QoQ: +2.02 Prozentpunkte | Verschuldung QoQ: -20.7% | Cashflow (letzte Periode): positiv (2,111,000,000)"
+    }
+  },
+  "start_cash": 10000.0,
+  "end": {
+    "wealth": 10182.57,
+    "equity": 9723.59,
+    "cash": 1938.96,
+    "external_profit": 458.98,
+    "return_pct": 1.83,
+    "trades": 21,
+    "positions": {
+      "ENR.DE": {
+        "ticker": "ENR.DE",
+        "shares": 29.0,
+        "avg_cost": 140.4303488895811,
+        "current_price": 130.32000732421875,
+        "dip_buy_count": 0
+      },
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 9.0,
+        "avg_cost": 199.83999633789062,
+        "current_price": 201.5500030517578,
+        "dip_buy_count": 0
+      },
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 3.0,
+        "avg_cost": 542.7999877929688,
+        "current_price": 546.5999755859375,
+        "dip_buy_count": 0
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 2.0,
+        "avg_cost": 275.79998779296875,
+        "current_price": 275.79998779296875,
+        "dip_buy_count": 0
+      }
+    }
+  },
+  "daily": [
+    {
+      "date": "2026-10-01",
+      "wealth": 9979.88,
+      "equity": 9979.88,
+      "cash": 877.02,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2026-10-02",
+      "wealth": 10069.52,
+      "equity": 10069.52,
+      "cash": 877.02,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2026-10-05",
+      "wealth": 10094.56,
+      "equity": 10094.56,
+      "cash": 439.64,
+      "external_profit": 0.0,
+      "actions": [
+        {
+          "ticker": "SAP.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L -0.3% · Score 58",
+          "score": 57.7
+        },
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L +1.2% · Score 31",
+          "score": 30.8
+        },
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L +1.6% · Score 53",
+          "score": 53.3
+        },
+        {
+          "ticker": "ENR.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L +2.0% · Score 66",
+          "score": 66.3
+        },
+        {
+          "ticker": "ENR.DE",
+          "aktion": "reinvestition",
+          "stück": 3.0,
+          "grund": "Reinvestition restliches Cash in ENR.DE (Score 66)",
+          "score": 66.3
+        }
+      ]
+    },
+    {
+      "date": "2026-10-06",
+      "wealth": 10217.44,
+      "equity": 10217.44,
+      "cash": 439.64,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2026-10-07",
+      "wealth": 10175.1,
+      "equity": 10175.1,
+      "cash": 439.64,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2026-10-08",
+      "wealth": 10127.3,
+      "equity": 10127.3,
+      "cash": 439.64,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2026-10-09",
+      "wealth": 10299.82,
+      "equity": 10299.82,
+      "cash": 439.64,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2026-10-12",
+      "wealth": 10413.22,
+      "equity": 10413.22,
+      "cash": 291.86,
+      "external_profit": 0.0,
+      "actions": [
+        {
+          "ticker": "SAP.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L +4.7% · Score 58",
+          "score": 57.7
+        },
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L +5.8% · Score 31",
+          "score": 30.8
+        },
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L +4.9% · Score 53",
+          "score": 53.3
+        },
+        {
+          "ticker": "ENR.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L +2.6% · Score 66",
+          "score": 66.3
+        },
+        {
+          "ticker": "ENR.DE",
+          "aktion": "reinvestition",
+          "stück": 1.0,
+          "grund": "Reinvestition restliches Cash in ENR.DE (Score 66)",
+          "score": 66.3
+        }
+      ]
+    },
+    {
+      "date": "2026-10-13",
+      "wealth": 10400.96,
+      "equity": 10265.24,
+      "cash": 2415.42,
+      "external_profit": 135.72,
+      "actions": [
+        {
+          "ticker": "SAP.DE",
+          "aktion": "teilverkauf",
+          "stück": 6.0,
+          "grund": "Teilverkauf: +6.3% ≥ +6.0% → ca. 50% der Position",
+          "score": 57.7
+        },
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "teilverkauf",
+          "stück": 4.0,
+          "grund": "Teilverkauf: +6.7% ≥ +6.0% → ca. 50% der Position",
+          "score": 30.8
+        }
+      ]
+    },
+    {
+      "date": "2026-10-14",
+      "wealth": 10243.2,
+      "equity": 9971.36,
+      "cash": 4667.66,
+      "external_profit": 271.84,
+      "actions": [
+        {
+          "ticker": "SAP.DE",
+          "aktion": "teilverkauf",
+          "stück": 4.0,
+          "grund": "Teilverkauf: +6.1% ≥ +6.0% → ca. 50% der Position",
+          "score": 57.7
+        },
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "teilverkauf",
+          "stück": 2.0,
+          "grund": "Teilverkauf: +6.3% ≥ +6.0% → ca. 50% der Position",
+          "score": 30.8
+        },
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "teilverkauf",
+          "stück": 2.0,
+          "grund": "Teilverkauf: +6.2% ≥ +6.0% → ca. 50% der Position",
+          "score": 53.3
+        }
+      ]
+    },
+    {
+      "date": "2026-10-15",
+      "wealth": 10225.41,
+      "equity": 9843.79,
+      "cash": 6046.18,
+      "external_profit": 381.62,
+      "actions": [
+        {
+          "ticker": "SAP.DE",
+          "aktion": "teilverkauf",
+          "stück": 2.0,
+          "grund": "Teilverkauf: +8.4% ≥ +6.0% → ca. 50% der Position",
+          "score": 57.7
+        },
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "teilverkauf",
+          "stück": 2.0,
+          "grund": "Teilverkauf: +7.8% ≥ +6.0% → ca. 50% der Position",
+          "score": 30.8
+        },
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "teilverkauf",
+          "stück": 1.0,
+          "grund": "Teilverkauf: +8.4% ≥ +6.0% → ca. 50% der Position",
+          "score": 53.3
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "wealth": 10280.2,
+      "equity": 9821.22,
+      "cash": 6986.64,
+      "external_profit": 458.98,
+      "actions": [
+        {
+          "ticker": "SAP.DE",
+          "aktion": "teilverkauf",
+          "stück": 1.0,
+          "grund": "Teilverkauf: +7.3% ≥ +6.0% → ca. 50% der Position",
+          "score": 57.7
+        },
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "teilverkauf",
+          "stück": 1.0,
+          "grund": "Teilverkauf: +8.7% ≥ +6.0% → ca. 50% der Position",
+          "score": 30.8
+        },
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "teilverkauf",
+          "stück": 1.0,
+          "grund": "Teilverkauf: +8.9% ≥ +6.0% → ca. 50% der Position",
+          "score": 53.3
+        }
+      ]
+    },
+    {
+      "date": "2026-10-19",
+      "wealth": 10238.56,
+      "equity": 9779.58,
+      "cash": 2491.56,
+      "external_profit": 458.98,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L -7.0% · Score 66",
+          "score": 66.3
+        },
+        {
+          "ticker": "ENR.DE",
+          "aktion": "reinvestition",
+          "stück": 8.0,
+          "grund": "Reinvestition restliches Cash in ENR.DE (Score 66)",
+          "score": 66.3
+        },
+        {
+          "ticker": "SAP.DE",
+          "aktion": "neukauf",
+          "stück": 9.0,
+          "grund": "Neukauf SAP.DE (Score 58)",
+          "score": 57.7
+        },
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "neukauf",
+          "stück": 3.0,
+          "grund": "Neukauf MUV2.DE (Score 53)",
+          "score": 53.3
+        }
+      ]
+    },
+    {
+      "date": "2026-10-20",
+      "wealth": 10182.57,
+      "equity": 9723.59,
+      "cash": 1938.96,
+      "external_profit": 458.98,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L -7.2% · Score 66",
+          "score": 66.3
+        },
+        {
+          "ticker": "SAP.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L +0.9% · Score 58",
+          "score": 57.7
+        },
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "halten",
+          "stück": null,
+          "grund": "Halten · P&L +0.7% · Score 53",
+          "score": 53.3
+        },
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "neukauf",
+          "stück": 2.0,
+          "grund": "Neukauf HNR1.DE (Score 31)",
+          "score": 30.8
+        }
+      ]
+    }
+  ],
+  "trades": [
+    {
+      "date": "2026-09-30T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "buy",
+      "shares": 13.0,
+      "price": 185.66000366210938,
+      "fee": 1.0,
+      "reason": "Start equal-weight",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-09-30T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "buy",
+      "shares": 9.0,
+      "price": 252.39999389648438,
+      "fee": 1.0,
+      "reason": "Start equal-weight",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-09-30T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "buy",
+      "shares": 4.0,
+      "price": 502.3999938964844,
+      "fee": 1.0,
+      "reason": "Start equal-weight",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-09-30T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 17.0,
+      "price": 142.60000610351562,
+      "fee": 1.0,
+      "reason": "Start equal-weight",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-05T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 3.0,
+      "price": 145.4600067138672,
+      "fee": 1.0,
+      "reason": "Algo: Reinvestition restliches Cash in ENR.DE (Score 66)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-12T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 1.0,
+      "price": 146.77999877929688,
+      "fee": 1.0,
+      "reason": "Algo: Reinvestition restliches Cash in ENR.DE (Score 66)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-13T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "sell",
+      "shares": 6.0,
+      "price": 197.27999877929688,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +6.3% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 68.72,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-13T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "sell",
+      "shares": 4.0,
+      "price": 269.3999938964844,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +6.7% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 67.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-14T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "sell",
+      "shares": 4.0,
+      "price": 196.94000244140625,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +6.1% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 44.12,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-14T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "sell",
+      "shares": 2.0,
+      "price": 268.3999938964844,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +6.3% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 31.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-14T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "sell",
+      "shares": 2.0,
+      "price": 533.4000244140625,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +6.2% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 61.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-15T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "sell",
+      "shares": 2.0,
+      "price": 201.25,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +8.4% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 30.18,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-15T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "sell",
+      "shares": 2.0,
+      "price": 272.0,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +7.8% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 38.2,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-15T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "sell",
+      "shares": 1.0,
+      "price": 544.7999877929688,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +8.4% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 41.4,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-16T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "sell",
+      "shares": 1.0,
+      "price": 199.22000122070312,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +7.3% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 12.56,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-16T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "sell",
+      "shares": 1.0,
+      "price": 274.3999938964844,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +8.7% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 21.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-16T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "sell",
+      "shares": 1.0,
+      "price": 547.2000122070312,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +8.9% ≥ +6.0% → ca. 50% der Position",
+      "locked_profit": 43.8,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-19T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 8.0,
+      "price": 133.13999938964844,
+      "fee": 1.0,
+      "reason": "Algo: Reinvestition restliches Cash in ENR.DE (Score 66)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-19T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "buy",
+      "shares": 9.0,
+      "price": 199.83999633789062,
+      "fee": 1.0,
+      "reason": "Algo: Neukauf SAP.DE (Score 58)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-19T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "buy",
+      "shares": 3.0,
+      "price": 542.7999877929688,
+      "fee": 1.0,
+      "reason": "Algo: Neukauf MUV2.DE (Score 53)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-10-20T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "buy",
+      "shares": 2.0,
+      "price": 275.79998779296875,
+      "fee": 1.0,
+      "reason": "Algo: Neukauf HNR1.DE (Score 31)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    }
+  ],
+  "note": "Fundamentals/Bericht = aktuelle Yahoo-Daten (bei 2 Wochen ok). Kurse strikt walk-forward ohne Look-ahead."
+}
