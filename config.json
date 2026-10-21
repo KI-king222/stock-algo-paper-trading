@@ -1,0 +1,15 @@
+{
+  "starting_cash": 10000.0,
+  "fee_per_trade": 1.0,
+  "take_profit_pct": 12.0,
+  "dip_trigger_pct": -12.0,
+  "max_dip_buys_per_ticker": 2,
+  "max_position_pct_of_equity": 40.0,
+  "dip_cash_fraction": 0.30,
+  "min_score_for_dip": -10,
+  "min_score_for_new_buy": 25,
+  "min_score_hold_thesis": -30,
+  "universe": ["SAP.DE", "HNR1.DE", "MUV2.DE", "ENR.DE"],
+  "reinvest_idle_cash": true,
+  "notes": "Gleiche Kernregeln wie KI-Repo; Schwellen für Score separat justierbar"
+}
