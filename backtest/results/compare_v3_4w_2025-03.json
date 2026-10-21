@@ -1,0 +1,259 @@
+{
+  "version": "v3",
+  "period": {
+    "start": "2025-03-03",
+    "end": "2025-03-28",
+    "trading_days": 20
+  },
+  "config": {
+    "mode": "active_income_v3",
+    "starting_cash": 10000.0,
+    "fee_per_trade": 1.0,
+    "take_profit_pct": 6.0,
+    "partial_tp_fraction": 0.4,
+    "dip_trigger_pct": -12.0,
+    "max_dip_buys_per_ticker": 2,
+    "max_position_pct_of_equity": 40.0,
+    "dip_cash_fraction": 0.3,
+    "min_score_for_dip": -15,
+    "min_score_for_new_buy": 25,
+    "min_score_for_reinvest": 30,
+    "min_score_hold_thesis": -35,
+    "no_add_if_pnl_below_pct": -3.0,
+    "reinvest_idle_cash": true,
+    "reinvest_cash_fraction": 0.4,
+    "max_new_buys_per_month": 1,
+    "min_monthly_skim_pct": 5.0,
+    "monthly_skim_fraction": 0.3,
+    "memory_enabled": true,
+    "use_momentum": true,
+    "cooldown_days": 5
+  },
+  "universe": [
+    "SAP.DE",
+    "HNR1.DE",
+    "MUV2.DE",
+    "ENR.DE"
+  ],
+  "end": {
+    "wealth": 9998.4,
+    "equity": 9998.4,
+    "cash": 537.63,
+    "external_profit": 0.0,
+    "return_pct": -0.02,
+    "trades": 3,
+    "positions": {
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 12.0,
+        "avg_cost": 264.62628173828125,
+        "current_price": 240.45863342285156,
+        "dip_buy_count": 0
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 13.0,
+        "avg_cost": 244.21099853515625,
+        "current_price": 255.55467224121094,
+        "dip_buy_count": 0
+      },
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 6.0,
+        "avg_cost": 518.185546875,
+        "current_price": 542.1755981445312,
+        "dip_buy_count": 0
+      }
+    }
+  },
+  "daily": [
+    {
+      "date": "2025-03-04",
+      "wealth": 9782.13,
+      "equity": 9782.13,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-05",
+      "wealth": 9948.99,
+      "equity": 9948.99,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-06",
+      "wealth": 9893.58,
+      "equity": 9893.58,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-07",
+      "wealth": 9814.03,
+      "equity": 9814.03,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-10",
+      "wealth": 9698.98,
+      "equity": 9698.98,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-11",
+      "wealth": 9643.81,
+      "equity": 9643.81,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-12",
+      "wealth": 9809.61,
+      "equity": 9809.61,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-13",
+      "wealth": 9757.46,
+      "equity": 9757.46,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-14",
+      "wealth": 9859.09,
+      "equity": 9859.09,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-17",
+      "wealth": 9926.6,
+      "equity": 9926.6,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-18",
+      "wealth": 9948.27,
+      "equity": 9948.27,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-19",
+      "wealth": 9907.98,
+      "equity": 9907.98,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-20",
+      "wealth": 9902.18,
+      "equity": 9902.18,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-21",
+      "wealth": 9952.3,
+      "equity": 9952.3,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-24",
+      "wealth": 9983.83,
+      "equity": 9983.83,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-25",
+      "wealth": 10108.56,
+      "equity": 10108.56,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-26",
+      "wealth": 10027.61,
+      "equity": 10027.61,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-27",
+      "wealth": 10038.24,
+      "equity": 10038.24,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-03-28",
+      "wealth": 9998.4,
+      "equity": 9998.4,
+      "cash": 537.63,
+      "external_profit": 0.0,
+      "actions": []
+    }
+  ],
+  "trades": [
+    {
+      "date": "2025-03-03T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "buy",
+      "shares": 12.0,
+      "price": 264.62628173828125,
+      "fee": 1.0,
+      "reason": "v3: Start",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-03T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "buy",
+      "shares": 13.0,
+      "price": 244.21099853515625,
+      "fee": 1.0,
+      "reason": "v3: Start",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-03-03T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "buy",
+      "shares": 6.0,
+      "price": 518.185546875,
+      "fee": 1.0,
+      "reason": "v3: Start",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    }
+  ],
+  "note": "Kurse walk-forward; Fundamentals/Bericht = Yahoo-Proxy."
+}
