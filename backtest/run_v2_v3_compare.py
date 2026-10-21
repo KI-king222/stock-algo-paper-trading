@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """
-Vergleich Algo v2 vs v3 über denselben 4-Wochen-Zeitraum (~1 Jahr zurück).
-Beide Ergebnisse werden unter backtest/results/ gespeichert.
+Vergleich Algo v2 vs v3 – 4 Wochen (anderes Fenster, nicht die letzten Wochen).
+Aktuell: März/April 2025.
 """
 from __future__ import annotations
 
 import json
 import math
 import sys
-from copy import deepcopy
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import pandas as pd
 
@@ -24,9 +23,10 @@ from algo.scoring import score_combined  # noqa: E402
 from algo.decision_engine import RunContext, apply_decisions, decide  # noqa: E402
 from algo.memory import AlgoMemory  # noqa: E402
 
-# ~1 Jahr vor „jetzt“ (2026-10) → Okt/Nov 2025, 4 Wochen
-PERIOD_START = "2025-10-06"
-PERIOD_END = "2025-11-03"  # ~4 Kalenderwochen
+# Anderes Fenster (~1,5 Jahre zurück): März–April 2025
+PERIOD_START = "2025-03-03"
+PERIOD_END = "2025-03-31"
+TAG = "2025-03"
 
 CFG_V2 = {
     "mode": "active_income_v2",
@@ -42,7 +42,7 @@ CFG_V2 = {
     "min_score_for_new_buy": 12,
     "min_score_for_reinvest": 0,
     "min_score_hold_thesis": -35,
-    "no_add_if_pnl_below_pct": -100.0,  # de facto aus
+    "no_add_if_pnl_below_pct": -100.0,
     "reinvest_idle_cash": True,
     "reinvest_cash_fraction": 0.55,
     "max_new_buys_per_month": 2,
@@ -123,15 +123,8 @@ def momentum_at(close: pd.DataFrame, ticker: str, day: pd.Timestamp) -> Dict[str
     return {"m5": m5, "m10": m10}
 
 
-def run_version(
-    label: str,
-    cfg: dict,
-    close: pd.DataFrame,
-    base_fund: dict,
-    base_report: dict,
-) -> dict:
+def run_version(label, cfg, close, base_fund, base_report):
     days = list(close.index)
-    tickers = list(cfg["universe"])
     pf = Portfolio(
         starting_cash=float(cfg["starting_cash"]),
         fee_per_trade=float(cfg["fee_per_trade"]),
@@ -154,16 +147,12 @@ def run_version(
         prices = prices_on(close, day)
         if not prices:
             continue
-
         scores, details = {}, {}
         for t in set(list(prices.keys()) + list(pf.positions.keys())):
             mom = momentum_at(close, t, day) if use_mom else None
             sc, parts, _ = score_combined(
-                base_fund.get(t) or {},
-                base_report.get(t),
-                momentum=mom,
+                base_fund.get(t) or {}, base_report.get(t), momentum=mom
             )
-            # v2: Momentum-Anteil entfernen falls fälschlich drin
             if not use_mom and "momentum" in parts:
                 sc = sc - float(parts.get("momentum") or 0)
                 parts = {**parts, "momentum": 0.0, "total": round(sc, 1)}
@@ -173,14 +162,7 @@ def run_version(
         iso_w = day.isocalendar()[1]
         full = iso_w != last_week or day == days[-1]
         decisions = decide(
-            pf,
-            prices,
-            scores,
-            details,
-            cfg,
-            day.to_pydatetime(),
-            mem,
-            False,
+            pf, prices, scores, details, cfg, day.to_pydatetime(), mem, False,
             ctx if cfg.get("cooldown_days") else None,
         )
         if not full:
@@ -189,11 +171,7 @@ def run_version(
             last_week = iso_w
 
         entries = apply_decisions(
-            pf,
-            decisions,
-            prices,
-            day.to_pydatetime(),
-            mem,
+            pf, decisions, prices, day.to_pydatetime(), mem,
             ctx if cfg.get("cooldown_days") else None,
         )
         pf.update_prices(prices)
@@ -238,46 +216,31 @@ def run_version(
         },
         "daily": daily,
         "trades": [t.to_dict() for t in pf.trades],
-        "note": (
-            "Zeitraum ~1 Jahr zurück. Fundamentals/Bericht = aktuelle Yahoo-Proxy. "
-            "Kurse walk-forward ohne Look-ahead."
-        ),
+        "note": "Kurse walk-forward; Fundamentals/Bericht = Yahoo-Proxy.",
     }
 
 
 def main():
     tickers = CFG_V3["universe"]
-    # etwas Puffer vor Start für Momentum-Fenster
-    start_buf = (datetime.fromisoformat(PERIOD_START) - timedelta(days=20)).strftime(
-        "%Y-%m-%d"
-    )
+    start_buf = (datetime.fromisoformat(PERIOD_START) - timedelta(days=20)).strftime("%Y-%m-%d")
     close_full = fetch_close(tickers, start_buf, PERIOD_END)
     close = close_full.loc[PERIOD_START:PERIOD_END]
     if len(close) < 5:
-        raise RuntimeError(f"Zu wenig Handelstage im Fenster: {len(close)}")
+        raise RuntimeError(f"Zu wenig Tage: {len(close)}")
 
     base_fund, base_report = {}, {}
-    print("=== Fundamentals/Bericht (Proxy) ===")
     for t in tickers:
         base_fund[t] = get_fundamentals(t)
         base_report[t] = get_financial_report(t)
-        sc, _, txt = score_combined(base_fund[t], base_report[t])
-        print(f"  {t}: {sc:+.1f} | {txt[:90]}")
 
-    print("\n=== Run v2 ===")
     r2 = run_version("v2", CFG_V2, close, base_fund, base_report)
-    print(f"  Wealth {r2['end']['wealth']:.2f} | Lohn {r2['end']['external_profit']:.2f}")
-
-    print("\n=== Run v3 ===")
     r3 = run_version("v3", CFG_V3, close, base_fund, base_report)
-    print(f"  Wealth {r3['end']['wealth']:.2f} | Lohn {r3['end']['external_profit']:.2f}")
 
     out = ROOT / "backtest" / "results"
     out.mkdir(parents=True, exist_ok=True)
-
-    path2 = out / "compare_v2_4w_2025-10.json"
-    path3 = out / "compare_v3_4w_2025-10.json"
-    path_sum = out / "compare_v2_v3_4w_summary.json"
+    path2 = out / f"compare_v2_4w_{TAG}.json"
+    path3 = out / f"compare_v3_4w_{TAG}.json"
+    path_sum = out / f"compare_v2_v3_4w_{TAG}_summary.json"
 
     with open(path2, "w", encoding="utf-8") as f:
         json.dump(r2, f, indent=2, ensure_ascii=False)
@@ -292,17 +255,20 @@ def main():
         "delta_lohn_v3_minus_v2": round(
             r3["end"]["external_profit"] - r2["end"]["external_profit"], 2
         ),
-        "files": {"v2": str(path2.name), "v3": str(path3.name)},
+        "files": {"v2": path2.name, "v3": path3.name},
         "timestamp": datetime.now().isoformat(timespec="seconds"),
     }
     with open(path_sum, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
-    print("\n" + "=" * 50)
+    # auch unter generischem Namen fürs Dashboard
+    with open(out / "compare_v2_v3_4w_summary.json", "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2, ensure_ascii=False)
+
     print(f"Zeitraum: {r2['period']['start']} → {r2['period']['end']}")
-    print(f"v2: {r2['end']['wealth']:.2f} € ({r2['end']['return_pct']:+.2f}%) Lohn {r2['end']['external_profit']:.2f}")
-    print(f"v3: {r3['end']['wealth']:.2f} € ({r3['end']['return_pct']:+.2f}%) Lohn {r3['end']['external_profit']:.2f}")
-    print(f"Gespeichert: {path2.name}, {path3.name}, {path_sum.name}")
+    print(f"v2: {r2['end']['wealth']:.2f} ({r2['end']['return_pct']:+.2f}%) Lohn {r2['end']['external_profit']:.2f}")
+    print(f"v3: {r3['end']['wealth']:.2f} ({r3['end']['return_pct']:+.2f}%) Lohn {r3['end']['external_profit']:.2f}")
+    print(f"→ {path2.name}, {path3.name}")
 
 
 if __name__ == "__main__":
