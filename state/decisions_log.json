@@ -85,6 +85,122 @@
       "equity": 9995.0,
       "external_profit": 0.0,
       "wealth": 9995.0
+    },
+    {
+      "date": "2026-10-21T20:22:38",
+      "source": "Algo: 21.10.2026 20:22 – Bericht+Score+Gehirn",
+      "scores": {
+        "SAP.DE": 57.7,
+        "ENR.DE": 66.3,
+        "MUV2.DE": 53.3,
+        "HNR1.DE": 30.8
+      },
+      "score_details": {
+        "SAP.DE": {
+          "growth": 20.64,
+          "profitability": 25,
+          "balance": 14.72,
+          "valuation": -3,
+          "fcf_info": 5.0,
+          "total": 57.7,
+          "data_points": 10.0,
+          "umsatz_yoy": 7.07,
+          "gewinn_yoy": 5.27,
+          "marge_trend": 3.7,
+          "schulden_trend": -8,
+          "cashflow": 6.0,
+          "report_subscore": 14.0,
+          "report_data_points": 5.0
+        },
+        "ENR.DE": {
+          "growth": 25,
+          "profitability": 19.88,
+          "balance": 11.92,
+          "valuation": -10,
+          "fcf_info": 5.0,
+          "total": 66.3,
+          "data_points": 10.0,
+          "umsatz_yoy": 7.82,
+          "gewinn_yoy": 12,
+          "marge_trend": 4.04,
+          "schulden_trend": 8,
+          "cashflow": 6.0,
+          "report_subscore": 30,
+          "report_data_points": 5.0
+        },
+        "MUV2.DE": {
+          "growth": 5.34,
+          "profitability": 25,
+          "balance": 5.81,
+          "valuation": 10,
+          "fcf_info": 5.0,
+          "total": 53.3,
+          "data_points": 10.0,
+          "umsatz_yoy": 6.74,
+          "gewinn_yoy": 6.32,
+          "marge_trend": 3.76,
+          "schulden_trend": 0.68,
+          "cashflow": 0.0,
+          "report_subscore": 17.5,
+          "report_data_points": 4.0
+        },
+        "HNR1.DE": {
+          "growth": -19.58,
+          "profitability": 25,
+          "balance": 4.64,
+          "valuation": 3,
+          "fcf_info": 5.0,
+          "total": 30.8,
+          "data_points": 10.0,
+          "umsatz_yoy": 7.21,
+          "gewinn_yoy": 4.1,
+          "marge_trend": 0.86,
+          "schulden_trend": 0.0,
+          "cashflow": 6.0,
+          "report_subscore": 18.2,
+          "report_data_points": 4.0
+        }
+      },
+      "report_summaries": {
+        "SAP.DE": "Umsatz YoY: +8.8% (wachsend) | Gewinn YoY: +8.8% | Nettomarge QoQ: +1.85 Prozentpunkte | Verschuldung QoQ: +33.6% | Cashflow (letzte Periode): positiv (3,038,000,000)",
+        "ENR.DE": "Umsatz YoY: +9.8% (wachsend) | Gewinn YoY: +544.6% | Nettomarge QoQ: +2.02 Prozentpunkte | Verschuldung QoQ: -20.7% | Cashflow (letzte Periode): positiv (2,111,000,000)",
+        "MUV2.DE": "Umsatz YoY: +8.4% (wachsend) | Gewinn YoY: +10.5% | Nettomarge QoQ: +1.88 Prozentpunkte | Verschuldung QoQ: -1.7%",
+        "HNR1.DE": "Umsatz YoY: +9.0% (wachsend) | Gewinn YoY: +6.8% | Nettomarge QoQ: +0.43 Prozentpunkte | Cashflow (letzte Periode): positiv (1,735,400,000)"
+      },
+      "decisions": [
+        {
+          "ticker": "SAP.DE",
+          "aktion": "halten",
+          "ok": true,
+          "grund": "Halten · P&L +2.7% · Score 58",
+          "score": 57.7
+        },
+        {
+          "ticker": "HNR1.DE",
+          "aktion": "halten",
+          "ok": true,
+          "grund": "Halten · P&L +0.6% · Score 31",
+          "score": 30.8
+        },
+        {
+          "ticker": "MUV2.DE",
+          "aktion": "halten",
+          "ok": true,
+          "grund": "Halten · P&L +0.7% · Score 53",
+          "score": 53.3
+        },
+        {
+          "ticker": "ENR.DE",
+          "aktion": "halten",
+          "ok": true,
+          "grund": "Halten · P&L +2.6% · Score 66",
+          "score": 66.3
+        }
+      ],
+      "cash": 201.43,
+      "equity": 10157.84,
+      "external_profit": 0.0,
+      "wealth": 10157.84
     }
   ]
 }

@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-21T20:22:38",
+  "reports": {
+    "SAP.DE": {
+      "findings": [
+        "Umsatz YoY: +8.8% (wachsend)",
+        "Gewinn YoY: +8.8%",
+        "Nettomarge QoQ: +1.85 Prozentpunkte",
+        "Verschuldung QoQ: +33.6%",
+        "Cashflow (letzte Periode): positiv (3,038,000,000)"
+      ],
+      "data_quality": 5,
+      "revenue_growth_yoy": 0.0883649184662847,
+      "earnings_growth_yoy": 0.08782435129740519,
+      "score": 57.7,
+      "lessons": ""
+    },
+    "ENR.DE": {
+      "findings": [
+        "Umsatz YoY: +9.8% (wachsend)",
+        "Gewinn YoY: +544.6%",
+        "Nettomarge QoQ: +2.02 Prozentpunkte",
+        "Verschuldung QoQ: -20.7%",
+        "Cashflow (letzte Periode): positiv (2,111,000,000)"
+      ],
+      "data_quality": 5,
+      "revenue_growth_yoy": 0.09771768316072113,
+      "earnings_growth_yoy": 5.446428571428571,
+      "score": 66.3,
+      "lessons": ""
+    },
+    "MUV2.DE": {
+      "findings": [
+        "Umsatz YoY: +8.4% (wachsend)",
+        "Gewinn YoY: +10.5%",
+        "Nettomarge QoQ: +1.88 Prozentpunkte",
+        "Verschuldung QoQ: -1.7%"
+      ],
+      "data_quality": 4,
+      "revenue_growth_yoy": 0.08430444282592862,
+      "earnings_growth_yoy": 0.1053419870194708,
+      "score": 53.3,
+      "lessons": ""
+    },
+    "HNR1.DE": {
+      "findings": [
+        "Umsatz YoY: +9.0% (wachsend)",
+        "Gewinn YoY: +6.8%",
+        "Nettomarge QoQ: +0.43 Prozentpunkte",
+        "Cashflow (letzte Periode): positiv (1,735,400,000)"
+      ],
+      "data_quality": 4,
+      "revenue_growth_yoy": 0.09015799641230854,
+      "earnings_growth_yoy": 0.06837738168408113,
+      "score": 30.8,
+      "lessons": ""
+    }
+  }
+}
