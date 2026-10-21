@@ -1,4 +1,4 @@
-"""Score v4: Fundamentals + Bericht + Momentum; m5/m10 in details für Regime."""
+"""Score v4.1: Fundamentals + Bericht + Kursverlauf (5/10/20 Tage)."""
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Tuple
@@ -140,25 +140,104 @@ def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, flo
     return sub, parts, text
 
 
-def score_momentum(m5: Optional[float], m10: Optional[float]) -> float:
-    s = 0.0
+def score_price_path(
+    m5: Optional[float],
+    m10: Optional[float],
+    m20: Optional[float],
+) -> Tuple[float, Dict[str, float], str]:
+    """
+    Bewertet, wie die Aktie die letzten Tage/Wochen gelaufen ist.
+    Starker Abwärtspfad → Abzug (kein blindes Nachkaufen ins fallende Messer).
+    Erholung nach vorherigem Minus kann leicht positiv sein.
+    """
+    parts: Dict[str, float] = {}
+    bits = []
+
     if m5 is not None:
-        if m5 < -5:
-            s -= 12
-        elif m5 < -2:
-            s -= 6
+        parts["m5"] = float(m5)
+        bits.append(f"5T {m5:+.1f}%")
+        if m5 < -6:
+            parts["trend_5d"] = -10
+        elif m5 < -3:
+            parts["trend_5d"] = -6
+        elif m5 < -1:
+            parts["trend_5d"] = -2
         elif m5 > 5:
-            s += 4
+            parts["trend_5d"] = 4
         elif m5 > 2:
-            s += 2
+            parts["trend_5d"] = 2
+        else:
+            parts["trend_5d"] = 0
+    else:
+        parts["trend_5d"] = 0
+
     if m10 is not None:
-        if m10 < -8:
-            s -= 8
-        elif m10 < -3:
-            s -= 4
+        parts["m10"] = float(m10)
+        bits.append(f"10T {m10:+.1f}%")
+        if m10 < -10:
+            parts["trend_10d"] = -9
+        elif m10 < -5:
+            parts["trend_10d"] = -5
+        elif m10 < -2:
+            parts["trend_10d"] = -2
         elif m10 > 8:
-            s += 3
-    return _clip(s, -20, 10)
+            parts["trend_10d"] = 3
+        elif m10 > 3:
+            parts["trend_10d"] = 2
+        else:
+            parts["trend_10d"] = 0
+    else:
+        parts["trend_10d"] = 0
+
+    if m20 is not None:
+        parts["m20"] = float(m20)
+        bits.append(f"20T {m20:+.1f}%")
+        if m20 < -12:
+            parts["trend_20d"] = -8
+        elif m20 < -6:
+            parts["trend_20d"] = -4
+        elif m20 > 10:
+            parts["trend_20d"] = 3
+        elif m20 > 4:
+            parts["trend_20d"] = 1
+        else:
+            parts["trend_20d"] = 0
+    else:
+        parts["trend_20d"] = 0
+
+    # Pfad-Logik: 20T stark minus, aber 5T schon erholt → mild positiver Bonus
+    if m20 is not None and m5 is not None and m20 < -8 and m5 > 1:
+        parts["erholung"] = 3
+        bits.append("Erholung nach Minus")
+    else:
+        parts["erholung"] = 0
+
+    # Dauerhaft fallend (alle Fenster negativ)
+    neg = sum(
+        1
+        for x in (m5, m10, m20)
+        if x is not None and x < -2
+    )
+    if neg >= 3:
+        parts["dauerfall"] = -6
+        bits.append("Dauerhaft schwach")
+    elif neg >= 2:
+        parts["dauerfall"] = -3
+    else:
+        parts["dauerfall"] = 0
+
+    sub = _clip(
+        parts["trend_5d"]
+        + parts["trend_10d"]
+        + parts["trend_20d"]
+        + parts["erholung"]
+        + parts["dauerfall"],
+        -25,
+        12,
+    )
+    parts["momentum"] = sub
+    text = ", ".join(bits) if bits else "kein Kursverlauf"
+    return sub, parts, text
 
 
 def score_combined(
@@ -176,18 +255,20 @@ def score_combined(
     else:
         report_text = "Keine ausreichenden Quartalsdaten."
 
-    mom = 0.0
-    m5 = m10 = None
+    path_score = 0.0
+    path_text = ""
     if momentum:
-        m5 = momentum.get("m5")
-        m10 = momentum.get("m10")
-        mom = score_momentum(m5, m10)
-        rparts["momentum"] = mom
-        if m5 is not None:
-            rparts["m5"] = float(m5)
-        if m10 is not None:
-            rparts["m10"] = float(m10)
+        path_score, pparts, path_text = score_price_path(
+            momentum.get("m5"),
+            momentum.get("m10"),
+            momentum.get("m20"),
+        )
+        rparts.update(pparts)
 
-    total = _clip(base * 0.65 + sub * 0.85 + mom, -100, 100)
+    # 55% Fund, 25% Bericht, 20% Kursverlauf
+    total = _clip(base * 0.55 + sub * 0.75 + path_score * 1.0, -100, 100)
     parts = {**base_parts, **rparts, "total": round(total, 1)}
-    return total, parts, report_text
+    full_text = report_text
+    if path_text:
+        full_text = f"{report_text} ‖ Kurs: {path_text}"
+    return total, parts, full_text

@@ -1,0 +1,32 @@
+name: Multi-window v4.1 test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  multi:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - run: python backtest/run_multi_windows.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v41-multi-windows
+          path: backtest/results/v41_*.json
+      - name: Commit
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add backtest/results/v41_*.json || true
+          if git diff --staged --quiet; then echo none; else
+            git commit -m "v4.1 multi-window results [skip ci]"
+            git push
+          fi
