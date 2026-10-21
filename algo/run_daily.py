@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Täglicher Algo-Lauf: Score → Regeln → State (für Automation 23 Uhr)."""
+"""Täglicher Algo-Lauf."""
 from __future__ import annotations
 
 import json
@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 from data import get_fundamentals, get_prices  # noqa: E402
 from portfolio import Portfolio  # noqa: E402
 from algo.scoring import score_fundamentals  # noqa: E402
-from algo.decision_engine import apply_decisions, decide  # noqa: E402
+from algo.decision_engine import ACTION_DE, apply_decisions, decide  # noqa: E402
 from algo.memory import AlgoMemory  # noqa: E402
 
 STATE_DIR = ROOT / "state"
@@ -43,7 +43,7 @@ def load_memory() -> AlgoMemory:
             for k, v in (d.get("bias") or {}).items():
                 mem.bias[k] = float(v)
         except Exception as e:
-            print(f"Memory load: {e}")
+            print(f"Memory: {e}")
     return mem
 
 
@@ -71,7 +71,7 @@ def main() -> None:
         for t, p in prices0.items():
             n = int((per - pf.fee_per_trade) // p)
             if n > 0:
-                pf.buy(t, float(n), p, now, reason="Algo: Initial equal-weight")
+                pf.buy(t, float(n), p, now, reason="Algo: Erste Aufteilung")
 
     tickers = list(set(universe) | set(pf.positions.keys()))
     prices = get_prices(tickers)
@@ -84,7 +84,6 @@ def main() -> None:
         print(f"  Score {t}: {sc:+.1f}")
 
     now = datetime.now()
-    # Monatsanfang grob: Tag 1–3 → Skim erlauben
     force_skim = now.day <= 3
     decisions = decide(
         pf, prices, scores, details, cfg, now, memory=mem, force_monthly_skim=force_skim
@@ -95,11 +94,14 @@ def main() -> None:
     if mem is not None:
         save_memory(mem)
 
+    # Scores für Anzeige runden
+    scores_r = {k: round(float(v), 1) for k, v in scores.items()}
+
     run = {
         "date": now.isoformat(timespec="seconds"),
         "source": f"Algo: {now.strftime('%d.%m.%Y %H:%M')} – algorithmischer Lauf",
-        "scores": scores,
-        "score_details": {k: {kk: vv for kk, vv in v.items()} for k, v in details.items()},
+        "scores": scores_r,
+        "score_details": details,
         "decisions": log_entries,
         "cash": round(pf.cash, 2),
         "equity": round(pf.total_equity(), 2),
@@ -117,26 +119,34 @@ def main() -> None:
 
     status = {
         "last_run": now.isoformat(timespec="seconds"),
-        "headline": f"Algo {now.strftime('%d.%m.%Y %H:%M')} | Wealth {pf.total_wealth():,.0f} €",
+        "headline": (
+            f"Algo {now.strftime('%d.%m.%Y %H:%M')} | "
+            f"Vermögen {pf.total_wealth():,.0f} € | "
+            f"Lohn (realisiert) {pf.external_profit:,.0f} € | "
+            f"Rest-Cash {pf.cash:,.0f} €"
+        ),
         "cash": round(pf.cash, 2),
         "equity": round(pf.total_equity(), 2),
         "external_profit": round(pf.external_profit, 2),
         "wealth": round(pf.total_wealth(), 2),
+        "hinweis": (
+            "Rest-Cash ist kein Gewinn. Realisierter Lohn = external_profit "
+            "(erst nach Verkauf im Plus)."
+        ),
         "n_decisions": len(log_entries),
         "actions_summary": [
-            f"{e.get('action')} {e.get('ticker', '')}" for e in log_entries if e.get("ok")
+            f"{e.get('aktion')} {e.get('ticker', '')}" for e in log_entries if e.get("ok")
         ][:12],
     }
     STATUS_FILE.write_text(json.dumps(status, indent=2, ensure_ascii=False), encoding="utf-8")
 
     print("=" * 50)
     print(
-        f"Equity: {pf.total_equity():,.2f} € | Wealth: {pf.total_wealth():,.2f} € | "
-        f"Lohn: {pf.external_profit:,.2f} € | Cash: {pf.cash:,.2f} €"
+        f"Vermögen: {pf.total_wealth():,.2f} € | Equity: {pf.total_equity():,.2f} € | "
+        f"Lohn: {pf.external_profit:,.2f} € | Rest-Cash: {pf.cash:,.2f} €"
     )
     for e in log_entries:
         print(f"  {e}")
-    print(f"State → {STATE_FILE}")
 
 
 if __name__ == "__main__":

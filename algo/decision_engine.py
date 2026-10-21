@@ -1,9 +1,9 @@
-"""Active Income: Teil-TP, Monats-Skim, Memory – kein Buy&Hold."""
+"""Active Income: Teil-TP, Monats-Skim, Memory – Aktionen auf Deutsch."""
 from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from portfolio import Portfolio
 
@@ -12,14 +12,28 @@ try:
 except ImportError:
     AlgoMemory = None  # type: ignore
 
+# Interne Codes → Anzeige DE
+ACTION_DE = {
+    "take_profit": "teilverkauf",
+    "hold": "halten",
+    "dip_buy": "nachkauf",
+    "new_buy": "neukauf",
+    "reinvest": "reinvestition",
+    "skip": "überspringen",
+}
+
 
 @dataclass
 class Decision:
     ticker: str
-    action: str
+    action: str  # intern: take_profit | hold | dip_buy | new_buy | reinvest
     score: float
     reason: str
     shares: float = 0.0
+
+    @property
+    def action_de(self) -> str:
+        return ACTION_DE.get(self.action, self.action)
 
 
 def decide(
@@ -52,7 +66,6 @@ def decide(
     equity = max(pf.total_equity(), 1.0)
     decisions: List[Decision] = []
 
-    # 1) Take-Profit / Teilverkauf
     for t, pos in list(pf.positions.items()):
         if t not in prices:
             continue
@@ -66,12 +79,11 @@ def decide(
                     t,
                     "take_profit",
                     sc,
-                    f"Teil-TP {pct:.1f}% >= {tp}% → {partial*100:.0f}% der Position",
+                    f"Teilverkauf: +{pct:.1f}% ≥ +{tp}% → ca. {partial*100:.0f}% der Position",
                     shares=float(n),
                 )
             )
 
-    # 2) Monatlicher Skim: auch unter vollem TP, ab min_monthly_skim_pct
     if force_monthly_skim:
         for t, pos in list(pf.positions.items()):
             if t not in prices:
@@ -88,12 +100,11 @@ def decide(
                         t,
                         "take_profit",
                         sc,
-                        f"Monats-Skim {pct:.1f}% >= {skim_pct}% → {skim_frac*100:.0f}%",
+                        f"Monats-Mitnahme: +{pct:.1f}% ≥ +{skim_pct}% → ca. {skim_frac*100:.0f}%",
                         shares=float(n),
                     )
                 )
 
-    # 3) Dip-Buy mit Memory-Anpassung
     for t, pos in list(pf.positions.items()):
         if t not in prices:
             continue
@@ -118,22 +129,33 @@ def decide(
                         t,
                         "dip_buy",
                         sc,
-                        f"Dip {pct:.1f}% score {sc:.0f} (mem_adj {adj:+.1f})",
+                        f"Nachkauf im Minus ({pct:.1f}%), Score {sc:.0f}",
                         shares=float(n),
                     )
                 )
             else:
-                decisions.append(Decision(t, "hold", sc, "Dip-Zone ohne Budget"))
+                decisions.append(
+                    Decision(t, "hold", sc, "Dip-Zone, aber kein freies Budget")
+                )
         elif sc < min_hold:
             decisions.append(
-                Decision(t, "hold", sc, f"Score schwach {sc:.0f} – halten, kein Sell im Minus")
+                Decision(
+                    t,
+                    "hold",
+                    sc,
+                    f"Halten (Score schwach {sc:.0f}) – kein Verkauf im Minus",
+                )
             )
         else:
             decisions.append(
-                Decision(t, "hold", sc, f"P&L {pct:.1f}% score {sc:.0f}")
+                Decision(
+                    t,
+                    "hold",
+                    sc,
+                    f"Halten · P&L {pct:+.1f}% · Score {sc:.0f}",
+                )
             )
 
-    # 4) Cash: Reinvest + Neukauf (aktiv, nicht parken)
     if cfg.get("reinvest_idle_cash", True) and pf.cash > fee * 2 + 120:
         open_ranked = []
         for t, pos in pf.positions.items():
@@ -157,7 +179,13 @@ def decide(
             n = int((spend - fee) // prices[t]) if prices[t] > 0 else 0
             if n > 0:
                 decisions.append(
-                    Decision(t, "reinvest", sc, f"Reinvest score {sc:.0f}", shares=float(n))
+                    Decision(
+                        t,
+                        "reinvest",
+                        sc,
+                        f"Reinvestition restliches Cash in {t} (Score {sc:.0f})",
+                        shares=float(n),
+                    )
                 )
 
         held = set(pf.positions.keys())
@@ -174,7 +202,13 @@ def decide(
             n = int((budget - fee) // prices[t]) if prices[t] > 0 else 0
             if n > 0:
                 decisions.append(
-                    Decision(t, "new_buy", sc, f"Neukauf score {sc:.0f}", shares=float(n))
+                    Decision(
+                        t,
+                        "new_buy",
+                        sc,
+                        f"Neukauf {t} (Score {sc:.0f})",
+                        shares=float(n),
+                    )
                 )
 
     return decisions
@@ -191,18 +225,18 @@ def apply_decisions(
     for d in decisions:
         if d.action == "take_profit" and d.ticker in pf.positions and d.ticker in prices:
             ok = pf.sell(
-                d.ticker, d.shares, prices[d.ticker], now, reason=f"Algo TP: {d.reason}"
+                d.ticker, d.shares, prices[d.ticker], now, reason=f"Algo: {d.reason}"
             )
             if ok and memory is not None:
                 memory.record_tp(d.ticker)
             log.append(
                 {
                     "ticker": d.ticker,
-                    "action": "sell_tp",
+                    "aktion": d.action_de,
                     "ok": ok,
-                    "shares": d.shares,
-                    "reason": d.reason,
-                    "score": d.score,
+                    "stück": d.shares,
+                    "grund": d.reason,
+                    "score": round(d.score, 1),
                 }
             )
         elif d.action in ("dip_buy", "reinvest", "new_buy") and d.shares > 0 and d.ticker in prices:
@@ -212,7 +246,7 @@ def apply_decisions(
                 d.shares,
                 prices[d.ticker],
                 now,
-                reason=f"Algo {d.action}: {d.reason}",
+                reason=f"Algo: {d.reason}",
                 is_dip=is_dip,
             )
             if ok and is_dip and memory is not None:
@@ -220,21 +254,21 @@ def apply_decisions(
             log.append(
                 {
                     "ticker": d.ticker,
-                    "action": d.action,
+                    "aktion": d.action_de,
                     "ok": ok,
-                    "shares": d.shares,
-                    "reason": d.reason,
-                    "score": d.score,
+                    "stück": d.shares,
+                    "grund": d.reason,
+                    "score": round(d.score, 1),
                 }
             )
         else:
             log.append(
                 {
                     "ticker": d.ticker,
-                    "action": d.action,
+                    "aktion": d.action_de,
                     "ok": True,
-                    "reason": d.reason,
-                    "score": d.score,
+                    "grund": d.reason,
+                    "score": round(d.score, 1),
                 }
             )
     return log
