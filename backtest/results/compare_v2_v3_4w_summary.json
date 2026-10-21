@@ -1,0 +1,90 @@
+{
+  "period": {
+    "start": "2025-10-06",
+    "end": "2025-10-31",
+    "trading_days": 20
+  },
+  "v2": {
+    "wealth": 9678.41,
+    "equity": 9678.41,
+    "cash": 98.5,
+    "external_profit": 0.0,
+    "return_pct": -3.22,
+    "trades": 7,
+    "positions": {
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 10.0,
+        "avg_cost": 227.73484802246094,
+        "current_price": 220.70416259765625,
+        "dip_buy_count": 0
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 9.0,
+        "avg_cost": 252.46958923339844,
+        "current_price": 235.52403259277344,
+        "dip_buy_count": 0
+      },
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 4.0,
+        "avg_cost": 540.5861206054688,
+        "current_price": 511.9533996582031,
+        "dip_buy_count": 0
+      },
+      "ENR.DE": {
+        "ticker": "ENR.DE",
+        "shares": 30.0,
+        "avg_cost": 106.08593928019205,
+        "current_price": 106.84437561035156,
+        "dip_buy_count": 0
+      }
+    }
+  },
+  "v3": {
+    "wealth": 9665.66,
+    "equity": 9665.66,
+    "cash": 406.29,
+    "external_profit": 0.0,
+    "return_pct": -3.34,
+    "trades": 6,
+    "positions": {
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 10.0,
+        "avg_cost": 227.73484802246094,
+        "current_price": 220.70416259765625,
+        "dip_buy_count": 0
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 9.0,
+        "avg_cost": 252.46958923339844,
+        "current_price": 235.52403259277344,
+        "dip_buy_count": 0
+      },
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 4.0,
+        "avg_cost": 540.5861206054688,
+        "current_price": 511.9533996582031,
+        "dip_buy_count": 0
+      },
+      "ENR.DE": {
+        "ticker": "ENR.DE",
+        "shares": 27.0,
+        "avg_cost": 106.51060994466145,
+        "current_price": 106.84437561035156,
+        "dip_buy_count": 0
+      }
+    }
+  },
+  "delta_wealth_v3_minus_v2": -12.75,
+  "delta_lohn_v3_minus_v2": 0.0,
+  "files": {
+    "v2": "compare_v2_4w_2025-10.json",
+    "v3": "compare_v3_4w_2025-10.json"
+  },
+  "timestamp": "2026-10-21T20:38:34"
+}

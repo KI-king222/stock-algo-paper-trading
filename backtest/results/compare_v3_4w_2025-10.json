@@ -1,0 +1,315 @@
+{
+  "version": "v3",
+  "period": {
+    "start": "2025-10-06",
+    "end": "2025-10-31",
+    "trading_days": 20
+  },
+  "config": {
+    "mode": "active_income_v3",
+    "starting_cash": 10000.0,
+    "fee_per_trade": 1.0,
+    "take_profit_pct": 6.0,
+    "partial_tp_fraction": 0.4,
+    "dip_trigger_pct": -12.0,
+    "max_dip_buys_per_ticker": 2,
+    "max_position_pct_of_equity": 40.0,
+    "dip_cash_fraction": 0.3,
+    "min_score_for_dip": -15,
+    "min_score_for_new_buy": 25,
+    "min_score_for_reinvest": 30,
+    "min_score_hold_thesis": -35,
+    "no_add_if_pnl_below_pct": -3.0,
+    "reinvest_idle_cash": true,
+    "reinvest_cash_fraction": 0.4,
+    "max_new_buys_per_month": 1,
+    "min_monthly_skim_pct": 5.0,
+    "monthly_skim_fraction": 0.3,
+    "memory_enabled": true,
+    "use_momentum": true,
+    "cooldown_days": 5
+  },
+  "universe": [
+    "SAP.DE",
+    "HNR1.DE",
+    "MUV2.DE",
+    "ENR.DE"
+  ],
+  "end": {
+    "wealth": 9665.66,
+    "equity": 9665.66,
+    "cash": 406.29,
+    "external_profit": 0.0,
+    "return_pct": -3.34,
+    "trades": 6,
+    "positions": {
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 10.0,
+        "avg_cost": 227.73484802246094,
+        "current_price": 220.70416259765625,
+        "dip_buy_count": 0
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 9.0,
+        "avg_cost": 252.46958923339844,
+        "current_price": 235.52403259277344,
+        "dip_buy_count": 0
+      },
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 4.0,
+        "avg_cost": 540.5861206054688,
+        "current_price": 511.9533996582031,
+        "dip_buy_count": 0
+      },
+      "ENR.DE": {
+        "ticker": "ENR.DE",
+        "shares": 27.0,
+        "avg_cost": 106.51060994466145,
+        "current_price": 106.84437561035156,
+        "dip_buy_count": 0
+      }
+    }
+  },
+  "daily": [
+    {
+      "date": "2025-10-07",
+      "wealth": 9998.69,
+      "equity": 9998.69,
+      "cash": 839.26,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-08",
+      "wealth": 10144.13,
+      "equity": 10144.13,
+      "cash": 839.26,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-09",
+      "wealth": 10106.06,
+      "equity": 10106.06,
+      "cash": 839.26,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-10",
+      "wealth": 9930.6,
+      "equity": 9930.6,
+      "cash": 839.26,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-13",
+      "wealth": 9977.11,
+      "equity": 9977.11,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "reinvestition",
+          "stück": 3.0,
+          "grund": "Reinvestition in ENR.DE (Score 61, P&L ok)",
+          "score": 61.2
+        }
+      ]
+    },
+    {
+      "date": "2025-10-14",
+      "wealth": 9965.66,
+      "equity": 9965.66,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-15",
+      "wealth": 9931.05,
+      "equity": 9931.05,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-16",
+      "wealth": 9810.94,
+      "equity": 9810.94,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-17",
+      "wealth": 9611.02,
+      "equity": 9611.02,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-20",
+      "wealth": 9744.66,
+      "equity": 9744.66,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-21",
+      "wealth": 9726.44,
+      "equity": 9726.44,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-22",
+      "wealth": 9626.94,
+      "equity": 9626.94,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-23",
+      "wealth": 9728.73,
+      "equity": 9728.73,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-24",
+      "wealth": 9786.69,
+      "equity": 9786.69,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-27",
+      "wealth": 9796.01,
+      "equity": 9796.01,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-28",
+      "wealth": 9762.53,
+      "equity": 9762.53,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-29",
+      "wealth": 9728.65,
+      "equity": 9728.65,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-30",
+      "wealth": 9730.96,
+      "equity": 9730.96,
+      "cash": 514.14,
+      "external_profit": 0.0,
+      "actions": []
+    },
+    {
+      "date": "2025-10-31",
+      "wealth": 9665.66,
+      "equity": 9665.66,
+      "cash": 406.29,
+      "external_profit": 0.0,
+      "actions": [
+        {
+          "ticker": "ENR.DE",
+          "aktion": "reinvestition",
+          "stück": 1.0,
+          "grund": "Reinvestition in ENR.DE (Score 61, P&L ok)",
+          "score": 61.2
+        }
+      ]
+    }
+  ],
+  "trades": [
+    {
+      "date": "2025-10-06T00:00:00",
+      "ticker": "SAP.DE",
+      "action": "buy",
+      "shares": 10.0,
+      "price": 227.73484802246094,
+      "fee": 1.0,
+      "reason": "v3: Start",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-06T00:00:00",
+      "ticker": "HNR1.DE",
+      "action": "buy",
+      "shares": 9.0,
+      "price": 252.46958923339844,
+      "fee": 1.0,
+      "reason": "v3: Start",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-06T00:00:00",
+      "ticker": "MUV2.DE",
+      "action": "buy",
+      "shares": 4.0,
+      "price": 540.5861206054688,
+      "fee": 1.0,
+      "reason": "v3: Start",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-06T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 23.0,
+      "price": 106.29670715332031,
+      "fee": 1.0,
+      "reason": "v3: Start",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-13T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 3.0,
+      "price": 108.03927612304688,
+      "fee": 1.0,
+      "reason": "Algo: Reinvestition in ENR.DE (Score 61, P&L ok)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2025-10-31T00:00:00",
+      "ticker": "ENR.DE",
+      "action": "buy",
+      "shares": 1.0,
+      "price": 106.84437561035156,
+      "fee": 1.0,
+      "reason": "Algo: Reinvestition in ENR.DE (Score 61, P&L ok)",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    }
+  ],
+  "note": "Zeitraum ~1 Jahr zurück. Fundamentals/Bericht = aktuelle Yahoo-Proxy. Kurse walk-forward ohne Look-ahead."
+}
