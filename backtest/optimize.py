@@ -4,9 +4,8 @@ Wiederholte 5y-Backtests mit Parameter-Suche, bis Ziel-Vermögen erreicht
 oder max. Versuche ausgeschöpft sind.
 
 WARNUNG – Overfitting:
-  Das optimiert auf EINEM historischen Pfad (2021–2026, 4 Ticker).
-  Parameter, die hier 20.000 € schaffen, sind KEIN Garant für die Zukunft.
-  Ergebnis = „hätte auf dieser Vergangenheit funktioniert“, nicht „wird wieder so".
+  Optimierung auf EINEM historischen Pfad (2021–2026, 4 Ticker).
+  20.000 € hier ≠ Garantie für die Zukunft.
 """
 from __future__ import annotations
 
@@ -16,7 +15,7 @@ import random
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -28,14 +27,13 @@ MAX_TRIALS = 40
 START = "2021-10-20"
 END = "2026-10-20"
 
-# Suchraum (diskrete sinnvolle Werte)
 SEARCH_SPACE = {
     "take_profit_pct": [8.0, 10.0, 12.0, 15.0, 20.0, 25.0, 50.0, 100.0],
     "dip_trigger_pct": [-8.0, -10.0, -12.0, -15.0, -20.0],
     "max_dip_buys_per_ticker": [0, 1, 2, 3],
     "dip_cash_fraction": [0.20, 0.30, 0.35, 0.45],
     "min_score_for_dip": [-40, -25, -15, -5, 0],
-    "min_score_for_new_buy": [10, 15, 25, 40, 999],  # 999 ≈ kein Neukauf
+    "min_score_for_new_buy": [10, 15, 25, 40, 999],
     "reinvest_cash_fraction": [0.0, 0.30, 0.50, 0.70],
     "max_new_buys_per_month": [0, 1, 2],
     "max_position_pct_of_equity": [35.0, 45.0, 55.0, 70.0],
@@ -54,21 +52,8 @@ def sample_params(rng: random.Random) -> dict:
 def apply_params(base: dict, params: dict) -> dict:
     cfg = copy.deepcopy(base)
     cfg.update(params)
-    # Flag: Reinvest aus wenn Fraction 0
     cfg["reinvest_idle_cash"] = float(params.get("reinvest_cash_fraction", 0)) > 0.01
     return cfg
-
-
-def run_with_cfg(cfg: dict) -> dict:
-    """Monkeypatch load_cfg in run_backtest via config file write temporarily."""
-    cfg_path = ROOT / "config.json"
-    backup = cfg_path.read_text(encoding="utf-8")
-    try:
-        cfg_path.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
-        result, _pf = run(START, END)
-        return result
-    finally:
-        cfg_path.write_text(backup, encoding="utf-8")
 
 
 def main():
@@ -80,9 +65,9 @@ def main():
     trials: List[dict] = []
     best: Dict[str, Any] = {"wealth": -1.0}
 
-    # Trial 0 = aktuelle Config
+    print(f"Ziel: {TARGET_WEALTH:.0f} € | max Trials: {MAX_TRIALS}")
     print("Trial 0 = aktuelle config.json")
-    r0 = run(START, END)[0]
+    r0, _ = run(START, END, cfg=base)
     w0 = float(r0["strategy"]["total_wealth"])
     trial0 = {
         "trial": 0,
@@ -96,21 +81,18 @@ def main():
     best = {**trial0, "full": r0}
     print(f"  → {w0:.2f} €")
 
-    if w0 >= TARGET_WEALTH:
-        print(f"Ziel {TARGET_WEALTH:.0f} € bereits mit aktueller Config erreicht.")
-    else:
+    if w0 < TARGET_WEALTH:
         for i in range(1, MAX_TRIALS + 1):
             params = sample_params(rng)
-            # 30% Chance: um besten herum mutieren
-            if best["wealth"] > 0 and rng.random() < 0.35:
+            if best["wealth"] > 0 and rng.random() < 0.4:
                 params = {**best["params"]}
                 key = rng.choice(list(SEARCH_SPACE.keys()))
                 params[key] = rng.choice(SEARCH_SPACE[key])
 
             cfg = apply_params(base, params)
-            print(f"Trial {i}/{MAX_TRIALS} params={params}")
+            print(f"Trial {i}/{MAX_TRIALS}")
             try:
-                result = run_with_cfg(cfg)
+                result, _ = run(START, END, cfg=cfg)
             except Exception as e:
                 print(f"  FEHLER: {e}")
                 trials.append({"trial": i, "params": params, "error": str(e)})
@@ -129,22 +111,20 @@ def main():
             }
             trials.append(row)
             print(
-                f"  → {wealth:.2f} € | DD {result['max_drawdown_pct']}% | "
-                f"Trades {row['trades']}"
+                f"  → {wealth:.2f} € | DD {result['max_drawdown_pct']}% | Trades {row['trades']}"
             )
-
             if wealth > best["wealth"]:
                 best = {**row, "full": result}
-                print(f"  ★ neues Best")
-
+                print("  ★ neues Best")
             if wealth >= TARGET_WEALTH:
                 print(f"\nZiel {TARGET_WEALTH:.0f} € erreicht in Trial {i}.")
                 break
         else:
             print(
-                f"\nZiel {TARGET_WEALTH:.0f} € nach {MAX_TRIALS} Trials nicht erreicht. "
-                f"Best: {best['wealth']:.2f} €"
+                f"\nZiel nicht erreicht. Best: {best['wealth']:.2f} € nach {MAX_TRIALS} Trials"
             )
+    else:
+        print("Ziel bereits mit Basis-Config erreicht.")
 
     summary = {
         "target_wealth": TARGET_WEALTH,
@@ -162,21 +142,18 @@ def main():
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "all_trials": trials,
     }
+    if "full" in best:
+        summary["best_strategy"] = best["full"].get("strategy")
+        summary["best_benchmark"] = best["full"].get("benchmark_buy_hold")
 
-    # Best-Config speichern (nicht live config überschreiben ohne Flag)
     best_cfg = apply_params(base, best.get("params") or {})
     with open(out_dir / "best_config.json", "w", encoding="utf-8") as f:
         json.dump(best_cfg, f, indent=2, ensure_ascii=False)
     with open(out_dir / "optimize_summary.json", "w", encoding="utf-8") as f:
-        # full result kann groß sein – ohne equity details
-        dump = {k: v for k, v in summary.items()}
-        if "full" in best:
-            dump["best_strategy"] = best["full"].get("strategy")
-            dump["best_benchmark"] = best["full"].get("benchmark_buy_hold")
-        json.dump(dump, f, indent=2, ensure_ascii=False)
+        json.dump(summary, f, indent=2, ensure_ascii=False)
 
     print("=" * 50)
-    print(f"Best Vermögen: {best['wealth']:.2f} €")
+    print(f"Best Vermögen: {best['wealth']:.2f} € | Ziel erreicht: {summary['achieved']}")
     print(f"Params: {best.get('params')}")
     print(f"→ {out_dir / 'optimize_summary.json'}")
 
