@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Täglicher Algo-Lauf v4."""
+"""Täglicher Algo-Lauf v4.1 – inkl. 5/10/20-Tage-Kursverlauf."""
 from __future__ import annotations
 
 import json
@@ -62,16 +62,20 @@ def save_ctx(ctx: RunContext):
 
 def price_momentum(ticker: str) -> dict:
     try:
-        h = yf.Ticker(ticker).history(period="1mo", auto_adjust=True)
+        h = yf.Ticker(ticker).history(period="3mo", auto_adjust=True)
         if h is None or h.empty or len(h) < 3:
-            return {"m5": None, "m10": None}
+            return {"m5": None, "m10": None, "m20": None}
         s = h["Close"].dropna()
         last = float(s.iloc[-1])
-        m5 = (last / float(s.iloc[-5]) - 1) * 100 if len(s) >= 5 else None
-        m10 = (last / float(s.iloc[-10]) - 1) * 100 if len(s) >= 10 else None
-        return {"m5": m5, "m10": m10}
+
+        def ret(n):
+            if len(s) < n:
+                return None
+            return (last / float(s.iloc[-n]) - 1) * 100
+
+        return {"m5": ret(5), "m10": ret(10), "m20": ret(20)}
     except Exception:
-        return {"m5": None, "m10": None}
+        return {"m5": None, "m10": None, "m20": None}
 
 
 def main() -> None:
@@ -98,7 +102,6 @@ def main() -> None:
         )
         prices0 = get_prices(universe)
         now = datetime.now()
-        # Score-gewichteter Start
         weights = {}
         for t in prices0:
             fund = get_fundamentals(t)
@@ -117,7 +120,7 @@ def main() -> None:
     prices = get_prices(tickers)
 
     scores, details, report_texts, reports_out = {}, {}, {}, {}
-    print("=== Analyse v4 ===")
+    print("=== Analyse v4.1 (Bericht + Kurs 5/10/20T) ===")
     for t in tickers:
         fund = get_fundamentals(t)
         report = get_financial_report(t)
@@ -130,9 +133,10 @@ def main() -> None:
             "findings": report.get("findings"),
             "momentum": mom,
             "score": round(sc, 1),
+            "path": rtext,
             "lessons": mem.lessons_for(t) if mem else "",
         }
-        print(f"\n{t} Score {sc:+.1f} mom={mom}")
+        print(f"\n{t} Score {sc:+.1f} | {mom}")
 
     now = datetime.now()
     force_skim = now.day <= 3
@@ -172,7 +176,7 @@ def main() -> None:
 
     run = {
         "date": now.isoformat(timespec="seconds"),
-        "source": f"Algo: {now.strftime('%d.%m.%Y %H:%M')} – v4 Regime+Trailing+TP4.5",
+        "source": f"Algo: {now.strftime('%d.%m.%Y %H:%M')} – v4.1 Kursverlauf+Bericht",
         "scores": {k: round(float(v), 1) for k, v in scores.items()},
         "score_details": details,
         "report_summaries": report_texts,
@@ -193,14 +197,14 @@ def main() -> None:
     status = {
         "last_run": now.isoformat(timespec="seconds"),
         "headline": (
-            f"Algo v4 {now.strftime('%d.%m.%Y %H:%M')} | "
+            f"Algo v4.1 {now.strftime('%d.%m.%Y %H:%M')} | "
             f"Vermögen {pf.total_wealth():,.0f} € | Lohn {pf.external_profit:,.0f} €"
         ),
         "cash": round(pf.cash, 2),
         "equity": round(pf.total_equity(), 2),
         "external_profit": round(pf.external_profit, 2),
         "wealth": round(pf.total_wealth(), 2),
-        "hinweis": "v4: TP ab ~4,5%, Trailing, kein Kauf bei schwachem Markt-Momentum.",
+        "hinweis": "v4.1: 5/10/20-Tage-Kursverlauf im Score, TP 4.5%, Trailing, Regime.",
         "n_decisions": len(log_entries),
         "actions_summary": [f"{e.get('aktion')} {e.get('ticker', '')}" for e in log_entries][:12],
     }
