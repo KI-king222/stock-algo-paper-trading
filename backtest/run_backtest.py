@@ -10,7 +10,7 @@ import math
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
@@ -20,6 +20,8 @@ sys.path.insert(0, str(ROOT))
 from portfolio import Portfolio  # noqa: E402
 from algo.decision_engine import apply_decisions, decide  # noqa: E402
 
+_CLOSE_CACHE: Dict[tuple, pd.DataFrame] = {}
+
 
 def load_cfg() -> dict:
     with open(ROOT / "config.json", encoding="utf-8") as f:
@@ -27,6 +29,10 @@ def load_cfg() -> dict:
 
 
 def fetch_close(tickers: List[str], start: str, end: str) -> pd.DataFrame:
+    key = (tuple(tickers), start, end)
+    if key in _CLOSE_CACHE:
+        return _CLOSE_CACHE[key]
+
     import yfinance as yf
 
     raw = yf.download(
@@ -40,7 +46,9 @@ def fetch_close(tickers: List[str], start: str, end: str) -> pd.DataFrame:
         close = raw[["Close"]].rename(columns={"Close": tickers[0]})
     close = close.dropna(how="all")
     close.index = pd.to_datetime(close.index).tz_localize(None)
-    return close.reindex(columns=[t for t in tickers if t in close.columns])
+    close = close.reindex(columns=[t for t in tickers if t in close.columns])
+    _CLOSE_CACHE[key] = close
+    return close
 
 
 def prices_on(close: pd.DataFrame, day: pd.Timestamp) -> Dict[str, float]:
@@ -57,7 +65,6 @@ def prices_on(close: pd.DataFrame, day: pd.Timestamp) -> Dict[str, float]:
 
 
 def historical_score(close: pd.DataFrame, ticker: str, day: pd.Timestamp) -> Tuple[float, dict]:
-    """v2: besseres Dip-Signal – überverkauft + nicht total gebrochen = höherer Score."""
     if ticker not in close.columns:
         return 0.0, {"total": 0.0, "note": "no data"}
     s = close[ticker].loc[:day].dropna()
@@ -74,7 +81,6 @@ def historical_score(close: pd.DataFrame, ticker: str, day: pd.Timestamp) -> Tup
     ret = s.pct_change().dropna().iloc[-20:]
     vol = float(ret.std() * (252 ** 0.5) * 100) if len(ret) > 5 else 20.0
 
-    # Trend-Qualität (mittel-/langfristig)
     trend = 0.0
     if m120 > 10:
         trend += 12
@@ -90,16 +96,14 @@ def historical_score(close: pd.DataFrame, ticker: str, day: pd.Timestamp) -> Tup
         trend -= 8
     trend = max(-25, min(25, trend))
 
-    # Mean-Reversion-Bonus bei gesundem Dip (nicht Crash)
     dip_quality = 0.0
     if -25 <= dd <= -10 and m120 > -10:
-        dip_quality = 12  # attraktiver Rücksetzer im Aufwärtstrend
+        dip_quality = 12
     elif dd < -40 and m120 < -20:
-        dip_quality = -15  # strukturell schwach
+        dip_quality = -15
     elif -15 <= m20 <= -5 and m60 > -10:
         dip_quality = 6
 
-    # Volatilität
     vol_score = 0.0
     if vol < 22:
         vol_score = 8
@@ -162,8 +166,8 @@ def buy_hold(close: pd.DataFrame, cash0: float, fee: float) -> dict:
     }
 
 
-def run(start="2021-10-20", end="2026-10-20") -> dict:
-    cfg = load_cfg()
+def run(start="2021-10-20", end="2026-10-20", cfg: Optional[dict] = None):
+    cfg = cfg if cfg is not None else load_cfg()
     tickers = list(cfg["universe"])
     close = fetch_close(tickers, start, end)
     days = list(close.index)
@@ -200,7 +204,6 @@ def run(start="2021-10-20", end="2026-10-20") -> dict:
             details[t] = parts
 
         decisions = decide(pf, prices, scores, details, cfg, day.to_pydatetime())
-        # Täglich nur TP; voller Algo-Monat
         if day.month == last_month:
             decisions = [d for d in decisions if d.action == "take_profit"]
         else:
@@ -234,7 +237,11 @@ def run(start="2021-10-20", end="2026-10-20") -> dict:
             "take_profit_pct": cfg.get("take_profit_pct"),
             "dip_trigger_pct": cfg.get("dip_trigger_pct"),
             "score_mode": "price_proxy_v2",
-            "note": "Kein Look-ahead; Dip-Qualität im Score; Reinvest in offene Pos",
+            "params": {k: cfg.get(k) for k in (
+                "take_profit_pct", "dip_trigger_pct", "max_dip_buys_per_ticker",
+                "dip_cash_fraction", "min_score_for_dip", "min_score_for_new_buy",
+                "reinvest_cash_fraction", "max_new_buys_per_month",
+            )},
         },
         "strategy": {
             "final_equity": round(pf.total_equity(), 2),
@@ -271,29 +278,8 @@ def main():
 
     s = result["strategy"]
     b = result["benchmark_buy_hold"]
-    comparison = {
-        "algo_v1": {"wealth": 15382.17, "return_pct": 53.82, "dd": -26.46},
-        "algo_v2": {
-            "wealth": s["total_wealth"],
-            "return_pct": s["return_wealth_pct"],
-            "dd": result["max_drawdown_pct"],
-            "trades": s["trades"],
-            "tp": s["take_profit_events"],
-            "dip": s["dip_buy_events"],
-            "new": s["new_buy_events"],
-            "reinvest": s["reinvest_events"],
-            "cash": s["cash"],
-        },
-        "ref_rules_S1_C": {"wealth": 17294.82, "return_pct": 72.95, "dd": -39.25},
-        "ref_rules_S1_A": {"wealth": 16938.57, "return_pct": 69.39, "dd": -32.85},
-        "buy_hold": b,
-    }
-    with open(out / "comparison.json", "w", encoding="utf-8") as f:
-        json.dump(comparison, f, indent=2, ensure_ascii=False)
-
     print(f"Vermögen: {s['total_wealth']:,.2f} € ({s['return_wealth_pct']:+.2f}%)")
-    print(f"DD: {result['max_drawdown_pct']}% | Trades {s['trades']} | TP {s['take_profit_events']} Dip {s['dip_buy_events']} New {s['new_buy_events']} Reinvest {s['reinvest_events']}")
-    print(f"Cash: {s['cash']:,.2f} € | BH: {b['final_value']:,.2f} € ({b['return_pct']:+.2f}%)")
+    print(f"DD: {result['max_drawdown_pct']}% | Trades {s['trades']}")
 
 
 if __name__ == "__main__":
