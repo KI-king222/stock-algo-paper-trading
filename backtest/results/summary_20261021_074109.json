@@ -1,0 +1,67 @@
+{
+  "version": 2,
+  "config": {
+    "start": "2021-10-20",
+    "end": "2026-10-20",
+    "universe": [
+      "SAP.DE",
+      "HNR1.DE",
+      "MUV2.DE",
+      "ENR.DE"
+    ],
+    "take_profit_pct": 12.0,
+    "dip_trigger_pct": -12.0,
+    "score_mode": "price_proxy_v2",
+    "note": "Kein Look-ahead; Dip-Qualität im Score; Reinvest in offene Pos"
+  },
+  "strategy": {
+    "final_equity": 9096.66,
+    "external_profit": 6333.56,
+    "total_wealth": 15430.22,
+    "cash": 210.66,
+    "taxes_paid_total": 887.14,
+    "return_wealth_pct": 54.3,
+    "trades": 86,
+    "take_profit_events": 24,
+    "dip_buy_events": 5,
+    "new_buy_events": 23,
+    "reinvest_events": 30,
+    "monthly_decision_days": 60,
+    "open_positions": {
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 20.0,
+        "avg_cost": 242.4691909790039,
+        "current_price": 199.83999633789062,
+        "dip_buy_count": 1
+      },
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 8.0,
+        "avg_cost": 542.7712631225586,
+        "current_price": 542.7999877929688,
+        "dip_buy_count": 0
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 2.0,
+        "avg_cost": 267.8919372558594,
+        "current_price": 273.3999938964844,
+        "dip_buy_count": 0
+      }
+    }
+  },
+  "benchmark_buy_hold": {
+    "final_value": 29817.81,
+    "return_pct": 198.18,
+    "holdings_end": {
+      "SAP.DE": 21.0,
+      "HNR1.DE": 19.0,
+      "MUV2.DE": 12.0,
+      "ENR.DE": 103.0
+    },
+    "cash_end": 199.55
+  },
+  "max_drawdown_pct": -26.83,
+  "equity_points": 1273
+}

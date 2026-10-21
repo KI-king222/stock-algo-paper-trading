@@ -1,34 +1,31 @@
 {
-  "algo_5y": {
-    "final_equity": 9379.57,
-    "external_profit": 6002.6,
-    "total_wealth": 15382.17,
-    "cash": 2525.65,
-    "taxes_paid_total": 728.12,
-    "return_wealth_pct": 53.82,
-    "trades": 63,
-    "take_profit_events": 27,
-    "dip_buy_events": 7,
-    "new_buy_events": 25,
-    "monthly_decision_days": 60,
-    "open_positions": {
-      "SAP.DE": {
-        "ticker": "SAP.DE",
-        "shares": 18.0,
-        "avg_cost": 242.79157257080078,
-        "current_price": 199.83999633789062,
-        "dip_buy_count": 2
-      },
-      "MUV2.DE": {
-        "ticker": "MUV2.DE",
-        "shares": 6.0,
-        "avg_cost": 511.3497619628906,
-        "current_price": 542.7999877929688,
-        "dip_buy_count": 1
-      }
-    }
+  "algo_v1": {
+    "wealth": 15382.17,
+    "return_pct": 53.82,
+    "dd": -26.46
   },
-  "benchmark": {
+  "algo_v2": {
+    "wealth": 15430.22,
+    "return_pct": 54.3,
+    "dd": -26.83,
+    "trades": 86,
+    "tp": 24,
+    "dip": 5,
+    "new": 23,
+    "reinvest": 30,
+    "cash": 210.66
+  },
+  "ref_rules_S1_C": {
+    "wealth": 17294.82,
+    "return_pct": 72.95,
+    "dd": -39.25
+  },
+  "ref_rules_S1_A": {
+    "wealth": 16938.57,
+    "return_pct": 69.39,
+    "dd": -32.85
+  },
+  "buy_hold": {
     "final_value": 29817.81,
     "return_pct": 198.18,
     "holdings_end": {
@@ -38,23 +35,5 @@
       "ENR.DE": 103.0
     },
     "cash_end": 199.55
-  },
-  "reference_from_ki_repo": {
-    "S1_C_TP8_Dip12": {
-      "wealth": 17294.82,
-      "return_pct": 72.95,
-      "dd": -39.25
-    },
-    "S1_A_TP12_Dip8": {
-      "wealth": 16938.57,
-      "return_pct": 69.39,
-      "dd": -32.85
-    },
-    "S2_brain_proxy": {
-      "wealth": 12811.99,
-      "return_pct": 28.12,
-      "dd": -44.65
-    }
-  },
-  "max_drawdown_pct": -26.46
+  }
 }

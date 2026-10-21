@@ -1,4 +1,5 @@
 {
+  "version": 2,
   "config": {
     "start": "2021-10-20",
     "end": "2026-10-20",
@@ -10,35 +11,43 @@
     ],
     "take_profit_pct": 12.0,
     "dip_trigger_pct": -12.0,
-    "score_mode": "price_proxy_point_in_time",
-    "note": "Kein Look-ahead auf heutige yfinance.info; Score aus Kursfenstern bis T"
+    "score_mode": "price_proxy_v2",
+    "note": "Kein Look-ahead; Dip-Qualität im Score; Reinvest in offene Pos"
   },
   "strategy": {
-    "final_equity": 9379.57,
-    "external_profit": 6002.6,
-    "total_wealth": 15382.17,
-    "cash": 2525.65,
-    "taxes_paid_total": 728.12,
-    "return_wealth_pct": 53.82,
-    "trades": 63,
-    "take_profit_events": 27,
-    "dip_buy_events": 7,
-    "new_buy_events": 25,
+    "final_equity": 9096.66,
+    "external_profit": 6333.56,
+    "total_wealth": 15430.22,
+    "cash": 210.66,
+    "taxes_paid_total": 887.14,
+    "return_wealth_pct": 54.3,
+    "trades": 86,
+    "take_profit_events": 24,
+    "dip_buy_events": 5,
+    "new_buy_events": 23,
+    "reinvest_events": 30,
     "monthly_decision_days": 60,
     "open_positions": {
       "SAP.DE": {
         "ticker": "SAP.DE",
-        "shares": 18.0,
-        "avg_cost": 242.79157257080078,
+        "shares": 20.0,
+        "avg_cost": 242.4691909790039,
         "current_price": 199.83999633789062,
-        "dip_buy_count": 2
+        "dip_buy_count": 1
       },
       "MUV2.DE": {
         "ticker": "MUV2.DE",
-        "shares": 6.0,
-        "avg_cost": 511.3497619628906,
+        "shares": 8.0,
+        "avg_cost": 542.7712631225586,
         "current_price": 542.7999877929688,
-        "dip_buy_count": 1
+        "dip_buy_count": 0
+      },
+      "HNR1.DE": {
+        "ticker": "HNR1.DE",
+        "shares": 2.0,
+        "avg_cost": 267.8919372558594,
+        "current_price": 273.3999938964844,
+        "dip_buy_count": 0
       }
     }
   },
@@ -53,6 +62,6 @@
     },
     "cash_end": 199.55
   },
-  "max_drawdown_pct": -26.46,
+  "max_drawdown_pct": -26.83,
   "equity_points": 1273
 }
