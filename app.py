@@ -1,4 +1,4 @@
-"""Streamlit-Dashboard: Charts, Scores erklärt, DE-Begriffe."""
+"""Streamlit-Dashboard: Charts, Bericht-Analyse, Scores, DE-Begriffe."""
 from __future__ import annotations
 
 import json
@@ -15,11 +15,13 @@ STATE = ROOT / "state"
 PORTFOLIO = STATE / "portfolio_state.json"
 LOG = STATE / "decisions_log.json"
 STATUS = STATE / "last_run_status.json"
+REPORTS = STATE / "last_reports.json"
+MEMORY = STATE / "algo_memory.json"
 CFG = ROOT / "config.json"
 
 st.set_page_config(page_title="Algo Paper Trading", page_icon="📈", layout="wide")
 st.title("Algo Paper Trading")
-st.caption("Regel-basiert · keine KI · ca. 23 Uhr Mo–Fr")
+st.caption("Kennzahlen + Quartals-Trends + Gehirn · keine Chat-KI · ca. 23 Uhr Mo–Fr")
 
 PERIODS = {
     "1 Tag": ("1d", "5m"),
@@ -131,23 +133,24 @@ def rules_plaintext(cfg: dict) -> str:
     uni = ", ".join(cfg.get("universe") or []) or "–"
     return f"""### So entscheidet der Algorithmus
 
-**Kein Chat-KI** – nur Kennzahlen-Score und feste Regeln.
+1. **Finanzzahlen** (Umsatz, Gewinn, Marge, Schulden, Cashflow aus Quartalen) auswerten  
+2. **Score** bilden (−100…+100)  
+3. **Gehirn** (frühere Entscheidungen/Episoden) leicht einbeziehen  
+4. **Regeln** anwenden (Teilverkauf, Nachkauf, Halten – kein Verkauf im Minus)
 
-**Universum:** {uni}
-
-**Teilverkauf** ab ca. **+{tp} %** (etwa {partial_pct} der Position) → Gewinn landet im **realisierten Lohn**.
-
-**Nachkauf** möglich ab ca. **{dip} %**, max. **{max_dips}×** pro Aktie.
-
-**Monats-Mitnahme** ab ca. **+{skim} %** (Monatsanfang).
-
-**Kein Verkauf im Minus.** Rest-Cash ist **kein** Gewinn.
+**Universum:** {uni}  
+**Teilverkauf** ab ca. **+{tp} %** (~{partial_pct} der Position)  
+**Nachkauf** ab ca. **{dip} %**, max. **{max_dips}×**  
+**Monats-Mitnahme** ab ca. **+{skim} %**  
+**Rest-Cash ≠ Gewinn.** Lohn erst nach Verkauf im Plus.
 """
 
 
 pf = load_json(PORTFOLIO)
 status = load_json(STATUS)
 log = load_json(LOG)
+reports = load_json(REPORTS)
+mem = load_json(MEMORY)
 cfg = load_json(CFG) or {}
 
 if status:
@@ -170,19 +173,36 @@ if pf:
     wealth = equity + ext
     start = float(pf.get("starting_cash") or 10_000)
     c1.metric("Gesamtvermögen", f"{wealth:,.2f} €", f"{(wealth/start-1)*100:+.1f}%")
-    c2.metric("Depot + Cash (Equity)", f"{equity:,.2f} €")
-    c3.metric("Rest-Cash (nicht investiert)", f"{cash:,.2f} €")
-    c4.metric("Realisierter Lohn (nur nach Verkauf)", f"{ext:,.2f} €")
-    c5.metric("Steuern (Simulation)", f"{float(pf.get('taxes_paid_total') or 0):,.2f} €")
-    st.caption(
-        "**Rest-Cash** = übrig gebliebenes Geld nach Käufen – **kein Gewinn**. "
-        "**Realisierter Lohn** steigt erst, wenn der Algo **im Plus verkauft**."
-    )
+    c2.metric("Depot + Cash", f"{equity:,.2f} €")
+    c3.metric("Rest-Cash", f"{cash:,.2f} €")
+    c4.metric("Realisierter Lohn", f"{ext:,.2f} €")
+    c5.metric("Steuern (sim.)", f"{float(pf.get('taxes_paid_total') or 0):,.2f} €")
+    st.caption("**Rest-Cash** = nicht investiert (kein Gewinn). **Lohn** nur nach Verkauf im Plus.")
 else:
     st.write("Kein Portfolio-State.")
 
 st.divider()
-st.subheader("Kurscharts (offene Positionen)")
+st.subheader("Finanzbericht-Analyse (letzter Lauf)")
+st.caption(
+    "Strukturierte Auswertung von Quartalszahlen (Umsatz, Gewinn, Marge, Schulden, Cashflow) – "
+    "keine PDF-KI, sondern dieselben Berichtszahlen als Zeitreihe."
+)
+if reports and reports.get("reports"):
+    for t, r in reports["reports"].items():
+        with st.expander(f"{t} · Score {r.get('score', '–')}"):
+            for line in r.get("findings") or ["–"]:
+                st.write(f"· {line}")
+            if r.get("lessons"):
+                st.write(f"**Gehirn:** {r['lessons']}")
+elif log and log.get("runs"):
+    last = log["runs"][-1]
+    for t, txt in (last.get("report_summaries") or {}).items():
+        st.write(f"**{t}:** {txt}")
+else:
+    st.write("Nach dem nächsten Algo-Lauf erscheinen hier die Findings.")
+
+st.divider()
+st.subheader("Kurscharts")
 if positions:
     period_label = st.radio("Zeitraum", list(PERIODS.keys()), index=2, horizontal=True)
     for t, p in positions.items():
@@ -190,17 +210,14 @@ if positions:
         px = float(p.get("current_price") or avg)
         sh = float(p.get("shares") or 0)
         pct = ((px - avg) / avg * 100) if avg else 0.0
-        st.markdown(f"**{t}** · {sh:g} Stk · Kurs {px:.2f} € · Ø {avg:.2f} € · **{pct:+.1f} %**")
+        st.markdown(f"**{t}** · {sh:g} Stk · {px:.2f} € · Ø {avg:.2f} € · **{pct:+.1f} %**")
         out = make_chart(t, avg, period_label)
         if out:
             fig, config = out
             st.plotly_chart(fig, use_container_width=True, config=config)
-        else:
-            st.caption(f"Keine Kursdaten für {t}.")
 else:
-    st.write("Keine offenen Positionen.")
+    st.write("Keine Positionen.")
 
-st.divider()
 st.subheader("Offene Positionen")
 if positions:
     rows = []
@@ -218,7 +235,6 @@ if positions:
                 "Ø Einstand": round(avg, 2),
                 "Kurs": round(px, 2),
                 "Wert €": round(mv, 2),
-                "P&L €": round(pnl, 2),
                 "P&L %": round(pct, 2),
                 "Nachkäufe": p.get("dip_buy_count", 0),
             }
@@ -228,20 +244,12 @@ if positions:
 st.subheader("Was sind die Scores?")
 st.markdown(
     """
-Der **Score** ist eine Note von ca. **−100 bis +100** für jede Aktie.  
-Der Algorithmus rechnet sie aus **Geschäfts-Kennzahlen** (kein Bauchgefühl):
+Note **−100 bis +100** aus:
 
-| Baustein | Bedeutung (kurz) |
-|----------|------------------|
-| **Wachstum** | Umsatz- / Gewinnwachstum |
-| **Rentabilität** | Margen, Eigenkapitalrendite |
-| **Bilanz** | Verschuldung, Liquidität |
-| **Bewertung** | z. B. KGV (teuer/günstig) |
+1. **Kennzahlen** (Wachstum, Marge, Bilanz, KGV, Cashflow)  
+2. **Quartals-Trends** wie in einem Finanzbericht (Umsatz/Gewinn YoY, Marge, Schulden, FCF)
 
-**Hoch (z. B. 40–60)** = Kennzahlen wirken solide → eher halten / nachkaufen / reinvestieren.  
-**Niedrig / negativ** = schwächer → vorsichtiger, kein aggressiver Nachkauf.  
-
-Der Score ist **kein Kurs-Prognose** und **kein garantierter Gewinn** – nur ein Filter für die Regeln.
+Hoch → eher halten/nachkaufen. Niedrig → vorsichtiger. **Keine Kursgarantie.**
 """
 )
 
@@ -251,17 +259,11 @@ if log and log.get("runs"):
     st.write(f"**{last.get('source', '')}**")
     dec = last.get("decisions") or []
     if dec:
-        # Alte EN-Keys auf DE mappen
         fixed = []
         for e in dec:
             row = dict(e)
             if "aktion" not in row and "action" in row:
                 row["aktion"] = ACTION_MAP.get(str(row["action"]), row["action"])
-            if "grund" not in row and "reason" in row:
-                row["grund"] = row["reason"]
-            if "stück" not in row and "shares" in row:
-                row["stück"] = row["shares"]
-            # Anzeige-Spalten
             fixed.append(
                 {
                     "Ticker": row.get("ticker"),
@@ -272,32 +274,37 @@ if log and log.get("runs"):
                 }
             )
         st.dataframe(pd.DataFrame(fixed), use_container_width=True, hide_index=True)
-    scores = last.get("scores") or {}
-    if scores:
-        st.write("**Scores (gerundet)**")
-        st.json({k: round(float(v), 1) for k, v in scores.items()})
+    if last.get("scores"):
+        st.write("**Scores**")
+        st.json({k: round(float(v), 1) for k, v in last["scores"].items()})
 else:
     st.write("Noch kein Log.")
 
+st.subheader("Gehirn (Episoden)")
+if mem and mem.get("episodes"):
+    eps = list(reversed(mem["episodes"]))[:15]
+    st.dataframe(pd.DataFrame(eps), use_container_width=True, hide_index=True)
+elif mem:
+    st.write("Bias/Zähler vorhanden, noch wenige Episoden – kommen mit weiteren Läufen.")
+    st.json({k: mem.get(k) for k in ("bias", "tp_success", "dip_success", "dip_fail")})
+else:
+    st.write("Noch kein Gehirn-File – nach dem nächsten Lauf da.")
+
 st.subheader("Trade-Historie (letzte 30)")
 if pf and pf.get("trades"):
-    trades = []
-    for t in pf["trades"][-30:]:
-        trades.append(
-            {
-                "Datum": t.get("date", "")[:19],
-                "Ticker": t.get("ticker"),
-                "Aktion": ACTION_MAP.get(str(t.get("action")), t.get("action")),
-                "Stück": t.get("shares"),
-                "Kurs": t.get("price"),
-                "Gebühr": t.get("fee"),
-                "Grund": t.get("reason"),
-                "Mitgenommener Gewinn": t.get("locked_profit"),
-            }
-        )
+    trades = [
+        {
+            "Datum": t.get("date", "")[:19],
+            "Ticker": t.get("ticker"),
+            "Aktion": ACTION_MAP.get(str(t.get("action")), t.get("action")),
+            "Stück": t.get("shares"),
+            "Kurs": t.get("price"),
+            "Grund": t.get("reason"),
+            "Mitgenommener Gewinn": t.get("locked_profit"),
+        }
+        for t in pf["trades"][-30:]
+    ]
     st.dataframe(pd.DataFrame(trades), use_container_width=True, hide_index=True)
-else:
-    st.write("Keine Trades.")
 
 st.divider()
 st.subheader("Regeln (Klartext)")
