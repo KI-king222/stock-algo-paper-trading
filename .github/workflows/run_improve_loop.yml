@@ -1,0 +1,38 @@
+name: Improve loop (3 windows)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - run: python backtest/run_improve_loop.py
+        timeout-minutes: 25
+      - uses: actions/upload-artifact@v4
+        with:
+          name: improve-loop
+          path: |
+            backtest/results/improve_loop_result.json
+            backtest/results/proposed_config_from_loop.json
+            config.json
+      - name: Commit
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add backtest/results/improve_loop_result.json \
+                  backtest/results/proposed_config_from_loop.json \
+                  config.json || true
+          if git diff --staged --quiet; then echo none; else
+            git commit -m "Improve-loop best config on 3 windows [skip ci]"
+            git push
+          fi
