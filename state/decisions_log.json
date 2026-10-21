@@ -1,0 +1,90 @@
+{
+  "runs": [
+    {
+      "date": "2026-10-21T08:57:52",
+      "source": "Algo: 21.10.2026 08:57 – algorithmischer Lauf",
+      "scores": {
+        "SAP.DE": 56.722719999999995,
+        "MUV2.DE": 46.35976,
+        "HNR1.DE": 12.74264,
+        "ENR.DE": 44.786960799999996
+      },
+      "score_details": {
+        "SAP.DE": {
+          "growth": 20.0,
+          "profitability": 25,
+          "balance": 14.722719999999999,
+          "valuation": -3,
+          "total": 56.7,
+          "data_points": 7.0
+        },
+        "MUV2.DE": {
+          "growth": 5.550000000000001,
+          "profitability": 25,
+          "balance": 5.809759999999999,
+          "valuation": 10,
+          "total": 46.4,
+          "data_points": 7.0
+        },
+        "HNR1.DE": {
+          "growth": -19.9,
+          "profitability": 25,
+          "balance": 4.642639999999998,
+          "valuation": 3,
+          "total": 12.7,
+          "data_points": 7.0
+        },
+        "ENR.DE": {
+          "growth": 25,
+          "profitability": 17.8660008,
+          "balance": 11.920960000000001,
+          "valuation": -10,
+          "total": 44.8,
+          "data_points": 7.0
+        }
+      },
+      "decisions": [
+        {
+          "ticker": "SAP.DE",
+          "action": "hold",
+          "ok": true,
+          "reason": "P&L 0.0% score 57",
+          "score": 56.722719999999995
+        },
+        {
+          "ticker": "HNR1.DE",
+          "action": "hold",
+          "ok": true,
+          "reason": "P&L 0.0% score 13",
+          "score": 12.74264
+        },
+        {
+          "ticker": "MUV2.DE",
+          "action": "hold",
+          "ok": true,
+          "reason": "P&L 0.0% score 46",
+          "score": 46.35976
+        },
+        {
+          "ticker": "ENR.DE",
+          "action": "hold",
+          "ok": true,
+          "reason": "P&L 0.0% score 45",
+          "score": 44.786960799999996
+        },
+        {
+          "ticker": "SAP.DE",
+          "action": "reinvest",
+          "ok": true,
+          "shares": 1.0,
+          "reason": "Reinvest score 57",
+          "score": 56.722719999999995
+        }
+      ],
+      "cash": 201.43,
+      "equity": 9995.0,
+      "external_profit": 0.0,
+      "wealth": 9995.0
+    }
+  ]
+}
