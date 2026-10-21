@@ -1,0 +1,35 @@
+name: Algo 5y Backtest
+
+on:
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run 5y backtest
+        run: python backtest/run_backtest.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: algo-backtest-results
+          path: backtest/results/
+      - name: Commit results
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          mkdir -p backtest/results
+          git add backtest/results/ || true
+          if git diff --staged --quiet; then echo none; else
+            git commit -m "Algo 5y backtest results [skip ci]"
+            git push
+          fi
