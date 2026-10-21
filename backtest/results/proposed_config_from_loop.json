@@ -1,0 +1,32 @@
+{
+  "mode": "active_income_v4_loop",
+  "starting_cash": 10000.0,
+  "fee_per_trade": 1.0,
+  "take_profit_pct": 6.0,
+  "partial_tp_fraction": 0.35,
+  "trail_giveback_pct": 3.0,
+  "dip_trigger_pct": -12.0,
+  "max_dip_buys_per_ticker": 1,
+  "max_position_pct_of_equity": 30.0,
+  "dip_cash_fraction": 0.25,
+  "min_score_for_dip": 5,
+  "min_score_for_new_buy": 25,
+  "min_score_for_reinvest": 25,
+  "min_score_hold_thesis": -30,
+  "no_add_if_pnl_below_pct": -5.0,
+  "reinvest_idle_cash": true,
+  "reinvest_cash_fraction": 0.4,
+  "max_new_buys_per_month": 1,
+  "min_monthly_skim_pct": 4.0,
+  "monthly_skim_fraction": 0.3,
+  "memory_enabled": true,
+  "regime_block_buys_if_median_mom5_below": -1.0,
+  "universe": [
+    "SAP.DE",
+    "HNR1.DE",
+    "MUV2.DE",
+    "ENR.DE"
+  ],
+  "cooldown_days": 3,
+  "notes": "Aus Improve-Loop auf 3 Fenstern – mit Vorsicht nutzen"
+}
