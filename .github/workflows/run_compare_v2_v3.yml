@@ -1,4 +1,4 @@
-name: Compare v2 vs v3 (4 weeks ~1y ago)
+name: Compare v2 vs v3 (4 weeks)
 
 on:
   workflow_dispatch:
@@ -20,18 +20,13 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: v2-v3-compare-4w
-          path: |
-            backtest/results/compare_v2_4w_2025-10.json
-            backtest/results/compare_v3_4w_2025-10.json
-            backtest/results/compare_v2_v3_4w_summary.json
+          path: backtest/results/compare_*.json
       - name: Commit results
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add backtest/results/compare_v2_4w_2025-10.json \
-                  backtest/results/compare_v3_4w_2025-10.json \
-                  backtest/results/compare_v2_v3_4w_summary.json || true
+          git add backtest/results/compare_*.json || true
           if git diff --staged --quiet; then echo none; else
-            git commit -m "Save v2 vs v3 4-week compare ~2025-10 [skip ci]"
+            git commit -m "Save v2 vs v3 4-week compare [skip ci]"
             git push
           fi
