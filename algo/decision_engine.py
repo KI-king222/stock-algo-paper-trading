@@ -1,9 +1,14 @@
-"""Active Income: Teil-TP, Monats-Skim, Memory – Aktionen auf Deutsch."""
+"""
+Active Income v3 – Lektionen aus 2-Wochen-Test:
+- kein Reinvest/Nachkauf in Positionen die schon klar im Minus sind
+- nach Teilverkauf kurze Pause für denselben Ticker
+- ENR-Fall: hoher Score allein reicht nicht bei negativem Momentum/P&L
+"""
 from __future__ import annotations
 
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Dict, List
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
+from typing import Dict, List, Set
 
 from portfolio import Portfolio
 
@@ -12,7 +17,6 @@ try:
 except ImportError:
     AlgoMemory = None  # type: ignore
 
-# Interne Codes → Anzeige DE
 ACTION_DE = {
     "take_profit": "teilverkauf",
     "hold": "halten",
@@ -26,7 +30,7 @@ ACTION_DE = {
 @dataclass
 class Decision:
     ticker: str
-    action: str  # intern: take_profit | hold | dip_buy | new_buy | reinvest
+    action: str
     score: float
     reason: str
     shares: float = 0.0
@@ -34,6 +38,22 @@ class Decision:
     @property
     def action_de(self) -> str:
         return ACTION_DE.get(self.action, self.action)
+
+
+@dataclass
+class RunContext:
+    """Zustand über einen Lauf / Backtest-Tag."""
+    recently_sold: Dict[str, datetime] = field(default_factory=dict)
+    cooldown_days: int = 5
+
+    def mark_sold(self, ticker: str, when: datetime):
+        self.recently_sold[ticker] = when
+
+    def in_cooldown(self, ticker: str, now: datetime) -> bool:
+        t0 = self.recently_sold.get(ticker)
+        if not t0:
+            return False
+        return (now - t0) < timedelta(days=self.cooldown_days)
 
 
 def decide(
@@ -45,27 +65,33 @@ def decide(
     now: datetime | None = None,
     memory=None,
     force_monthly_skim: bool = False,
+    ctx: RunContext | None = None,
 ) -> List[Decision]:
     now = now or datetime.now()
+    ctx = ctx or RunContext()
     tp = float(cfg.get("take_profit_pct", 6.0))
-    partial = float(cfg.get("partial_tp_fraction", 0.5))
+    partial = float(cfg.get("partial_tp_fraction", 0.4))
     dip_tr = float(cfg.get("dip_trigger_pct", -10.0))
     max_dips = int(cfg.get("max_dip_buys_per_ticker", 2))
-    min_dip_score = float(cfg.get("min_score_for_dip", -20))
-    min_new = float(cfg.get("min_score_for_new_buy", 12))
+    min_dip_score = float(cfg.get("min_score_for_dip", -15))
+    min_new = float(cfg.get("min_score_for_new_buy", 20))
     min_hold = float(cfg.get("min_score_hold_thesis", -35))
     max_pos_pct = float(cfg.get("max_position_pct_of_equity", 40.0))
     dip_frac = float(cfg.get("dip_cash_fraction", 0.30))
-    reinvest_frac = float(cfg.get("reinvest_cash_fraction", 0.55))
-    max_new = int(cfg.get("max_new_buys_per_month", 2))
-    skim_pct = float(cfg.get("min_monthly_skim_pct", 4.0))
-    skim_frac = float(cfg.get("monthly_skim_fraction", 0.35))
+    reinvest_frac = float(cfg.get("reinvest_cash_fraction", 0.40))
+    max_new = int(cfg.get("max_new_buys_per_month", 1))
+    skim_pct = float(cfg.get("min_monthly_skim_pct", 5.0))
+    skim_frac = float(cfg.get("monthly_skim_fraction", 0.30))
+    # Neu: nicht in fallende Positionen nachschießen
+    no_buy_below_pnl = float(cfg.get("no_add_if_pnl_below_pct", -3.0))
+    min_reinvest_score = float(cfg.get("min_score_for_reinvest", 25))
     fee = pf.fee_per_trade
 
     pf.update_prices(prices)
     equity = max(pf.total_equity(), 1.0)
     decisions: List[Decision] = []
 
+    # 1) Teilverkauf
     for t, pos in list(pf.positions.items()):
         if t not in prices:
             continue
@@ -79,7 +105,7 @@ def decide(
                     t,
                     "take_profit",
                     sc,
-                    f"Teilverkauf: +{pct:.1f}% ≥ +{tp}% → ca. {partial*100:.0f}% der Position",
+                    f"Teilverkauf: +{pct:.1f}% ≥ +{tp}% → ca. {partial*100:.0f}%",
                     shares=float(n),
                 )
             )
@@ -100,11 +126,12 @@ def decide(
                         t,
                         "take_profit",
                         sc,
-                        f"Monats-Mitnahme: +{pct:.1f}% ≥ +{skim_pct}% → ca. {skim_frac*100:.0f}%",
+                        f"Monats-Mitnahme: +{pct:.1f}% ≥ +{skim_pct}%",
                         shares=float(n),
                     )
                 )
 
+    # 2) Dip / Halten
     for t, pos in list(pf.positions.items()):
         if t not in prices:
             continue
@@ -112,66 +139,77 @@ def decide(
             continue
         sc = scores.get(t, 0.0)
         pct = pos.unrealized_pnl_pct
-        adj = 0.0
-        if memory is not None and cfg.get("memory_enabled", True):
-            adj = memory.dip_score_adjust(t)
+        details = score_details.get(t) or {}
+        mom = float(details.get("momentum") or 0)
+        adj = memory.dip_score_adjust(t) if memory and cfg.get("memory_enabled", True) else 0.0
         need = min_dip_score - adj
 
-        if pct <= dip_tr and pos.dip_buy_count < max_dips and sc >= need:
-            budget = pf.cash * dip_frac
-            max_mv = equity * (max_pos_pct / 100.0)
-            room = max_mv - pos.market_value
-            spend = min(budget, room) if room > 0 else 0
-            n = int((spend - fee) // prices[t]) if prices[t] > 0 else 0
-            if n > 0:
+        # Dip nur wenn Score ok UND Momentum nicht stark negativ
+        if pct <= dip_tr and pos.dip_buy_count < max_dips:
+            if sc < need or mom < -8:
                 decisions.append(
                     Decision(
                         t,
-                        "dip_buy",
+                        "hold",
                         sc,
-                        f"Nachkauf im Minus ({pct:.1f}%), Score {sc:.0f}",
-                        shares=float(n),
+                        f"Dip-Zone, aber Score/Momentum zu schwach "
+                        f"(Score {sc:.0f}, Mom {mom:.0f}) – kein Nachkauf",
                     )
                 )
             else:
-                decisions.append(
-                    Decision(t, "hold", sc, "Dip-Zone, aber kein freies Budget")
-                )
+                budget = pf.cash * dip_frac
+                max_mv = equity * (max_pos_pct / 100.0)
+                room = max_mv - pos.market_value
+                spend = min(budget, room) if room > 0 else 0
+                n = int((spend - fee) // prices[t]) if prices[t] > 0 else 0
+                if n > 0:
+                    decisions.append(
+                        Decision(
+                            t,
+                            "dip_buy",
+                            sc,
+                            f"Nachkauf Dip {pct:.1f}% Score {sc:.0f}",
+                            shares=float(n),
+                        )
+                    )
+                else:
+                    decisions.append(Decision(t, "hold", sc, "Dip-Zone, kein Budget"))
         elif sc < min_hold:
             decisions.append(
-                Decision(
-                    t,
-                    "hold",
-                    sc,
-                    f"Halten (Score schwach {sc:.0f}) – kein Verkauf im Minus",
-                )
+                Decision(t, "hold", sc, f"Halten (Score schwach {sc:.0f}) – kein Verkauf im Minus")
             )
         else:
             decisions.append(
-                Decision(
-                    t,
-                    "hold",
-                    sc,
-                    f"Halten · P&L {pct:+.1f}% · Score {sc:.0f}",
-                )
+                Decision(t, "hold", sc, f"Halten · P&L {pct:+.1f}% · Score {sc:.0f}")
             )
 
-    if cfg.get("reinvest_idle_cash", True) and pf.cash > fee * 2 + 120:
+    # 3) Reinvest / Neukauf – strenger
+    if cfg.get("reinvest_idle_cash", True) and pf.cash > fee * 2 + 150:
         open_ranked = []
         for t, pos in pf.positions.items():
             if t not in prices:
                 continue
             if any(d.ticker == t and d.action in ("take_profit", "dip_buy") for d in decisions):
                 continue
+            if ctx.in_cooldown(t, now):
+                continue
+            # Lektion ENR: nicht nachschießen wenn schon im Minus
+            if pos.unrealized_pnl_pct <= no_buy_below_pnl:
+                continue
             if pos.unrealized_pnl_pct >= tp - 1:
                 continue
             sc = scores.get(t, 0.0)
+            mom = float((score_details.get(t) or {}).get("momentum") or 0)
+            if mom < -6:
+                continue
             pref = memory.prefer_ticker(t) if memory else 0.0
-            if sc + pref * 5 >= 0:
-                open_ranked.append((sc + pref * 5, t))
+            rank = sc + pref * 5 + mom * 0.5
+            if sc >= min_reinvest_score:
+                open_ranked.append((rank, t, sc))
         open_ranked.sort(reverse=True)
+
         if open_ranked:
-            sc, t = open_ranked[0]
+            _, t, sc = open_ranked[0]
             budget = pf.cash * reinvest_frac
             max_mv = equity * (max_pos_pct / 100.0)
             room = max_mv - pf.positions[t].market_value
@@ -183,7 +221,7 @@ def decide(
                         t,
                         "reinvest",
                         sc,
-                        f"Reinvestition restliches Cash in {t} (Score {sc:.0f})",
+                        f"Reinvestition in {t} (Score {sc:.0f}, P&L ok)",
                         shares=float(n),
                     )
                 )
@@ -193,12 +231,17 @@ def decide(
         for t, sc in scores.items():
             if t in held or t not in prices:
                 continue
+            if ctx.in_cooldown(t, now):
+                continue
+            mom = float((score_details.get(t) or {}).get("momentum") or 0)
+            if mom < -6:
+                continue
             pref = memory.prefer_ticker(t) if memory else 0.0
             if sc + pref * 3 >= min_new:
-                cands.append((sc + pref * 3, t, sc))
+                cands.append((sc + pref * 3 + mom * 0.3, t, sc))
         cands.sort(reverse=True)
         for _, t, sc in cands[:max_new]:
-            budget = pf.cash * 0.28
+            budget = pf.cash * 0.25
             n = int((budget - fee) // prices[t]) if prices[t] > 0 else 0
             if n > 0:
                 decisions.append(
@@ -220,6 +263,7 @@ def apply_decisions(
     prices: Dict[str, float],
     now: datetime,
     memory=None,
+    ctx: RunContext | None = None,
 ) -> List[dict]:
     log = []
     for d in decisions:
@@ -227,8 +271,11 @@ def apply_decisions(
             ok = pf.sell(
                 d.ticker, d.shares, prices[d.ticker], now, reason=f"Algo: {d.reason}"
             )
-            if ok and memory is not None:
-                memory.record_tp(d.ticker)
+            if ok:
+                if memory is not None:
+                    memory.record_tp(d.ticker)
+                if ctx is not None:
+                    ctx.mark_sold(d.ticker, now)
             log.append(
                 {
                     "ticker": d.ticker,

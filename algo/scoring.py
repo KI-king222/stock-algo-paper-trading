@@ -1,6 +1,6 @@
 """
-Score v2: Fundamentals + strukturierte Finanzbericht-Trends → −100 … +100.
-Regelbasiert (kein LLM-Training) – systematische Auswertung der Zahlen.
+Score v3: Fundamentals + Bericht-Trends + optionales Kurs-Momentum.
+Stärkere Strafe bei steigender Verschuldung (Lektion SAP/ENR-Test).
 """
 from __future__ import annotations
 
@@ -12,7 +12,6 @@ def _clip(x: float, lo: float, hi: float) -> float:
 
 
 def score_fundamentals(fund: Dict[str, Any]) -> Tuple[float, Dict[str, float]]:
-    """Basis-Score aus Info-Kennzahlen."""
     parts: Dict[str, float] = {}
     known = 0
 
@@ -72,7 +71,6 @@ def score_fundamentals(fund: Dict[str, Any]) -> Tuple[float, Dict[str, float]]:
         known += 1
     parts["valuation"] = val
 
-    # Free Cashflow-Hinweis aus Info
     fcf = fund.get("free_cashflow")
     if fcf is not None:
         parts["fcf_info"] = 5.0 if fcf > 0 else -6.0
@@ -90,16 +88,11 @@ def score_fundamentals(fund: Dict[str, Any]) -> Tuple[float, Dict[str, float]]:
 
 
 def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, float], str]:
-    """
-    Zusatscore aus Quartals-Trends (wie Bericht gelesen: Umsatz, Gewinn, Marge, Schulden, FCF).
-    Rückgabe: (score −30…+30, parts, kurztext)
-    """
     parts: Dict[str, float] = {}
     q = 0.0
 
     ry = report.get("revenue_growth_yoy")
     if ry is not None:
-        # +10% YoY ≈ stark
         parts["umsatz_yoy"] = _clip(ry * 80, -12, 12)
         q += 1
     else:
@@ -107,7 +100,8 @@ def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, flo
 
     ey = report.get("earnings_growth_yoy")
     if ey is not None:
-        parts["gewinn_yoy"] = _clip(ey * 60, -12, 12)
+        # Extremes YoY (z.B. +500% von kleiner Basis) kappen – sonst Score verzerrt
+        parts["gewinn_yoy"] = _clip(ey * 50, -12, 10)
         q += 1
     else:
         parts["gewinn_yoy"] = 0.0
@@ -121,8 +115,11 @@ def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, flo
 
     dt = report.get("debt_trend_qoq")
     if dt is not None:
-        # Schulden runter = gut
-        parts["schulden_trend"] = _clip(-dt * 40, -8, 8)
+        # Schulden runter = gut; stark steigend = deutlich bestrafen (Test: SAP +34%)
+        if dt > 0.15:
+            parts["schulden_trend"] = _clip(-dt * 70, -15, 0)
+        else:
+            parts["schulden_trend"] = _clip(-dt * 45, -10, 8)
         q += 1
     else:
         parts["schulden_trend"] = 0.0
@@ -132,6 +129,12 @@ def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, flo
         q += 1
     else:
         parts["cashflow"] = 0.0
+
+    # Qualitätsflag: Wachstum + steigende Schulden = weniger „weise“
+    if ry is not None and ry > 0 and dt is not None and dt > 0.2:
+        parts["qualitaet"] = -6.0
+    else:
+        parts["qualitaet"] = 0.0
 
     sub = sum(parts.values())
     if q < 2:
@@ -144,18 +147,49 @@ def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, flo
     return sub, parts, text
 
 
+def score_momentum(m5: Optional[float], m10: Optional[float]) -> float:
+    """Kurzfrist-Momentum in % (5/10 Handelstage). Negativ → Abzug."""
+    s = 0.0
+    if m5 is not None:
+        if m5 < -5:
+            s -= 12
+        elif m5 < -2:
+            s -= 6
+        elif m5 > 5:
+            s += 4
+        elif m5 > 2:
+            s += 2
+    if m10 is not None:
+        if m10 < -8:
+            s -= 8
+        elif m10 < -3:
+            s -= 4
+        elif m10 > 8:
+            s += 3
+    return _clip(s, -20, 10)
+
+
 def score_combined(
-    fund: Dict[str, Any], report: Optional[Dict[str, Any]] = None
+    fund: Dict[str, Any],
+    report: Optional[Dict[str, Any]] = None,
+    momentum: Optional[Dict[str, float]] = None,
 ) -> Tuple[float, Dict[str, Any], str]:
-    """Gesamtscore = Fundamentals + Bericht-Trends."""
     base, base_parts = score_fundamentals(fund)
     report_text = ""
+    sub = 0.0
+    rparts: Dict[str, float] = {}
+
     if report and report.get("data_quality", 0) > 0:
         sub, rparts, report_text = score_financial_report(report)
-        total = _clip(base * 0.7 + sub, -100, 100)
-        parts = {**base_parts, **rparts, "total": round(total, 1)}
     else:
-        total = base
-        parts = {**base_parts, "total": round(total, 1)}
         report_text = "Keine ausreichenden Quartalsdaten."
+
+    mom = 0.0
+    if momentum:
+        mom = score_momentum(momentum.get("m5"), momentum.get("m10"))
+        rparts["momentum"] = mom
+
+    # 65% Fundamental+Info, 25% Bericht, 10% kurzfrist Momentum
+    total = _clip(base * 0.65 + sub * 0.85 + mom, -100, 100)
+    parts = {**base_parts, **rparts, "total": round(total, 1)}
     return total, parts, report_text
