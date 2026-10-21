@@ -1,0 +1,58 @@
+{
+  "config": {
+    "start": "2021-10-20",
+    "end": "2026-10-20",
+    "universe": [
+      "SAP.DE",
+      "HNR1.DE",
+      "MUV2.DE",
+      "ENR.DE"
+    ],
+    "take_profit_pct": 12.0,
+    "dip_trigger_pct": -12.0,
+    "score_mode": "price_proxy_point_in_time",
+    "note": "Kein Look-ahead auf heutige yfinance.info; Score aus Kursfenstern bis T"
+  },
+  "strategy": {
+    "final_equity": 9379.57,
+    "external_profit": 6002.6,
+    "total_wealth": 15382.17,
+    "cash": 2525.65,
+    "taxes_paid_total": 728.12,
+    "return_wealth_pct": 53.82,
+    "trades": 63,
+    "take_profit_events": 27,
+    "dip_buy_events": 7,
+    "new_buy_events": 25,
+    "monthly_decision_days": 60,
+    "open_positions": {
+      "SAP.DE": {
+        "ticker": "SAP.DE",
+        "shares": 18.0,
+        "avg_cost": 242.79157257080078,
+        "current_price": 199.83999633789062,
+        "dip_buy_count": 2
+      },
+      "MUV2.DE": {
+        "ticker": "MUV2.DE",
+        "shares": 6.0,
+        "avg_cost": 511.3497619628906,
+        "current_price": 542.7999877929688,
+        "dip_buy_count": 1
+      }
+    }
+  },
+  "benchmark_buy_hold": {
+    "final_value": 29817.81,
+    "return_pct": 198.18,
+    "holdings_end": {
+      "SAP.DE": 21.0,
+      "HNR1.DE": 19.0,
+      "MUV2.DE": 12.0,
+      "ENR.DE": 103.0
+    },
+    "cash_end": 199.55
+  },
+  "max_drawdown_pct": -26.46,
+  "equity_points": 1273
+}
