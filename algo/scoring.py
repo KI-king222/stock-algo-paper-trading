@@ -1,7 +1,4 @@
-"""
-Score v3: Fundamentals + Bericht-Trends + optionales Kurs-Momentum.
-Stärkere Strafe bei steigender Verschuldung (Lektion SAP/ENR-Test).
-"""
+"""Score v4: Fundamentals + Bericht + Momentum; m5/m10 in details für Regime."""
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Tuple
@@ -100,7 +97,6 @@ def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, flo
 
     ey = report.get("earnings_growth_yoy")
     if ey is not None:
-        # Extremes YoY (z.B. +500% von kleiner Basis) kappen – sonst Score verzerrt
         parts["gewinn_yoy"] = _clip(ey * 50, -12, 10)
         q += 1
     else:
@@ -115,7 +111,6 @@ def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, flo
 
     dt = report.get("debt_trend_qoq")
     if dt is not None:
-        # Schulden runter = gut; stark steigend = deutlich bestrafen (Test: SAP +34%)
         if dt > 0.15:
             parts["schulden_trend"] = _clip(-dt * 70, -15, 0)
         else:
@@ -130,7 +125,6 @@ def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, flo
     else:
         parts["cashflow"] = 0.0
 
-    # Qualitätsflag: Wachstum + steigende Schulden = weniger „weise“
     if ry is not None and ry > 0 and dt is not None and dt > 0.2:
         parts["qualitaet"] = -6.0
     else:
@@ -142,13 +136,11 @@ def score_financial_report(report: Dict[str, Any]) -> Tuple[float, Dict[str, flo
     sub = _clip(sub, -30, 30)
     parts["report_subscore"] = round(sub, 1)
     parts["report_data_points"] = float(q)
-
     text = " | ".join(report.get("findings") or ["keine Trends"])
     return sub, parts, text
 
 
 def score_momentum(m5: Optional[float], m10: Optional[float]) -> float:
-    """Kurzfrist-Momentum in % (5/10 Handelstage). Negativ → Abzug."""
     s = 0.0
     if m5 is not None:
         if m5 < -5:
@@ -185,11 +177,17 @@ def score_combined(
         report_text = "Keine ausreichenden Quartalsdaten."
 
     mom = 0.0
+    m5 = m10 = None
     if momentum:
-        mom = score_momentum(momentum.get("m5"), momentum.get("m10"))
+        m5 = momentum.get("m5")
+        m10 = momentum.get("m10")
+        mom = score_momentum(m5, m10)
         rparts["momentum"] = mom
+        if m5 is not None:
+            rparts["m5"] = float(m5)
+        if m10 is not None:
+            rparts["m10"] = float(m10)
 
-    # 65% Fundamental+Info, 25% Bericht, 10% kurzfrist Momentum
     total = _clip(base * 0.65 + sub * 0.85 + mom, -100, 100)
     parts = {**base_parts, **rparts, "total": round(total, 1)}
     return total, parts, report_text
