@@ -1,13 +1,7 @@
 #!/usr/bin/env python3
 """
-5-Jahres Walk-Forward für den Algorithmus.
-
-Wichtig ehrlich:
-- Kurse: nur bis Tag T (kein Look-ahead).
-- Score: historisch aus Kursfenstern (Momentum, Drawdown, Volatilität)
-  als Proxy – yfinance.info wäre HEUTIGE Fundamentals und würde
-  die Vergangenheit verfälschen. Echte Point-in-Time-Bilanzen kommen später.
-- Regeln: identisch zu config (TP 12%, Dip -12%, max 2, kein Minus-Sell).
+5-Jahres Walk-Forward Algo v2.
+Score point-in-time aus Kursfenstern (kein Look-ahead auf heutige Bilanzen).
 """
 from __future__ import annotations
 
@@ -63,10 +57,7 @@ def prices_on(close: pd.DataFrame, day: pd.Timestamp) -> Dict[str, float]:
 
 
 def historical_score(close: pd.DataFrame, ticker: str, day: pd.Timestamp) -> Tuple[float, dict]:
-    """
-    Point-in-time Score nur aus Kursen bis day.
-    Proxy für 'Qualität/Trend' – nicht echte Bilanz.
-    """
+    """v2: besseres Dip-Signal – überverkauft + nicht total gebrochen = höherer Score."""
     if ticker not in close.columns:
         return 0.0, {"total": 0.0, "note": "no data"}
     s = close[ticker].loc[:day].dropna()
@@ -74,49 +65,63 @@ def historical_score(close: pd.DataFrame, ticker: str, day: pd.Timestamp) -> Tup
         return 0.0, {"total": 0.0, "note": "too short"}
 
     last = float(s.iloc[-1])
-    # 60d / 120d Momentum
+    m20 = (last / float(s.iloc[-20]) - 1) * 100 if len(s) >= 20 else 0.0
     m60 = (last / float(s.iloc[-60]) - 1) * 100 if len(s) >= 60 else 0.0
     m120 = (last / float(s.iloc[-120]) - 1) * 100 if len(s) >= 120 else m60
-    # Drawdown vom 120d-Hoch
     window = s.iloc[-120:] if len(s) >= 120 else s
     peak = float(window.max())
     dd = (last / peak - 1) * 100 if peak > 0 else 0.0
-    # Volatilität (20d)
     ret = s.pct_change().dropna().iloc[-20:]
     vol = float(ret.std() * (252 ** 0.5) * 100) if len(ret) > 5 else 20.0
 
-    # Teil-Scores ähnlich scoring.py-Skala
-    growth = max(-25, min(25, m60 * 0.4 + m120 * 0.2))
-    # Stabilität: moderater DD und nicht extreme Vol
-    bal = 0.0
-    if dd > -15:
-        bal += 10
-    elif dd > -30:
-        bal += 0
+    # Trend-Qualität (mittel-/langfristig)
+    trend = 0.0
+    if m120 > 10:
+        trend += 12
+    elif m120 > 0:
+        trend += 5
+    elif m120 > -15:
+        trend += 0
     else:
-        bal -= 15
-    if vol < 25:
-        bal += 8
-    elif vol > 45:
-        bal -= 10
-    bal = max(-25, min(25, bal))
-    # Bewertung-Proxy: starkes Momentum + tiefer DD = teuer gelaufen → leicht negativ
-    val = 0.0
-    if m120 > 40 and dd > -8:
-        val = -5
-    elif m120 < -20:
-        val = 5  # günstiger Einstieg möglich
+        trend -= 12
+    if m60 > 5:
+        trend += 6
+    elif m60 < -25:
+        trend -= 8
+    trend = max(-25, min(25, trend))
 
-    total = max(-100, min(100, growth + bal + val))
+    # Mean-Reversion-Bonus bei gesundem Dip (nicht Crash)
+    dip_quality = 0.0
+    if -25 <= dd <= -10 and m120 > -10:
+        dip_quality = 12  # attraktiver Rücksetzer im Aufwärtstrend
+    elif dd < -40 and m120 < -20:
+        dip_quality = -15  # strukturell schwach
+    elif -15 <= m20 <= -5 and m60 > -10:
+        dip_quality = 6
+
+    # Volatilität
+    vol_score = 0.0
+    if vol < 22:
+        vol_score = 8
+    elif vol < 35:
+        vol_score = 2
+    elif vol > 50:
+        vol_score = -12
+    else:
+        vol_score = -4
+
+    total = max(-100, min(100, trend + dip_quality + vol_score))
     parts = {
-        "growth": round(growth, 1),
-        "balance": round(bal, 1),
-        "valuation": round(val, 1),
+        "trend": round(trend, 1),
+        "dip_quality": round(dip_quality, 1),
+        "vol_score": round(vol_score, 1),
+        "m20": round(m20, 1),
         "m60": round(m60, 1),
+        "m120": round(m120, 1),
         "dd": round(dd, 1),
         "vol": round(vol, 1),
         "total": round(total, 1),
-        "source": "price_proxy_pit",
+        "source": "price_proxy_v2",
     }
     return total, parts
 
@@ -125,7 +130,7 @@ def max_drawdown(history: List[dict]) -> float:
     peak = 0.0
     mdd = 0.0
     for h in history:
-        w = float(h.get("wealth") or h.get("equity") or 0)
+        w = float(h.get("wealth") or 0)
         if w > peak:
             peak = w
         if peak > 0:
@@ -162,27 +167,23 @@ def run(start="2021-10-20", end="2026-10-20") -> dict:
     tickers = list(cfg["universe"])
     close = fetch_close(tickers, start, end)
     days = list(close.index)
-    if len(days) < 50:
-        raise RuntimeError("Zu wenige Handelstage")
 
     pf = Portfolio(
         starting_cash=float(cfg.get("starting_cash", 10_000)),
         fee_per_trade=float(cfg.get("fee_per_trade", 1.0)),
     )
-
-    # Tag 1 equal-weight
     p0 = prices_on(close, days[0])
     per = pf.cash / max(len(p0), 1)
     for t, p in p0.items():
         n = int((per - pf.fee_per_trade) // p)
         if n > 0:
-            pf.buy(t, float(n), p, days[0].to_pydatetime(), reason="BT: equal-weight Start")
+            pf.buy(t, float(n), p, days[0].to_pydatetime(), reason="BT: equal-weight")
 
     last_month = days[0].month
     last_year = days[0].year
     equity_hist = []
     monthly_runs = 0
-    tp_n = dip_n = new_n = 0
+    counts = {"sell_tp": 0, "dip_buy": 0, "new_buy": 0, "reinvest": 0}
 
     for day in days[1:]:
         prices = prices_on(close, day)
@@ -192,19 +193,14 @@ def run(start="2021-10-20", end="2026-10-20") -> dict:
             pf.freistellung_remaining = pf.freistellung_yearly
             last_year = day.year
 
-        # Täglich: Scores + Entscheidungen (TP kann täglich greifen)
-        scores = {}
-        details = {}
+        scores, details = {}, {}
         for t in set(list(prices.keys()) + list(pf.positions.keys())):
             sc, parts = historical_score(close, t, day)
             scores[t] = sc
             details[t] = parts
 
-        # Monatlich aggressiver New/Dip; täglich nur TP+Dip-Check
-        # Für Performance: decide täglich (TP wichtig täglich)
         decisions = decide(pf, prices, scores, details, cfg, day.to_pydatetime())
-
-        # An Nicht-Monats-Tagen nur take_profit erlauben (weniger Overtrading)
+        # Täglich nur TP; voller Algo-Monat
         if day.month == last_month:
             decisions = [d for d in decisions if d.action == "take_profit"]
         else:
@@ -213,12 +209,9 @@ def run(start="2021-10-20", end="2026-10-20") -> dict:
 
         log = apply_decisions(pf, decisions, prices, day.to_pydatetime())
         for e in log:
-            if e.get("action") == "sell_tp" and e.get("ok"):
-                tp_n += 1
-            elif e.get("action") == "dip_buy" and e.get("ok"):
-                dip_n += 1
-            elif e.get("action") == "new_buy" and e.get("ok"):
-                new_n += 1
+            a = e.get("action")
+            if e.get("ok") and a in counts:
+                counts[a] += 1
 
         pf.update_prices(prices)
         equity_hist.append(
@@ -232,16 +225,16 @@ def run(start="2021-10-20", end="2026-10-20") -> dict:
 
     wealth = pf.total_wealth()
     bench = buy_hold(close, pf.starting_cash, pf.fee_per_trade)
-
     result = {
+        "version": 2,
         "config": {
             "start": start,
             "end": end,
             "universe": tickers,
             "take_profit_pct": cfg.get("take_profit_pct"),
             "dip_trigger_pct": cfg.get("dip_trigger_pct"),
-            "score_mode": "price_proxy_point_in_time",
-            "note": "Kein Look-ahead auf heutige yfinance.info; Score aus Kursfenstern bis T",
+            "score_mode": "price_proxy_v2",
+            "note": "Kein Look-ahead; Dip-Qualität im Score; Reinvest in offene Pos",
         },
         "strategy": {
             "final_equity": round(pf.total_equity(), 2),
@@ -251,9 +244,10 @@ def run(start="2021-10-20", end="2026-10-20") -> dict:
             "taxes_paid_total": round(pf.taxes_paid_total, 2),
             "return_wealth_pct": round((wealth / pf.starting_cash - 1) * 100, 2),
             "trades": len(pf.trades),
-            "take_profit_events": tp_n,
-            "dip_buy_events": dip_n,
-            "new_buy_events": new_n,
+            "take_profit_events": counts["sell_tp"],
+            "dip_buy_events": counts["dip_buy"],
+            "new_buy_events": counts["new_buy"],
+            "reinvest_events": counts["reinvest"],
             "monthly_decision_days": monthly_runs,
             "open_positions": {k: v.to_dict() for k, v in pf.positions.items()},
         },
@@ -261,14 +255,12 @@ def run(start="2021-10-20", end="2026-10-20") -> dict:
         "max_drawdown_pct": max_drawdown(equity_hist),
         "equity_points": len(equity_hist),
     }
-    return result, pf, equity_hist
+    return result, pf
 
 
 def main():
-    print("=" * 60)
-    print("Algo 5y Walk-Forward Backtest")
-    print("=" * 60)
-    result, pf, hist = run()
+    print("Algo 5y Backtest v2")
+    result, pf = run()
     out = ROOT / "backtest" / "results"
     out.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -276,31 +268,32 @@ def main():
         json.dump(result, f, indent=2, ensure_ascii=False)
     with open(out / "latest_summary.json", "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
-    if hist:
-        pd.DataFrame(hist).to_csv(out / f"equity_{stamp}.csv", index=False)
 
     s = result["strategy"]
     b = result["benchmark_buy_hold"]
-    print(f"Vermögen:   {s['total_wealth']:,.2f} € ({s['return_wealth_pct']:+.2f}%)")
-    print(f"Equity:     {s['final_equity']:,.2f} € | external {s['external_profit']:,.2f} €")
-    print(f"Drawdown:   {result['max_drawdown_pct']}%")
-    print(f"Trades:     {s['trades']} | TP {s['take_profit_events']} | Dip {s['dip_buy_events']} | New {s['new_buy_events']}")
-    print(f"Buy&Hold:   {b['final_value']:,.2f} € ({b['return_pct']:+.2f}%)")
-    print(f"→ {out / 'latest_summary.json'}")
-
-    # Vergleich zu bekannten KI-Repo-Regel-Läufen
     comparison = {
-        "algo_5y": s,
-        "benchmark": b,
-        "reference_from_ki_repo": {
-            "S1_C_TP8_Dip12": {"wealth": 17294.82, "return_pct": 72.95, "dd": -39.25},
-            "S1_A_TP12_Dip8": {"wealth": 16938.57, "return_pct": 69.39, "dd": -32.85},
-            "S2_brain_proxy": {"wealth": 12811.99, "return_pct": 28.12, "dd": -44.65},
+        "algo_v1": {"wealth": 15382.17, "return_pct": 53.82, "dd": -26.46},
+        "algo_v2": {
+            "wealth": s["total_wealth"],
+            "return_pct": s["return_wealth_pct"],
+            "dd": result["max_drawdown_pct"],
+            "trades": s["trades"],
+            "tp": s["take_profit_events"],
+            "dip": s["dip_buy_events"],
+            "new": s["new_buy_events"],
+            "reinvest": s["reinvest_events"],
+            "cash": s["cash"],
         },
-        "max_drawdown_pct": result["max_drawdown_pct"],
+        "ref_rules_S1_C": {"wealth": 17294.82, "return_pct": 72.95, "dd": -39.25},
+        "ref_rules_S1_A": {"wealth": 16938.57, "return_pct": 69.39, "dd": -32.85},
+        "buy_hold": b,
     }
     with open(out / "comparison.json", "w", encoding="utf-8") as f:
         json.dump(comparison, f, indent=2, ensure_ascii=False)
+
+    print(f"Vermögen: {s['total_wealth']:,.2f} € ({s['return_wealth_pct']:+.2f}%)")
+    print(f"DD: {result['max_drawdown_pct']}% | Trades {s['trades']} | TP {s['take_profit_events']} Dip {s['dip_buy_events']} New {s['new_buy_events']} Reinvest {s['reinvest_events']}")
+    print(f"Cash: {s['cash']:,.2f} € | BH: {b['final_value']:,.2f} € ({b['return_pct']:+.2f}%)")
 
 
 if __name__ == "__main__":

@@ -4,12 +4,14 @@
   "take_profit_pct": 12.0,
   "dip_trigger_pct": -12.0,
   "max_dip_buys_per_ticker": 2,
-  "max_position_pct_of_equity": 40.0,
-  "dip_cash_fraction": 0.30,
-  "min_score_for_dip": -10,
-  "min_score_for_new_buy": 25,
-  "min_score_hold_thesis": -30,
-  "universe": ["SAP.DE", "HNR1.DE", "MUV2.DE", "ENR.DE"],
+  "max_position_pct_of_equity": 45.0,
+  "dip_cash_fraction": 0.35,
+  "min_score_for_dip": -25,
+  "min_score_for_new_buy": 15,
+  "min_score_hold_thesis": -40,
   "reinvest_idle_cash": true,
-  "notes": "Gleiche Kernregeln wie KI-Repo; Schwellen für Score separat justierbar"
+  "reinvest_cash_fraction": 0.50,
+  "max_new_buys_per_month": 1,
+  "universe": ["SAP.DE", "HNR1.DE", "MUV2.DE", "ENR.DE"],
+  "notes": "v2: Dip leichter erlauben, weniger aggressiv Neukauf, idle Cash stärker in bestehende/beste Scores"
 }
