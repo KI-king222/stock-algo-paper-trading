@@ -1,0 +1,53 @@
+name: Optimize until target wealth
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Ziel-Vermögen in Euro"
+        required: false
+        default: "20000"
+      max_trials:
+        description: "Max. Versuche"
+        required: false
+        default: "40"
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run optimizer
+        env:
+          TARGET_WEALTH: ${{ github.event.inputs.target }}
+          MAX_TRIALS: ${{ github.event.inputs.max_trials }}
+        run: |
+          python - <<'PY'
+          import os, backtest.optimize as opt
+          opt.TARGET_WEALTH = float(os.environ.get("TARGET_WEALTH") or 20000)
+          opt.MAX_TRIALS = int(os.environ.get("MAX_TRIALS") or 40)
+          opt.main()
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: optimize-results
+          path: backtest/results/optimize/
+      - name: Commit results
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add backtest/results/optimize/ || true
+          if git diff --staged --quiet; then echo none; else
+            git commit -m "Optimize loop results [skip ci]"
+            git push
+          fi
