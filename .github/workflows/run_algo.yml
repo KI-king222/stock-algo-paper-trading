@@ -3,7 +3,8 @@ name: Run Algo Daily
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 21 * * 1-5"  # Mo–Fr ~23:00 CEST (21:00 UTC)
+    # Mo–Fr 21:00 UTC = 23:00 CEST (Sommer) / 22:00 CET (Winter)
+    - cron: "0 21 * * 1-5"
 
 jobs:
   algo:
@@ -29,6 +30,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "Keine State-Änderung"
           else
-            git commit -m "Algo run state [skip ci]"
+            git commit -m "Algo daily state $(date -u +%Y-%m-%d) [skip ci]"
             git push
           fi
