@@ -1,4 +1,4 @@
-"""Paper-Portfolio: Gebühr, Steuer, external_profit – analog KI-Repo."""
+"""Paper-Portfolio: Gebühr, Steuer, external_profit – mit Kaufdatum."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -67,6 +67,8 @@ class Position:
     avg_cost: float
     current_price: float = 0.0
     dip_buy_count: int = 0
+    opened_at: str = ""
+    last_action_at: str = ""
 
     @property
     def market_value(self) -> float:
@@ -90,6 +92,8 @@ class Position:
             "avg_cost": self.avg_cost,
             "current_price": self.current_price if _valid_price(self.current_price) else self.avg_cost,
             "dip_buy_count": self.dip_buy_count,
+            "opened_at": self.opened_at,
+            "last_action_at": self.last_action_at,
         }
 
     @classmethod
@@ -103,6 +107,8 @@ class Position:
             avg_cost=float(d["avg_cost"]),
             current_price=float(cp),
             dip_buy_count=int(d.get("dip_buy_count", 0)),
+            opened_at=str(d.get("opened_at") or ""),
+            last_action_at=str(d.get("last_action_at") or ""),
         )
 
 
@@ -143,12 +149,14 @@ class Portfolio:
         if total > self.cash + 0.01:
             return False
         self.cash -= total
+        iso = date.isoformat()
         if ticker in self.positions:
             pos = self.positions[ticker]
             new_shares = pos.shares + shares
             pos.avg_cost = ((pos.shares * pos.avg_cost) + cost) / new_shares
             pos.shares = new_shares
             pos.current_price = price
+            pos.last_action_at = iso
             if is_dip:
                 pos.dip_buy_count += 1
         else:
@@ -158,6 +166,8 @@ class Portfolio:
                 avg_cost=price,
                 current_price=price,
                 dip_buy_count=1 if is_dip else 0,
+                opened_at=iso,
+                last_action_at=iso,
             )
         self.trades.append(
             Trade(date=date, ticker=ticker, action="buy", shares=shares, price=price, fee=fee, reason=reason)
@@ -185,7 +195,9 @@ class Portfolio:
             locked = net_after_tax
         else:
             self.cash += net
+        iso = date.isoformat()
         pos.shares -= shares
+        pos.last_action_at = iso
         if pos.shares <= 0.0001:
             del self.positions[ticker]
         self.trades.append(
@@ -207,7 +219,21 @@ class Portfolio:
     def total_wealth(self) -> float:
         return self.total_equity() + self.external_profit
 
+    def _backfill_dates(self):
+        for t, pos in self.positions.items():
+            if not pos.opened_at:
+                for tr in self.trades:
+                    if tr.ticker == t and tr.action == "buy":
+                        pos.opened_at = tr.date.isoformat()
+                        break
+            if not pos.last_action_at:
+                for tr in reversed(self.trades):
+                    if tr.ticker == t:
+                        pos.last_action_at = tr.date.isoformat()
+                        break
+
     def to_dict(self) -> dict:
+        self._backfill_dates()
         return {
             "starting_cash": self.starting_cash,
             "cash": self.cash,
@@ -235,6 +261,7 @@ class Portfolio:
         pf.freistellung_remaining = float(d.get("freistellung_remaining", pf.freistellung_yearly))
         pf.positions = {k: Position.from_dict(v) for k, v in d.get("positions", {}).items()}
         pf.trades = [Trade.from_dict(t) for t in d.get("trades", [])]
+        pf._backfill_dates()
         return pf
 
     def save(self, path: str | Path):
