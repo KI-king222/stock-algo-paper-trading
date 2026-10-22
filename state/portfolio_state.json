@@ -12,29 +12,37 @@
       "ticker": "SAP.DE",
       "shares": 13.0,
       "avg_cost": 203.25,
-      "current_price": 208.64999389648438,
-      "dip_buy_count": 0
+      "current_price": 215.35000610351562,
+      "dip_buy_count": 0,
+      "opened_at": "2026-10-21T08:57:51.694761",
+      "last_action_at": "2026-10-21T08:57:52.844203"
     },
     "HNR1.DE": {
       "ticker": "HNR1.DE",
       "shares": 9.0,
       "avg_cost": 276.0,
-      "current_price": 277.6000061035156,
-      "dip_buy_count": 0
+      "current_price": 282.79998779296875,
+      "dip_buy_count": 0,
+      "opened_at": "2026-10-21T08:57:51.694761",
+      "last_action_at": "2026-10-21T08:57:51.694761"
     },
     "MUV2.DE": {
       "ticker": "MUV2.DE",
       "shares": 4.0,
       "avg_cost": 548.0,
-      "current_price": 551.5999755859375,
-      "dip_buy_count": 0
+      "current_price": 556.5999755859375,
+      "dip_buy_count": 0,
+      "opened_at": "2026-10-21T08:57:51.694761",
+      "last_action_at": "2026-10-21T08:57:51.694761"
     },
     "ENR.DE": {
       "ticker": "ENR.DE",
       "shares": 19.0,
       "avg_cost": 130.27999877929688,
-      "current_price": 133.63999938964844,
-      "dip_buy_count": 0
+      "current_price": 122.19999694824219,
+      "dip_buy_count": 0,
+      "opened_at": "2026-10-21T08:57:51.694761",
+      "last_action_at": "2026-10-21T08:57:51.694761"
     }
   },
   "trades": [
