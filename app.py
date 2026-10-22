@@ -1,4 +1,4 @@
-"""Streamlit Algo – Anordnung wie gewünscht."""
+"""Streamlit Algo – inkl. Watchlist."""
 from __future__ import annotations
 
 import json
@@ -17,6 +17,7 @@ LOG = STATE / "decisions_log.json"
 STATUS = STATE / "last_run_status.json"
 REPORTS = STATE / "last_reports.json"
 MEMORY = STATE / "algo_memory.json"
+WATCHLIST = STATE / "watchlist.json"
 CFG = ROOT / "config.json"
 
 st.set_page_config(page_title="Algo Paper Trading", page_icon="📈", layout="wide")
@@ -30,7 +31,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- 1) Titel + Caption ---
 st.title("Algo Paper Trading")
 st.caption("Kennzahlen + Quartals-Trends + Gehirn · keine Chat-KI · ca. 23 Uhr Mo–Fr")
 
@@ -186,11 +186,11 @@ status = load_json(STATUS)
 log = load_json(LOG)
 reports = load_json(REPORTS)
 mem = load_json(MEMORY)
+wl = load_json(WATCHLIST)
 cfg = load_json(CFG) or {}
 trades_all = (pf or {}).get("trades") or []
 positions = (pf or {}).get("positions") or {}
 
-# --- 2) Kennzahlen ---
 c1, c2, c3, c4, c5 = st.columns(5)
 if pf:
     cash = float(pf.get("cash") or 0)
@@ -206,11 +206,7 @@ if pf:
     c3.metric("Rest-Cash", f"{cash:,.2f} €")
     c4.metric("Realisierter Lohn", f"{ext:,.2f} €")
     c5.metric("Steuern (sim.)", f"{float(pf.get('taxes_paid_total') or 0):,.2f} €")
-    st.caption("**Rest-Cash** = nicht investiert. **Lohn** nur nach Verkauf im Plus.")
-else:
-    st.write("Kein Portfolio-State.")
 
-# --- 3) Offene Positionen ---
 st.divider()
 st.subheader("Offene Positionen")
 if positions:
@@ -234,17 +230,35 @@ if positions:
 else:
     st.write("Keine Positionen.")
 
-# --- 4) Letzter Lauf ---
+st.divider()
+st.subheader("Watchlist")
+st.markdown("**Skala 1–3**  \n1 = hoch · 2 = mittel · 3 = niedrig")
+if wl and wl.get("items"):
+    items = [i for i in wl["items"] if i.get("status", "active") == "active"]
+    if items:
+        st.dataframe(
+            pd.DataFrame([{
+                "Ticker": i.get("ticker"),
+                "Name": i.get("title"),
+                "Priorität": i.get("priority"),
+                "Seit": i.get("added_at"),
+                "Grund": i.get("reason"),
+            } for i in sorted(items, key=lambda x: x.get("priority") or 99)]),
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        st.info("Keine aktiven Einträge")
+else:
+    st.info("Noch leer – `state/watchlist.json` kann manuell oder per Script gefüllt werden.")
+
 st.divider()
 st.subheader("Letzter Lauf")
 if status:
     st.info(f"**{status.get('last_run', '–')}**  ·  {status.get('headline', '')}")
-    if status.get("hinweis"):
-        st.caption(status["hinweis"])
 else:
     st.warning("Noch kein Lauf – Actions → Run Algo Daily.")
 
-# --- 5) Graphen ---
 st.divider()
 st.subheader("Kursverlauf der aktuellen Positionen")
 if positions:
@@ -257,14 +271,11 @@ if positions:
         fig = make_chart_ki_style(t, avg, period_label)
         if fig:
             st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG, key=f"algo_chart_{t}_{period_label}")
-else:
-    st.write("Keine Positionen für Charts.")
 
-# --- 6) Trade History ---
 st.divider()
 st.subheader("Trade-Historie")
 if trades_all:
-    trades = [{
+    st.dataframe(pd.DataFrame([{
         "Datum": fmt_dt(t.get("date")),
         "Ticker": t.get("ticker"),
         "Aktion": ACTION_MAP.get(str(t.get("action")), t.get("action")),
@@ -272,12 +283,8 @@ if trades_all:
         "Kurs": t.get("price"),
         "Grund": t.get("reason"),
         "Mitgenommener Gewinn": t.get("locked_profit"),
-    } for t in trades_all[-40:]]
-    st.dataframe(pd.DataFrame(trades), use_container_width=True, hide_index=True)
-else:
-    st.write("Noch keine Trades.")
+    } for t in trades_all[-40:]]), use_container_width=True, hide_index=True)
 
-# --- 7) Letzte Entscheidungen ---
 st.divider()
 st.subheader("Letzte Entscheidungen")
 if log and log.get("runs"):
@@ -300,13 +307,7 @@ if log and log.get("runs"):
                 "Grund": row.get("grund") or row.get("reason"),
             })
         st.dataframe(pd.DataFrame(fixed), use_container_width=True, hide_index=True)
-    if last.get("scores"):
-        st.write("**Scores**")
-        st.json({k: round(float(v), 1) for k, v in last["scores"].items()})
-else:
-    st.write("Noch kein Log.")
 
-# --- 8) Rest ---
 st.divider()
 st.subheader("Finanzbericht-Analyse")
 if reports and reports.get("reports"):
@@ -314,26 +315,10 @@ if reports and reports.get("reports"):
         with st.expander(f"{t} · Score {r.get('score', '–')}"):
             for line in r.get("findings") or ["–"]:
                 st.write(f"· {line}")
-elif log and log.get("runs"):
-    last = log["runs"][-1]
-    for t, txt in (last.get("report_summaries") or {}).items():
-        st.write(f"**{t}:** {txt}")
-else:
-    st.write("Nach dem nächsten Lauf hier sichtbar.")
-
-st.subheader("Was sind die Scores?")
-st.markdown(
-    "Note **−100 bis +100** aus Kennzahlen, Quartals-Trends und Kursverlauf. "
-    "Hoch → eher halten/nachkaufen. **Keine Kursgarantie.**"
-)
 
 st.subheader("Gehirn (Episoden)")
 if mem and mem.get("episodes"):
     st.dataframe(pd.DataFrame(list(reversed(mem["episodes"]))[:15]), use_container_width=True, hide_index=True)
-elif mem:
-    st.json({k: mem.get(k) for k in ("bias", "tp_success", "dip_success", "dip_fail")})
-else:
-    st.write("Noch kein Gehirn-File.")
 
 st.subheader("Regeln (Klartext)")
 st.markdown(rules_plaintext(cfg))
