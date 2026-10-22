@@ -1,4 +1,4 @@
-"""Streamlit-Dashboard: Charts, Bericht-Analyse, Scores, DE-Begriffe."""
+"""Streamlit-Dashboard: Charts wie KI-Version, Bericht, Scores, DE-Begriffe."""
 from __future__ import annotations
 
 import json
@@ -20,16 +20,43 @@ MEMORY = STATE / "algo_memory.json"
 CFG = ROOT / "config.json"
 
 st.set_page_config(page_title="Algo Paper Trading", page_icon="📈", layout="wide")
+st.markdown(
+    """
+<style>
+    .block-container { padding-top: 1rem; padding-bottom: 1rem; }
+    div[data-testid="stPlotlyChart"] { margin-bottom: 0.8rem; }
+</style>
+""",
+    unsafe_allow_html=True,
+)
 st.title("Algo Paper Trading")
 st.caption("Kennzahlen + Quartals-Trends + Gehirn · keine Chat-KI · ca. 23 Uhr Mo–Fr")
 
+# Gleiche Labels/Style wie KI-Paper-Trading
 PERIODS = {
-    "1 Tag": ("1d", "5m"),
-    "1 Woche": ("5d", "30m"),
-    "1 Monat": ("1mo", "1d"),
-    "3 Monate": ("3mo", "1d"),
-    "6 Monate": ("6mo", "1d"),
-    "1 Jahr": ("1y", "1d"),
+    "1T": ("1d", "5m"),
+    "1W": ("5d", "15m"),
+    "1M": ("1mo", "1h"),
+    "3M": ("3mo", "1d"),
+    "6M": ("6mo", "1d"),
+    "1J": ("1y", "1d"),
+}
+
+CHART_CONFIG = {
+    "displayModeBar": True,
+    "displaylogo": False,
+    "scrollZoom": True,
+    "responsive": True,
+    "doubleClick": "reset",
+    "modeBarButtonsToRemove": [
+        "zoom2d",
+        "select2d",
+        "lasso2d",
+        "autoScale2d",
+        "toggleSpikelines",
+        "hoverClosestCartesian",
+        "hoverCompareCartesian",
+    ],
 }
 
 ACTION_MAP = {
@@ -61,32 +88,48 @@ def fetch_history(ticker: str, period: str, interval: str) -> Optional[pd.DataFr
             return None
         df = df.reset_index()
         if "Datetime" in df.columns:
-            df["ts"] = pd.to_datetime(df["Datetime"])
+            df["Date"] = pd.to_datetime(df["Datetime"], utc=True).dt.tz_convert(None)
         elif "Date" in df.columns:
-            df["ts"] = pd.to_datetime(df["Date"])
+            df["Date"] = pd.to_datetime(df["Date"], utc=True).dt.tz_convert(None)
         else:
-            df["ts"] = pd.to_datetime(df.iloc[:, 0])
-        return df
+            df["Date"] = pd.to_datetime(df.iloc[:, 0], utc=True).dt.tz_convert(None)
+        df["Kurs"] = df["Close"].astype(float)
+        return df[["Date", "Kurs"]].dropna()
     except Exception:
         return None
 
 
-def make_chart(ticker: str, avg_cost: float, period_label: str):
+def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
+    """Charts wie stock-paper-trading (KI): Index-X, Grün, Spike, Einstand."""
     period, interval = PERIODS[period_label]
-    df = fetch_history(ticker, period, interval)
-    if df is None or df.empty:
+    hist = fetch_history(ticker, period, interval)
+    if hist is None or hist.empty:
         return None
-    y = df["Close"].astype(float)
-    y_min, y_max = float(y.min()), float(y.max())
-    pad = (y_max - y_min) * 0.05 if y_max > y_min else max(y_max * 0.02, 1.0)
+    hist = hist.copy().reset_index(drop=True)
+    hist["i"] = hist.index.astype(int)
+    y_min = min(float(hist["Kurs"].min()), avg_cost if avg_cost else float(hist["Kurs"].min()))
+    y_max = max(float(hist["Kurs"].max()), avg_cost if avg_cost else float(hist["Kurs"].max()))
+    pad = max((y_max - y_min) * 0.03, 0.5)
+    n = len(hist)
+    n_ticks = min(6, n)
+    tick_idx = (
+        [int(i * (n - 1) / max(n_ticks - 1, 1)) for i in range(n_ticks)] if n > 1 else [0]
+    )
+    tick_idx = sorted(set(tick_idx))
+    ticktext = [hist.loc[i, "Date"].strftime("%d.%m") for i in tick_idx]
+
     fig = go.Figure()
     fig.add_trace(
         go.Scatter(
-            x=df["ts"],
-            y=y,
+            x=hist["i"],
+            y=hist["Kurs"],
             mode="lines",
-            line=dict(width=2, color="#0A84FF"),
-            hovertemplate="%{x|%d.%m.%Y %H:%M}<br>%{y:.2f} €<extra></extra>",
+            name=ticker,
+            line=dict(width=2.0, color="#30D158"),
+            fill="tozeroy",
+            fillcolor="rgba(48, 209, 88, 0.13)",
+            customdata=hist["Date"],
+            hovertemplate="<b>%{y:.2f} €</b><br>%{customdata|%d.%m.%Y %H:%M}<extra></extra>",
         )
     )
     if avg_cost and avg_cost > 0:
@@ -94,33 +137,58 @@ def make_chart(ticker: str, avg_cost: float, period_label: str):
             y=avg_cost,
             line_dash="dot",
             line_color="#FF9F0A",
-            annotation_text=f"Ø {avg_cost:.2f} €",
+            line_width=1.4,
+            annotation_text=f"Einstand {avg_cost:.2f} €",
             annotation_position="top left",
+            annotation_font=dict(size=11, color="#FF9F0A"),
         )
     fig.update_layout(
-        margin=dict(l=8, r=8, t=28, b=8),
-        height=280,
+        title=dict(
+            text=f"{ticker}  ·  {period_label}",
+            font=dict(size=17, color="#F5F5F7"),
+            x=0.0,
+            xanchor="left",
+        ),
+        height=380,
+        margin=dict(l=8, r=8, t=50, b=10),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        xaxis=dict(showgrid=True, gridcolor="rgba(128,128,128,0.25)", rangeslider=dict(visible=False)),
+        font=dict(color="#AEAEB2", size=11),
+        hovermode="x unified",
+        dragmode="pan",
+        xaxis=dict(
+            showgrid=True,
+            gridcolor="rgba(255,255,255,0.07)",
+            tickmode="array",
+            tickvals=tick_idx,
+            ticktext=ticktext,
+            rangeslider=dict(visible=False),
+            fixedrange=False,
+            showspikes=True,
+            spikemode="across+toaxis",
+            spikesnap="cursor",
+            spikethickness=1.5,
+            spikecolor="#0A84FF",
+        ),
         yaxis=dict(
             showgrid=True,
-            gridcolor="rgba(128,128,128,0.25)",
-            range=[y_min - pad, y_max + pad],
+            gridcolor="rgba(255,255,255,0.07)",
+            side="right",
             tickformat=".2f",
+            ticksuffix=" €",
+            range=[y_min - pad, y_max + pad],
+            fixedrange=False,
+            showspikes=True,
         ),
-        dragmode="pan",
-        hovermode="x unified",
         showlegend=False,
-        title=dict(text=ticker, font=dict(size=14)),
+        hoverlabel=dict(
+            bgcolor="rgba(28,28,30,0.95)",
+            font_size=15,
+            font_color="#FFFFFF",
+            bordercolor="#30D158",
+        ),
     )
-    config = {
-        "displayModeBar": True,
-        "scrollZoom": True,
-        "displaylogo": False,
-        "modeBarButtonsToRemove": ["select2d", "lasso2d", "autoScale2d"],
-    }
-    return fig, config
+    return fig
 
 
 def rules_plaintext(cfg: dict) -> str:
@@ -134,7 +202,7 @@ def rules_plaintext(cfg: dict) -> str:
     return f"""### So entscheidet der Algorithmus
 
 1. **Finanzzahlen** (Umsatz, Gewinn, Marge, Schulden, Cashflow aus Quartalen) auswerten  
-2. **Score** bilden (−100…+100)  
+2. **Kursverlauf** (5/10/20 Tage) und **Score** (−100…+100)  
 3. **Gehirn** (frühere Entscheidungen/Episoden) leicht einbeziehen  
 4. **Regeln** anwenden (Teilverkauf, Nachkauf, Halten – kein Verkauf im Minus)
 
@@ -202,19 +270,28 @@ else:
     st.write("Nach dem nächsten Algo-Lauf erscheinen hier die Findings.")
 
 st.divider()
-st.subheader("Kurscharts")
+st.subheader("Kursverlauf der aktuellen Positionen")
 if positions:
-    period_label = st.radio("Zeitraum", list(PERIODS.keys()), index=2, horizontal=True)
+    period_label = st.radio(
+        "Zeitraum",
+        list(PERIODS.keys()),
+        index=1,
+        horizontal=True,
+        label_visibility="collapsed",
+        key="algo_chart_period",
+    )
     for t, p in positions.items():
         avg = float(p.get("avg_cost") or 0)
-        px = float(p.get("current_price") or avg)
-        sh = float(p.get("shares") or 0)
-        pct = ((px - avg) / avg * 100) if avg else 0.0
-        st.markdown(f"**{t}** · {sh:g} Stk · {px:.2f} € · Ø {avg:.2f} € · **{pct:+.1f} %**")
-        out = make_chart(t, avg, period_label)
-        if out:
-            fig, config = out
-            st.plotly_chart(fig, use_container_width=True, config=config)
+        fig = make_chart_ki_style(t, avg, period_label)
+        if fig:
+            st.plotly_chart(
+                fig,
+                use_container_width=True,
+                config=CHART_CONFIG,
+                key=f"algo_chart_{t}_{period_label}",
+            )
+        else:
+            st.info(f"Kein Kursverlauf für {t}.")
 else:
     st.write("Keine Positionen.")
 
@@ -247,7 +324,7 @@ st.markdown(
 Note **−100 bis +100** aus:
 
 1. **Kennzahlen** (Wachstum, Marge, Bilanz, KGV, Cashflow)  
-2. **Quartals-Trends** wie in einem Finanzbericht (Umsatz/Gewinn YoY, Marge, Schulden, FCF)
+2. **Quartals-Trends** und **Kursverlauf** (5/10/20 Tage)
 
 Hoch → eher halten/nachkaufen. Niedrig → vorsichtiger. **Keine Kursgarantie.**
 """
