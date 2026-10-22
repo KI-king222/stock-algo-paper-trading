@@ -1,4 +1,4 @@
-"""Streamlit-Dashboard: Charts wie KI-Version, Bericht, Scores, DE-Begriffe."""
+"""Streamlit-Dashboard: Charts wie KI, Kaufdatum, Aktionsdatum."""
 from __future__ import annotations
 
 import json
@@ -32,7 +32,6 @@ st.markdown(
 st.title("Algo Paper Trading")
 st.caption("Kennzahlen + Quartals-Trends + Gehirn · keine Chat-KI · ca. 23 Uhr Mo–Fr")
 
-# Gleiche Labels/Style wie KI-Paper-Trading
 PERIODS = {
     "1T": ("1d", "5m"),
     "1W": ("5d", "15m"),
@@ -80,6 +79,26 @@ def load_json(path: Path):
         return None
 
 
+def fmt_dt(s) -> str:
+    if not s:
+        return "–"
+    return str(s).replace("T", " ")[:19]
+
+
+def first_buy(trades, ticker) -> str:
+    for tr in trades or []:
+        if tr.get("ticker") == ticker and str(tr.get("action")).lower() == "buy":
+            return fmt_dt(tr.get("date"))
+    return "–"
+
+
+def last_act(trades, ticker) -> str:
+    for tr in reversed(trades or []):
+        if tr.get("ticker") == ticker:
+            return fmt_dt(tr.get("date"))
+    return "–"
+
+
 @st.cache_data(ttl=300)
 def fetch_history(ticker: str, period: str, interval: str) -> Optional[pd.DataFrame]:
     try:
@@ -100,7 +119,6 @@ def fetch_history(ticker: str, period: str, interval: str) -> Optional[pd.DataFr
 
 
 def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
-    """Charts wie stock-paper-trading (KI): Index-X, Grün, Spike, Einstand."""
     period, interval = PERIODS[period_label]
     hist = fetch_history(ticker, period, interval)
     if hist is None or hist.empty:
@@ -117,7 +135,6 @@ def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
     )
     tick_idx = sorted(set(tick_idx))
     ticktext = [hist.loc[i, "Date"].strftime("%d.%m") for i in tick_idx]
-
     fig = go.Figure()
     fig.add_trace(
         go.Scatter(
@@ -201,16 +218,15 @@ def rules_plaintext(cfg: dict) -> str:
     uni = ", ".join(cfg.get("universe") or []) or "–"
     return f"""### So entscheidet der Algorithmus
 
-1. **Finanzzahlen** (Umsatz, Gewinn, Marge, Schulden, Cashflow aus Quartalen) auswerten  
-2. **Kursverlauf** (5/10/20 Tage) und **Score** (−100…+100)  
-3. **Gehirn** (frühere Entscheidungen/Episoden) leicht einbeziehen  
-4. **Regeln** anwenden (Teilverkauf, Nachkauf, Halten – kein Verkauf im Minus)
+1. Finanzzahlen auswerten  
+2. Kursverlauf + Score  
+3. Gehirn  
+4. Regeln (Teilverkauf, Nachkauf, Halten – kein Verkauf im Minus)
 
 **Universum:** {uni}  
-**Teilverkauf** ab ca. **+{tp} %** (~{partial_pct} der Position)  
-**Nachkauf** ab ca. **{dip} %**, max. **{max_dips}×**  
-**Monats-Mitnahme** ab ca. **+{skim} %**  
-**Rest-Cash ≠ Gewinn.** Lohn erst nach Verkauf im Plus.
+**Teilverkauf** ab ca. +{tp} % (~{partial_pct})  
+**Nachkauf** ab ca. {dip} %, max. {max_dips}×  
+**Monats-Mitnahme** ab ca. +{skim} %
 """
 
 
@@ -220,11 +236,10 @@ log = load_json(LOG)
 reports = load_json(REPORTS)
 mem = load_json(MEMORY)
 cfg = load_json(CFG) or {}
+trades_all = (pf or {}).get("trades") or []
 
 if status:
     st.info(f"**Letzter Lauf:** {status.get('last_run', '–')}  ·  {status.get('headline', '')}")
-    if status.get("hinweis"):
-        st.caption(status["hinweis"])
 else:
     st.warning("Noch kein Lauf – Actions → Run Algo Daily.")
 
@@ -245,53 +260,31 @@ if pf:
     c3.metric("Rest-Cash", f"{cash:,.2f} €")
     c4.metric("Realisierter Lohn", f"{ext:,.2f} €")
     c5.metric("Steuern (sim.)", f"{float(pf.get('taxes_paid_total') or 0):,.2f} €")
-    st.caption("**Rest-Cash** = nicht investiert (kein Gewinn). **Lohn** nur nach Verkauf im Plus.")
-else:
-    st.write("Kein Portfolio-State.")
 
 st.divider()
 st.subheader("Finanzbericht-Analyse (letzter Lauf)")
-st.caption(
-    "Strukturierte Auswertung von Quartalszahlen (Umsatz, Gewinn, Marge, Schulden, Cashflow) – "
-    "keine PDF-KI, sondern dieselben Berichtszahlen als Zeitreihe."
-)
 if reports and reports.get("reports"):
     for t, r in reports["reports"].items():
         with st.expander(f"{t} · Score {r.get('score', '–')}"):
             for line in r.get("findings") or ["–"]:
                 st.write(f"· {line}")
-            if r.get("lessons"):
-                st.write(f"**Gehirn:** {r['lessons']}")
 elif log and log.get("runs"):
     last = log["runs"][-1]
     for t, txt in (last.get("report_summaries") or {}).items():
         st.write(f"**{t}:** {txt}")
-else:
-    st.write("Nach dem nächsten Algo-Lauf erscheinen hier die Findings.")
 
 st.divider()
 st.subheader("Kursverlauf der aktuellen Positionen")
 if positions:
     period_label = st.radio(
-        "Zeitraum",
-        list(PERIODS.keys()),
-        index=1,
-        horizontal=True,
-        label_visibility="collapsed",
-        key="algo_chart_period",
+        "Zeitraum", list(PERIODS.keys()), index=1, horizontal=True,
+        label_visibility="collapsed", key="algo_chart_period",
     )
     for t, p in positions.items():
         avg = float(p.get("avg_cost") or 0)
         fig = make_chart_ki_style(t, avg, period_label)
         if fig:
-            st.plotly_chart(
-                fig,
-                use_container_width=True,
-                config=CHART_CONFIG,
-                key=f"algo_chart_{t}_{period_label}",
-            )
-        else:
-            st.info(f"Kein Kursverlauf für {t}.")
+            st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG, key=f"algo_chart_{t}_{period_label}")
 else:
     st.write("Keine Positionen.")
 
@@ -305,9 +298,13 @@ if positions:
         mv = sh * px
         pnl = mv - sh * avg
         pct = (pnl / (sh * avg) * 100) if sh * avg else 0
+        opened = fmt_dt(p.get("opened_at")) if p.get("opened_at") else first_buy(trades_all, t)
+        last_a = fmt_dt(p.get("last_action_at")) if p.get("last_action_at") else last_act(trades_all, t)
         rows.append(
             {
                 "Ticker": t,
+                "Kaufdatum": opened,
+                "Letzte Aktion": last_a,
                 "Stück": sh,
                 "Ø Einstand": round(avg, 2),
                 "Kurs": round(px, 2),
@@ -318,22 +315,11 @@ if positions:
         )
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
-st.subheader("Was sind die Scores?")
-st.markdown(
-    """
-Note **−100 bis +100** aus:
-
-1. **Kennzahlen** (Wachstum, Marge, Bilanz, KGV, Cashflow)  
-2. **Quartals-Trends** und **Kursverlauf** (5/10/20 Tage)
-
-Hoch → eher halten/nachkaufen. Niedrig → vorsichtiger. **Keine Kursgarantie.**
-"""
-)
-
 st.subheader("Letzte Entscheidungen")
 if log and log.get("runs"):
     last = log["runs"][-1]
-    st.write(f"**{last.get('source', '')}**")
+    run_date = fmt_dt(last.get("date"))
+    st.write(f"**{last.get('source', '')}** · **Datum Lauf:** {run_date}")
     dec = last.get("decisions") or []
     if dec:
         fixed = []
@@ -343,6 +329,7 @@ if log and log.get("runs"):
                 row["aktion"] = ACTION_MAP.get(str(row["action"]), row["action"])
             fixed.append(
                 {
+                    "Datum": run_date,
                     "Ticker": row.get("ticker"),
                     "Aktion": row.get("aktion") or row.get("action"),
                     "Stück": row.get("stück") or row.get("shares") or "–",
@@ -351,27 +338,12 @@ if log and log.get("runs"):
                 }
             )
         st.dataframe(pd.DataFrame(fixed), use_container_width=True, hide_index=True)
-    if last.get("scores"):
-        st.write("**Scores**")
-        st.json({k: round(float(v), 1) for k, v in last["scores"].items()})
-else:
-    st.write("Noch kein Log.")
-
-st.subheader("Gehirn (Episoden)")
-if mem and mem.get("episodes"):
-    eps = list(reversed(mem["episodes"]))[:15]
-    st.dataframe(pd.DataFrame(eps), use_container_width=True, hide_index=True)
-elif mem:
-    st.write("Bias/Zähler vorhanden, noch wenige Episoden – kommen mit weiteren Läufen.")
-    st.json({k: mem.get(k) for k in ("bias", "tp_success", "dip_success", "dip_fail")})
-else:
-    st.write("Noch kein Gehirn-File – nach dem nächsten Lauf da.")
 
 st.subheader("Trade-Historie (letzte 30)")
-if pf and pf.get("trades"):
+if trades_all:
     trades = [
         {
-            "Datum": t.get("date", "")[:19],
+            "Datum": fmt_dt(t.get("date")),
             "Ticker": t.get("ticker"),
             "Aktion": ACTION_MAP.get(str(t.get("action")), t.get("action")),
             "Stück": t.get("shares"),
@@ -379,7 +351,7 @@ if pf and pf.get("trades"):
             "Grund": t.get("reason"),
             "Mitgenommener Gewinn": t.get("locked_profit"),
         }
-        for t in pf["trades"][-30:]
+        for t in trades_all[-30:]
     ]
     st.dataframe(pd.DataFrame(trades), use_container_width=True, hide_index=True)
 
