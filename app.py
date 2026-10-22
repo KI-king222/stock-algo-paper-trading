@@ -1,9 +1,10 @@
-"""Streamlit Algo – inkl. Watchlist."""
+"""Streamlit Algo – Live-Kurse beim Laden wie KI-Version."""
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -32,7 +33,9 @@ st.markdown(
 )
 
 st.title("Algo Paper Trading")
-st.caption("Kennzahlen + Quartals-Trends + Gehirn · keine Chat-KI · ca. 23 Uhr Mo–Fr")
+st.caption(
+    "Kennzahlen + Charts live beim Öffnen · Trades/Log nur nach Workflow · ca. 23 Uhr Mo–Fr"
+)
 
 PERIODS = {
     "1T": ("1d", "5m"),
@@ -89,7 +92,23 @@ def last_act(trades, ticker) -> str:
     return "–"
 
 
-@st.cache_data(ttl=300)
+def fetch_live_prices(tickers) -> Dict[str, float]:
+    """Aktuelle Kurse – unabhängig vom Workflow (wie KI-Version)."""
+    out = {}
+    for t in tickers:
+        try:
+            h = yf.Ticker(t).history(period="5d")
+            if h is None or h.empty:
+                continue
+            p = float(h["Close"].dropna().iloc[-1])
+            if math.isfinite(p) and p > 0:
+                out[t] = p
+        except Exception:
+            pass
+    return out
+
+
+@st.cache_data(ttl=120)
 def fetch_history(ticker: str, period: str, interval: str) -> Optional[pd.DataFrame]:
     try:
         df = yf.Ticker(ticker).history(period=period, interval=interval, auto_adjust=True)
@@ -191,6 +210,21 @@ cfg = load_json(CFG) or {}
 trades_all = (pf or {}).get("trades") or []
 positions = (pf or {}).get("positions") or {}
 
+# Live-Kurse (ohne Workflow) – wie KI
+live_ok = False
+if positions:
+    live = fetch_live_prices(list(positions.keys()))
+    if live:
+        live_ok = True
+        for t, p in live.items():
+            if t in positions:
+                positions[t]["current_price"] = p
+
+if live_ok:
+    st.caption("Kurse: **live** beim Seitenaufruf (yfinance) · Bestand/Trades: letzter Workflow")
+elif positions:
+    st.caption("Kurse: gespeicherter Stand (Live-Abruf fehlgeschlagen)")
+
 c1, c2, c3, c4, c5 = st.columns(5)
 if pf:
     cash = float(pf.get("cash") or 0)
@@ -238,19 +272,16 @@ if wl and wl.get("items"):
     if items:
         st.dataframe(
             pd.DataFrame([{
-                "Ticker": i.get("ticker"),
-                "Name": i.get("title"),
-                "Priorität": i.get("priority"),
-                "Seit": i.get("added_at"),
+                "Ticker": i.get("ticker"), "Name": i.get("title"),
+                "Priorität": i.get("priority"), "Seit": i.get("added_at"),
                 "Grund": i.get("reason"),
             } for i in sorted(items, key=lambda x: x.get("priority") or 99)]),
-            use_container_width=True,
-            hide_index=True,
+            use_container_width=True, hide_index=True,
         )
     else:
         st.info("Keine aktiven Einträge")
 else:
-    st.info("Noch leer – `state/watchlist.json` kann manuell oder per Script gefüllt werden.")
+    st.info("Noch leer.")
 
 st.divider()
 st.subheader("Letzter Lauf")
