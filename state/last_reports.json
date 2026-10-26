@@ -1,23 +1,6 @@
 {
-  "date": "2026-10-23T21:23:39",
+  "date": "2026-10-26T21:26:08",
   "reports": {
-    "SAP.DE": {
-      "findings": [
-        "Umsatz YoY: +8.8% (wachsend)",
-        "Gewinn YoY: +8.8%",
-        "Nettomarge QoQ: +1.85 Prozentpunkte",
-        "Verschuldung QoQ: +33.6%",
-        "Cashflow (letzte Periode): positiv (3,038,000,000)"
-      ],
-      "momentum": {
-        "m5": 7.28582757476417,
-        "m10": 10.254029874614435,
-        "m20": 16.509069078730533
-      },
-      "score": 40.3,
-      "path": "Umsatz YoY: +8.8% (wachsend) | Gewinn YoY: +8.8% | Nettomarge QoQ: +1.85 Prozentpunkte | Verschuldung QoQ: +33.6% | Cashflow (letzte Periode): positiv (3,038,000,000) \u2016 Kurs: 5T +7.3%, 10T +10.3%, 20T +16.5%",
-      "lessons": ""
-    },
     "ENR.DE": {
       "findings": [
         "Umsatz YoY: +9.8% (wachsend)",
@@ -27,28 +10,29 @@
         "Cashflow (letzte Periode): positiv (2,111,000,000)"
       ],
       "momentum": {
-        "m5": -10.860747446869013,
-        "m10": -19.14429670787309,
-        "m20": -15.758094696336244
+        "m5": -5.494170702658296,
+        "m10": -13.910243419607104,
+        "m20": -15.539708218315152
       },
       "score": 29.8,
-      "path": "Umsatz YoY: +9.8% (wachsend) | Gewinn YoY: +544.6% | Nettomarge QoQ: +2.02 Prozentpunkte | Verschuldung QoQ: -20.7% | Cashflow (letzte Periode): positiv (2,111,000,000) \u2016 Kurs: 5T -10.9%, 10T -19.1%, 20T -15.8%, Dauerhaft schwach",
+      "path": "Umsatz YoY: +9.8% (wachsend) | Gewinn YoY: +544.6% | Nettomarge QoQ: +2.02 Prozentpunkte | Verschuldung QoQ: -20.7% | Cashflow (letzte Periode): positiv (2,111,000,000) \u2016 Kurs: 5T -5.5%, 10T -13.9%, 20T -15.5%, Dauerhaft schwach",
       "lessons": ""
     },
-    "HNR1.DE": {
+    "SAP.DE": {
       "findings": [
-        "Umsatz YoY: +9.0% (wachsend)",
-        "Gewinn YoY: +6.8%",
-        "Nettomarge QoQ: +0.43 Prozentpunkte",
-        "Cashflow (letzte Periode): positiv (1,735,400,000)"
+        "Umsatz YoY: +6.1% (wachsend)",
+        "Gewinn YoY: +33.9%",
+        "Nettomarge QoQ: -0.17 Prozentpunkte",
+        "Verschuldung QoQ: +0.8%",
+        "Cashflow (letzte Periode): positiv (1,753,000,000)"
       ],
       "momentum": {
-        "m5": 2.487204997203296,
-        "m10": 4.943824796640928,
-        "m20": 8.268943363004254
+        "m5": 5.308854768657301,
+        "m10": 7.588200179102045,
+        "m20": 14.531616453407015
       },
-      "score": 28.1,
-      "path": "Umsatz YoY: +9.0% (wachsend) | Gewinn YoY: +6.8% | Nettomarge QoQ: +0.43 Prozentpunkte | Cashflow (letzte Periode): positiv (1,735,400,000) \u2016 Kurs: 5T +2.5%, 10T +4.9%, 20T +8.3%",
+      "score": 54.3,
+      "path": "Umsatz YoY: +6.1% (wachsend) | Gewinn YoY: +33.9% | Nettomarge QoQ: -0.17 Prozentpunkte | Verschuldung QoQ: +0.8% | Cashflow (letzte Periode): positiv (1,753,000,000) \u2016 Kurs: 5T +5.3%, 10T +7.6%, 20T +14.5%",
       "lessons": ""
     },
     "MUV2.DE": {
@@ -59,12 +43,28 @@
         "Verschuldung QoQ: -1.7%"
       ],
       "momentum": {
-        "m5": 2.542370689630946,
-        "m10": 5.616693659570693,
-        "m20": 8.287932993373047
+        "m5": 1.975859734817531,
+        "m10": 5.289006178454625,
+        "m20": 9.810878193801887
       },
-      "score": 45.5,
-      "path": "Umsatz YoY: +8.4% (wachsend) | Gewinn YoY: +10.5% | Nettomarge QoQ: +1.88 Prozentpunkte | Verschuldung QoQ: -1.7% \u2016 Kurs: 5T +2.5%, 10T +5.6%, 20T +8.3%",
+      "score": 43.5,
+      "path": "Umsatz YoY: +8.4% (wachsend) | Gewinn YoY: +10.5% | Nettomarge QoQ: +1.88 Prozentpunkte | Verschuldung QoQ: -1.7% \u2016 Kurs: 5T +2.0%, 10T +5.3%, 20T +9.8%",
+      "lessons": ""
+    },
+    "HNR1.DE": {
+      "findings": [
+        "Umsatz YoY: +9.0% (wachsend)",
+        "Gewinn YoY: +6.8%",
+        "Nettomarge QoQ: +0.43 Prozentpunkte",
+        "Cashflow (letzte Periode): positiv (1,735,400,000)"
+      ],
+      "momentum": {
+        "m5": 1.8129079845185858,
+        "m10": 4.231623665464812,
+        "m20": 9.601863549506252
+      },
+      "score": 26.1,
+      "path": "Umsatz YoY: +9.0% (wachsend) | Gewinn YoY: +6.8% | Nettomarge QoQ: +0.43 Prozentpunkte | Cashflow (letzte Periode): positiv (1,735,400,000) \u2016 Kurs: 5T +1.8%, 10T +4.2%, 20T +9.6%",
       "lessons": ""
     }
   }
