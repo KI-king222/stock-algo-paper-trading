@@ -1,10 +1,10 @@
 {
-  "last_run": "2026-10-26T21:26:08",
-  "headline": "Algo v4.1 26.10.2026 21:26 | Vermögen 10,058 € | Lohn 0 €",
+  "last_run": "2026-10-27T21:27:26",
+  "headline": "Algo v4.1 27.10.2026 21:27 | Vermögen 10,151 € | Lohn 0 €",
   "cash": 201.43,
-  "equity": 10057.52,
+  "equity": 10150.6,
   "external_profit": 0.0,
-  "wealth": 10057.52,
+  "wealth": 10150.6,
   "hinweis": "v4.1: 5/10/20-Tage-Kursverlauf im Score, TP 4.5%, Trailing, Regime.",
   "n_decisions": 4,
   "actions_summary": [
