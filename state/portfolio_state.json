@@ -1,36 +1,36 @@
 {
   "starting_cash": 10000.0,
-  "cash": 201.43002319335938,
+  "cash": 1029.4300231933594,
   "fee_per_trade": 1.0,
   "tax_rate": 0.26375,
   "freistellung_yearly": 1000.0,
-  "freistellung_remaining": 1000.0,
-  "external_profit": 0.0,
+  "freistellung_remaining": 959.0,
+  "external_profit": 41.0,
   "taxes_paid_total": 0.0,
   "positions": {
     "SAP.DE": {
       "ticker": "SAP.DE",
       "shares": 13.0,
       "avg_cost": 203.25,
-      "current_price": 208.89999389648438,
+      "current_price": 211.25,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T08:57:51.694761",
       "last_action_at": "2026-10-21T08:57:52.844203"
     },
     "HNR1.DE": {
       "ticker": "HNR1.DE",
-      "shares": 9.0,
+      "shares": 6.0,
       "avg_cost": 276.0,
-      "current_price": 284.20001220703125,
+      "current_price": 290.0,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T08:57:51.694761",
-      "last_action_at": "2026-10-21T08:57:51.694761"
+      "last_action_at": "2026-11-03T02:46:35.430820"
     },
     "MUV2.DE": {
       "ticker": "MUV2.DE",
       "shares": 4.0,
       "avg_cost": 548.0,
-      "current_price": 556.4000244140625,
+      "current_price": 567.0,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T08:57:51.694761",
       "last_action_at": "2026-10-21T08:57:51.694761"
@@ -39,7 +39,7 @@
       "ticker": "ENR.DE",
       "shares": 19.0,
       "avg_cost": 130.27999877929688,
-      "current_price": 136.27999877929688,
+      "current_price": 126.91999816894531,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T08:57:51.694761",
       "last_action_at": "2026-10-21T08:57:51.694761"
@@ -99,6 +99,17 @@
       "fee": 1.0,
       "reason": "Algo reinvest: Reinvest score 57",
       "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-11-03T02:46:35.430820",
+      "ticker": "HNR1.DE",
+      "action": "sell",
+      "shares": 3.0,
+      "price": 290.0,
+      "fee": 1.0,
+      "reason": "Algo: Monats-Mitnahme: +5.1%",
+      "locked_profit": 41.0,
       "tax_paid": 0.0
     }
   ]

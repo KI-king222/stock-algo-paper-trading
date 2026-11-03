@@ -1,7 +1,24 @@
 {
-  "tp_success": {},
+  "tp_success": {
+    "HNR1.DE": 1
+  },
   "dip_success": {},
   "dip_fail": {},
-  "bias": {},
-  "episodes": []
+  "bias": {
+    "HNR1.DE": 0.05
+  },
+  "episodes": [
+    {
+      "id": "ep_20261103_024635_HNR1.DE",
+      "date": "2026-11-03T02:46:35",
+      "ticker": "HNR1.DE",
+      "action": "teilverkauf",
+      "score": 30.1,
+      "price": 290.0,
+      "reason": "Monats-Mitnahme: +5.1%",
+      "report_summary": "Umsatz YoY: +9.0% (wachsend) | Gewinn YoY: +6.8% | Nettomarge QoQ: +0.43 Prozentpunkte | Cashflow (letzte Periode): positiv (1,735,400,000) ‖ Kurs: 5T +3.3%, 10T +6.1%, 20T +13.5%",
+      "outcome": "offen",
+      "lesson": ""
+    }
+  ]
 }
