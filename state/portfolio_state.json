@@ -14,8 +14,8 @@
       "avg_cost": 203.25,
       "current_price": 210.5,
       "dip_buy_count": 0,
-      "opened_at": "2026-10-21T08:57:51.694761",
-      "last_action_at": "2026-10-21T08:57:52.844203"
+      "opened_at": "2026-10-21T09:15:00",
+      "last_action_at": "2026-10-21T09:16:00"
     },
     "HNR1.DE": {
       "ticker": "HNR1.DE",
@@ -23,8 +23,8 @@
       "avg_cost": 276.0,
       "current_price": 291.20001220703125,
       "dip_buy_count": 0,
-      "opened_at": "2026-10-21T08:57:51.694761",
-      "last_action_at": "2026-11-03T02:46:35.430820"
+      "opened_at": "2026-10-21T09:15:00",
+      "last_action_at": "2026-11-03T09:30:00"
     },
     "MUV2.DE": {
       "ticker": "MUV2.DE",
@@ -32,8 +32,8 @@
       "avg_cost": 548.0,
       "current_price": 568.0,
       "dip_buy_count": 0,
-      "opened_at": "2026-10-21T08:57:51.694761",
-      "last_action_at": "2026-10-21T08:57:51.694761"
+      "opened_at": "2026-10-21T09:15:00",
+      "last_action_at": "2026-10-21T09:15:00"
     },
     "ENR.DE": {
       "ticker": "ENR.DE",
@@ -41,13 +41,13 @@
       "avg_cost": 130.27999877929688,
       "current_price": 130.0,
       "dip_buy_count": 0,
-      "opened_at": "2026-10-21T08:57:51.694761",
-      "last_action_at": "2026-10-21T08:57:51.694761"
+      "opened_at": "2026-10-21T09:15:00",
+      "last_action_at": "2026-10-21T09:15:00"
     }
   },
   "trades": [
     {
-      "date": "2026-10-21T08:57:51.694761",
+      "date": "2026-10-21T09:15:00",
       "ticker": "SAP.DE",
       "action": "buy",
       "shares": 12.0,
@@ -58,7 +58,7 @@
       "tax_paid": 0.0
     },
     {
-      "date": "2026-10-21T08:57:51.694761",
+      "date": "2026-10-21T09:15:00",
       "ticker": "HNR1.DE",
       "action": "buy",
       "shares": 9.0,
@@ -69,7 +69,7 @@
       "tax_paid": 0.0
     },
     {
-      "date": "2026-10-21T08:57:51.694761",
+      "date": "2026-10-21T09:15:00",
       "ticker": "MUV2.DE",
       "action": "buy",
       "shares": 4.0,
@@ -80,7 +80,7 @@
       "tax_paid": 0.0
     },
     {
-      "date": "2026-10-21T08:57:51.694761",
+      "date": "2026-10-21T09:15:00",
       "ticker": "ENR.DE",
       "action": "buy",
       "shares": 19.0,
@@ -91,7 +91,7 @@
       "tax_paid": 0.0
     },
     {
-      "date": "2026-10-21T08:57:52.844203",
+      "date": "2026-10-21T09:16:00",
       "ticker": "SAP.DE",
       "action": "buy",
       "shares": 1.0,
@@ -102,7 +102,7 @@
       "tax_paid": 0.0
     },
     {
-      "date": "2026-11-03T02:46:35.430820",
+      "date": "2026-11-03T09:30:00",
       "ticker": "HNR1.DE",
       "action": "sell",
       "shares": 3.0,
