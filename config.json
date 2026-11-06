@@ -2,8 +2,8 @@
   "mode": "active_income_v4_loop",
   "starting_cash": 10000.0,
   "fee_per_trade": 1.0,
-  "take_profit_pct": 6.0,
-  "partial_tp_fraction": 0.35,
+  "take_profit_pct": 8.0,
+  "partial_tp_fraction": 1.0,
   "trail_giveback_pct": 3.0,
   "dip_trigger_pct": -12.0,
   "max_dip_buys_per_ticker": 1,
@@ -22,8 +22,8 @@
   "max_cash_absolute": 800.0,
   "min_cash_reserve": 500.0,
   "max_new_buys_per_month": 2,
-  "min_monthly_skim_pct": 4.0,
-  "monthly_skim_fraction": 0.3,
+  "min_monthly_skim_pct": 8.0,
+  "monthly_skim_fraction": 1.0,
   "memory_enabled": true,
   "regime_block_buys_if_median_mom5_below": -1.0,
   "universe": [
@@ -33,5 +33,5 @@
     "ENR.DE"
   ],
   "cooldown_days": 2,
-  "notes": "06.11.2026: Reinvest nur wenn Titel im Dip (mind. -3%) + Score ok – kein Kauf am Hoch nur wegen Cash"
+  "notes": "06.11.2026: Full exit ab +8% (kein Teilverkauf). Reinvest nur bei Dip."
 }
