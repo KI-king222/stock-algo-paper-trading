@@ -26,11 +26,9 @@
   "monthly_skim_fraction": 1.0,
   "memory_enabled": true,
   "regime_block_buys_if_median_mom5_below": -1.0,
-  "universe": [
-    "SAP.DE", "SIE.DE", "ALV.DE", "MUV2.DE", "HNR1.DE", "DTE.DE",
-    "BAS.DE", "BMW.DE", "VOW3.DE", "DB1.DE", "ENR.DE", "IFX.DE",
-    "ADS.DE", "DHL.DE", "RWE.DE", "MBG.DE"
-  ],
+  "universe": [],
+  "universe_open": true,
+  "universe_hint": "Leer = offen. Algo/Orchestrator und KI dürfen jede liquide DE/EU/US-Aktie wählen die Score+Dip erfüllt.",
   "cooldown_days": 2,
-  "notes": "06.11.2026: Breites DAX-Universe. Kauf nur im durchschnittlichen Tief. TP +6% full = monatlicher Lohn-Charakter."
+  "notes": "06.11.2026: Kein festes Universe. Freie Auswahl nach Score/Dip/These. TP +6% full."
 }
