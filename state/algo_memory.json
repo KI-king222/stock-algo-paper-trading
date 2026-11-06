@@ -1,11 +1,13 @@
 {
   "tp_success": {
-    "HNR1.DE": 1
+    "HNR1.DE": 2,
+    "MUV2.DE": 1
   },
   "dip_success": {},
   "dip_fail": {},
   "bias": {
-    "HNR1.DE": 0.05
+    "HNR1.DE": 0.1,
+    "MUV2.DE": 0.05
   },
   "episodes": [
     {
@@ -17,6 +19,42 @@
       "price": 290.0,
       "reason": "Monats-Mitnahme: +5.1%",
       "report_summary": "Umsatz YoY: +9.0% (wachsend) | Gewinn YoY: +6.8% | Nettomarge QoQ: +0.43 Prozentpunkte | Cashflow (letzte Periode): positiv (1,735,400,000) ‖ Kurs: 5T +3.3%, 10T +6.1%, 20T +13.5%",
+      "outcome": "offen",
+      "lesson": ""
+    },
+    {
+      "id": "ep_20261106_012316_HNR1.DE",
+      "date": "2026-11-06T01:23:16",
+      "ticker": "HNR1.DE",
+      "action": "teilverkauf",
+      "score": 32.1,
+      "price": 298.8,
+      "reason": "Teilverkauf: +8.3% ≥ +6.0% → ca. 35%",
+      "report_summary": "Umsatz YoY: +9.0% (wachsend) | Gewinn YoY: +6.8% | Nettomarge QoQ: +0.43 Prozentpunkte | Cashflow (letzte Periode): positiv (1,735,400,000) ‖ Kurs: 5T +5.1%, 10T +5.7%, 20T +13.9%",
+      "outcome": "offen",
+      "lesson": ""
+    },
+    {
+      "id": "ep_20261106_012316_MUV2.DE",
+      "date": "2026-11-06T01:23:16",
+      "ticker": "MUV2.DE",
+      "action": "teilverkauf",
+      "score": 49.5,
+      "price": 584.4,
+      "reason": "Teilverkauf: +6.6% ≥ +6.0% → ca. 35%",
+      "report_summary": "Umsatz YoY: +8.4% (wachsend) | Gewinn YoY: +10.5% | Nettomarge QoQ: +1.88 Prozentpunkte | Verschuldung QoQ: -1.7% ‖ Kurs: 5T +5.0%, 10T +5.0%, 20T +12.6%",
+      "outcome": "offen",
+      "lesson": ""
+    },
+    {
+      "id": "ep_20261106_012316_SAP.DE",
+      "date": "2026-11-06T01:23:16",
+      "ticker": "SAP.DE",
+      "action": "reinvestition",
+      "score": 50.3,
+      "price": 214.3,
+      "reason": "Reinvestition in SAP.DE (Score 50)",
+      "report_summary": "Umsatz YoY: +6.1% (wachsend) | Gewinn YoY: +33.9% | Nettomarge QoQ: -0.17 Prozentpunkte | Verschuldung QoQ: +0.8% | Cashflow (letzte Periode): positiv (1,753,000,000) ‖ Kurs: 5T +2.6%, 10T -0.5%, 20T +16.1%",
       "outcome": "offen",
       "lesson": ""
     }
