@@ -12,11 +12,13 @@
   "min_score_for_dip": 5,
   "min_score_for_new_buy": 25,
   "min_score_for_reinvest": 25,
+  "min_score_strong_thesis_buy": 40,
+  "allow_buy_without_dip_if_strong_score": true,
   "min_score_hold_thesis": -30,
   "no_add_if_pnl_below_pct": -5.0,
   "reinvest_idle_cash": true,
   "reinvest_cash_fraction": 0.50,
-  "reinvest_only_on_dip": true,
+  "reinvest_only_on_dip": false,
   "min_dip_pct_for_reinvest": -2.0,
   "max_cash_pct_of_equity": 10.0,
   "max_cash_absolute": 700.0,
@@ -28,7 +30,7 @@
   "regime_block_buys_if_median_mom5_below": -1.0,
   "universe": [],
   "universe_open": true,
-  "universe_hint": "Leer = offen. Jede liquide DE/EU/US-Aktie mit Score+Dip.",
+  "universe_hint": "Offen. Weg A: Dip + Score ok. Weg B: starker Score auch ohne Dip.",
   "cooldown_days": 2,
-  "notes": "06.11.2026 Optimierung: TP6 full, Dip-entry -2%, Cash~700, Universe offen, Lohn-Rotation"
+  "notes": "07.11.2026: Kauf = Finanzbericht/Score × Kurs. Tief kein Riegel. Starkes Setup auch ohne Tief."
 }
