@@ -17,9 +17,9 @@
   "reinvest_idle_cash": true,
   "reinvest_cash_fraction": 0.50,
   "reinvest_only_on_dip": true,
-  "min_dip_pct_for_reinvest": -3.0,
+  "min_dip_pct_for_reinvest": -2.0,
   "max_cash_pct_of_equity": 10.0,
-  "max_cash_absolute": 800.0,
+  "max_cash_absolute": 700.0,
   "min_cash_reserve": 500.0,
   "max_new_buys_per_month": 3,
   "min_monthly_skim_pct": 6.0,
@@ -28,7 +28,7 @@
   "regime_block_buys_if_median_mom5_below": -1.0,
   "universe": [],
   "universe_open": true,
-  "universe_hint": "Leer = offen. Algo/Orchestrator und KI dürfen jede liquide DE/EU/US-Aktie wählen die Score+Dip erfüllt.",
+  "universe_hint": "Leer = offen. Jede liquide DE/EU/US-Aktie mit Score+Dip.",
   "cooldown_days": 2,
-  "notes": "06.11.2026: Kein festes Universe. Freie Auswahl nach Score/Dip/These. TP +6% full."
+  "notes": "06.11.2026 Optimierung: TP6 full, Dip-entry -2%, Cash~700, Universe offen, Lohn-Rotation"
 }
