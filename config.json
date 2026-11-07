@@ -2,7 +2,7 @@
   "mode": "active_income_v4_loop",
   "starting_cash": 10000.0,
   "fee_per_trade": 1.0,
-  "take_profit_pct": 6.0,
+  "take_profit_pct": 7.0,
   "partial_tp_fraction": 1.0,
   "trail_giveback_pct": 3.0,
   "dip_trigger_pct": -12.0,
@@ -17,24 +17,26 @@
   "min_score_hold_thesis": -30,
   "no_add_if_pnl_below_pct": -5.0,
   "reinvest_idle_cash": true,
-  "reinvest_cash_fraction": 0.50,
+  "reinvest_cash_fraction": 0.40,
   "reinvest_only_on_dip": false,
   "min_dip_pct_for_reinvest": -2.0,
   "max_cash_pct_of_equity": 10.0,
   "max_cash_absolute": 700.0,
   "min_cash_reserve": 500.0,
   "max_new_buys_per_month": 3,
-  "min_monthly_skim_pct": 6.0,
+  "min_monthly_skim_pct": 7.0,
   "monthly_skim_fraction": 1.0,
   "memory_enabled": true,
   "regime_block_buys_if_median_mom5_below": -1.0,
+  "prefer_international": true,
   "universe": [
-    "SAP.DE", "SIE.DE", "ALV.DE", "MUV2.DE", "HNR1.DE", "DTE.DE",
-    "BAS.DE", "BMW.DE", "VOW3.DE", "DB1.DE", "ENR.DE", "IFX.DE",
-    "ADS.DE", "DHL.DE", "RWE.DE", "MBG.DE", "AIR.DE", "FRE.DE"
+    "SAP.DE", "SIE.DE", "ALV.DE", "MUV2.DE", "HNR1.DE", "BAS.DE", "BMW.DE",
+    "ENR.DE", "IFX.DE", "ADS.DE", "DHL.DE", "RWE.DE", "MBG.DE", "AIR.DE",
+    "ASML.AS", "MC.PA", "OR.PA", "AI.PA",
+    "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "JPM", "V"
   ],
   "universe_open": true,
-  "universe_hint": "Liste = Screener-Pool. universe_open: darf darüber hinaus. Leer war Bug → keine Neukäufe.",
+  "universe_hint": "DE + EU + US liquide. Score inkl. Finanzbericht (Quartalsdaten) + Kurs 5/10/20T.",
   "cooldown_days": 2,
-  "notes": "07.11.2026 Fix: Universe-Pool wieder da (Cash lag nach TP brach). TP6 full. Watchlist wird befüllt."
+  "notes": "07.11.2026 Loop: TP7 full Lohn, International, Cash700. Kein Buy&Hold."
 }
