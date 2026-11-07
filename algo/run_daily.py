@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Täglicher Algo-Lauf v4.2 – Universe-Fallback, Watchlist, Cash-Druck."""
+"""Täglicher Algo-Lauf v4.3 – TP7 Lohn, DE+EU+US, Cash-Druck, Watchlist."""
 from __future__ import annotations
 
 import json
@@ -28,11 +28,12 @@ CTX_FILE = STATE_DIR / "run_context.json"
 WATCH_FILE = STATE_DIR / "watchlist.json"
 CFG_FILE = ROOT / "config.json"
 
-# Fallback wenn config.universe leer (universe_open) – sonst keine Neukäufe möglich
+# Fallback wenn config.universe leer – DE + EU + US (Loop-Stand)
 DEFAULT_UNIVERSE = [
-    "SAP.DE", "SIE.DE", "ALV.DE", "MUV2.DE", "HNR1.DE", "DTE.DE",
-    "BAS.DE", "BMW.DE", "VOW3.DE", "DB1.DE", "ENR.DE", "IFX.DE",
-    "ADS.DE", "DHL.DE", "RWE.DE", "MBG.DE", "AIR.DE", "FRE.DE",
+    "SAP.DE", "SIE.DE", "ALV.DE", "MUV2.DE", "HNR1.DE", "BAS.DE", "BMW.DE",
+    "ENR.DE", "IFX.DE", "ADS.DE", "DHL.DE", "RWE.DE", "MBG.DE", "AIR.DE",
+    "ASML.AS", "MC.PA", "OR.PA", "AI.PA",
+    "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "JPM", "V",
 ]
 
 
@@ -44,7 +45,6 @@ def load_cfg() -> dict:
 def resolve_universe(cfg: dict) -> list:
     u = list(cfg.get("universe") or [])
     if not u or cfg.get("universe_open", False):
-        # offen / leer → Default-Pool (Bot darf weiter alle scoren)
         u = list(dict.fromkeys(u + DEFAULT_UNIVERSE))
     return u
 
@@ -96,7 +96,6 @@ def price_momentum(ticker: str) -> dict:
 
 
 def write_watchlist(scores: dict, details: dict, prices: dict, held: set, cfg: dict):
-    """Top-Kandidaten die NICHT gehalten werden → Watchlist."""
     min_new = float(cfg.get("min_score_for_new_buy", 25))
     items = []
     for t, sc in scores.items():
@@ -105,7 +104,6 @@ def write_watchlist(scores: dict, details: dict, prices: dict, held: set, cfg: d
         if t not in prices:
             continue
         mom = float((details.get(t) or {}).get("momentum") or 0)
-        # Skala 1=hoch (nahe Kauf), 2=mittel, 3=niedrig
         if sc >= min_new + 10 and mom >= -2:
             scale = 1
         elif sc >= min_new:
@@ -160,8 +158,6 @@ def main() -> None:
             report = get_financial_report(t)
             sc, _, _ = score_combined(fund, report, price_momentum(t))
             weights[t] = max(sc, 5.0)
-        total_w = sum(weights.values()) or 1.0
-        # nur Top-4 Start
         top = sorted(weights.items(), key=lambda x: -x[1])[:4]
         for t, w in top:
             p = prices0.get(t)
@@ -177,7 +173,7 @@ def main() -> None:
     prices = get_prices(tickers)
 
     scores, details, report_texts, reports_out = {}, {}, {}, {}
-    print("=== Analyse v4.2 (Universe-Fallback + Watchlist) ===")
+    print("=== Analyse v4.3 (TP7 / DE+EU+US) ===")
     for t in tickers:
         fund = get_fundamentals(t)
         report = get_financial_report(t)
@@ -234,7 +230,7 @@ def main() -> None:
 
     run = {
         "date": now.isoformat(timespec="seconds"),
-        "source": f"Algo: {now.strftime('%d.%m.%Y %H:%M')} – v4.2",
+        "source": f"Algo: {now.strftime('%d.%m.%Y %H:%M')} – v4.3",
         "scores": {k: round(float(v), 1) for k, v in scores.items()},
         "score_details": details,
         "report_summaries": report_texts,
@@ -254,10 +250,11 @@ def main() -> None:
     )
 
     max_cash = float(cfg.get("max_cash_absolute", 700))
+    tp = cfg.get("take_profit_pct", 7)
     status = {
         "last_run": now.isoformat(timespec="seconds"),
         "headline": (
-            f"Algo v4.2 {now.strftime('%d.%m.%Y %H:%M')} | "
+            f"Algo v4.3 {now.strftime('%d.%m.%Y %H:%M')} | "
             f"Vermögen {pf.total_wealth():,.0f} € | Cash {pf.cash:,.0f} € | Lohn {pf.external_profit:,.0f} €"
         ),
         "cash": round(pf.cash, 2),
@@ -265,8 +262,8 @@ def main() -> None:
         "external_profit": round(pf.external_profit, 2),
         "wealth": round(pf.total_wealth(), 2),
         "hinweis": (
-            f"v4.2: TP {cfg.get('take_profit_pct', 6)}% full, Cash-Ziel ≤{max_cash:.0f}€, "
-            f"Universe {len(universe)} Titel, Watchlist {len(watch.get('items') or [])}."
+            f"v4.3: TP {tp}% full Lohn, Cash ≤{max_cash:.0f}€, "
+            f"Universe {len(universe)} (DE+EU+US), Watchlist {len(watch.get('items') or [])}."
         ),
         "n_decisions": len(log_entries),
         "actions_summary": [f"{e.get('aktion')} {e.get('ticker', '')}" for e in log_entries][:12],
