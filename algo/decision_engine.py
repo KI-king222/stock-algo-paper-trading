@@ -1,9 +1,8 @@
 """
-Active Income v4
-- früherer Teilverkauf (ca. +4.5%)
-- Peak-Trailing: wenn von Hoch > trail_giveback zurück, Teilverkauf
-- Regime: bei schlechtem Median-Momentum keine Neu-/Reinvest-Käufe
-- kein Nachschuss ins Minus; Cooldown nach Verkauf
+Active Income v4.2
+- Take-Profit: bei partial_tp_fraction ≥ 0.99 → volle Position (Lohn)
+- Cash-Druck: über max_cash_absolute → Neukäufe priorisieren
+- Regime, Cooldown, kein Nachschuss ins starke Minus
 """
 from __future__ import annotations
 
@@ -19,7 +18,7 @@ except ImportError:
     AlgoMemory = None  # type: ignore
 
 ACTION_DE = {
-    "take_profit": "teilverkauf",
+    "take_profit": "verkauf",
     "hold": "halten",
     "dip_buy": "nachkauf",
     "new_buy": "neukauf",
@@ -44,8 +43,8 @@ class Decision:
 @dataclass
 class RunContext:
     recently_sold: Dict[str, datetime] = field(default_factory=dict)
-    peaks: Dict[str, float] = field(default_factory=dict)  # höchster Kurs seit Kauf/TP
-    cooldown_days: int = 5
+    peaks: Dict[str, float] = field(default_factory=dict)
+    cooldown_days: int = 2
 
     def mark_sold(self, ticker: str, when: datetime):
         self.recently_sold[ticker] = when
@@ -88,49 +87,45 @@ def decide(
     ctx: RunContext | None = None,
 ) -> List[Decision]:
     now = now or datetime.now()
-    ctx = ctx or RunContext()
-    tp = float(cfg.get("take_profit_pct", 4.5))
-    partial = float(cfg.get("partial_tp_fraction", 0.35))
-    trail = float(cfg.get("trail_giveback_pct", 2.0))
+    ctx = ctx or RunContext(cooldown_days=int(cfg.get("cooldown_days", 2)))
+    tp = float(cfg.get("take_profit_pct", 6.0))
+    partial = float(cfg.get("partial_tp_fraction", 1.0))
+    full_exit = partial >= 0.99
+    trail = float(cfg.get("trail_giveback_pct", 3.0))
     dip_tr = float(cfg.get("dip_trigger_pct", -12.0))
     max_dips = int(cfg.get("max_dip_buys_per_ticker", 1))
     min_dip_score = float(cfg.get("min_score_for_dip", 5))
-    min_new = float(cfg.get("min_score_for_new_buy", 30))
+    min_new = float(cfg.get("min_score_for_new_buy", 25))
     min_hold = float(cfg.get("min_score_hold_thesis", -30))
-    max_pos_pct = float(cfg.get("max_position_pct_of_equity", 35.0))
-    dip_frac = float(cfg.get("dip_cash_fraction", 0.25))
-    reinvest_frac = float(cfg.get("reinvest_cash_fraction", 0.30))
-    max_new = int(cfg.get("max_new_buys_per_month", 1))
-    skim_pct = float(cfg.get("min_monthly_skim_pct", 4.0))
-    skim_frac = float(cfg.get("monthly_skim_fraction", 0.30))
-    no_buy_below = float(cfg.get("no_add_if_pnl_below_pct", -3.0))
-    min_reinvest = float(cfg.get("min_score_for_reinvest", 35))
-    regime_thr = float(cfg.get("regime_block_buys_if_median_mom5_below", -2.0))
+    max_pos_pct = float(cfg.get("max_position_pct_of_equity", 25.0))
+    dip_frac = float(cfg.get("dip_cash_fraction", 0.35))
+    reinvest_frac = float(cfg.get("reinvest_cash_fraction", 0.50))
+    max_new = int(cfg.get("max_new_buys_per_month", 3))
+    skim_pct = float(cfg.get("min_monthly_skim_pct", 6.0))
+    skim_frac = float(cfg.get("monthly_skim_fraction", 1.0))
+    no_buy_below = float(cfg.get("no_add_if_pnl_below_pct", -5.0))
+    min_reinvest = float(cfg.get("min_score_for_reinvest", 25))
+    regime_thr = float(cfg.get("regime_block_buys_if_median_mom5_below", -1.0))
+    max_cash_abs = float(cfg.get("max_cash_absolute", 700.0))
+    min_cash_reserve = float(cfg.get("min_cash_reserve", 500.0))
     fee = pf.fee_per_trade
 
     pf.update_prices(prices)
     equity = max(pf.total_equity(), 1.0)
     decisions: List[Decision] = []
 
-    # Peaks aktualisieren
     for t, px in prices.items():
         if t in pf.positions:
             ctx.update_peak(t, px)
 
-    # Markt-Regime aus Momentum-Details
     moms = []
     for t, det in score_details.items():
-        # momentum-Teilscore oder m5 in details falls hinterlegt
         m = det.get("m5")
-        if m is None and "momentum" in det:
-            # grober Rückschluss: negativer Momentum-Teil ≈ schwach
-            pass
         if m is not None:
             try:
                 moms.append(float(m))
             except (TypeError, ValueError):
                 pass
-    # Fallback: momentum-Teilscore als Proxy
     if not moms:
         for det in score_details.values():
             if "momentum" in det:
@@ -141,7 +136,7 @@ def decide(
     med_mom = _median(moms)
     risk_off = med_mom is not None and med_mom < regime_thr
 
-    # 1) Teilverkauf fest + Trailing
+    # 1) Take-Profit full oder partial
     for t, pos in list(pf.positions.items()):
         if t not in prices:
             continue
@@ -152,30 +147,23 @@ def decide(
         giveback = ((peak - px) / peak * 100) if peak > 0 else 0.0
 
         if pct >= tp:
-            n = max(1.0, round(pos.shares * partial))
-            n = min(n, pos.shares)
-            decisions.append(
-                Decision(
-                    t,
-                    "take_profit",
-                    sc,
-                    f"Teilverkauf: +{pct:.1f}% ≥ +{tp}% → ca. {partial*100:.0f}%",
-                    shares=float(n),
-                )
-            )
+            if full_exit:
+                n = float(pos.shares)
+                reason = f"Vollverkauf (Lohn): +{pct:.1f}% ≥ +{tp}%"
+            else:
+                n = max(1.0, round(pos.shares * partial))
+                n = min(n, pos.shares)
+                reason = f"Teilverkauf: +{pct:.1f}% ≥ +{tp}% → ca. {partial*100:.0f}%"
+            decisions.append(Decision(t, "take_profit", sc, reason, shares=float(n)))
         elif pct >= tp * 0.6 and giveback >= trail:
-            # schon im Plus gewesen, jetzt vom Hoch zurück → mitnehmen
-            n = max(1.0, round(pos.shares * partial))
-            n = min(n, pos.shares)
-            decisions.append(
-                Decision(
-                    t,
-                    "take_profit",
-                    sc,
-                    f"Trailing: vom Hoch −{giveback:.1f}% (P&L noch {pct:+.1f}%)",
-                    shares=float(n),
-                )
-            )
+            if full_exit:
+                n = float(pos.shares)
+                reason = f"Trailing Vollverkauf: vom Hoch −{giveback:.1f}% (P&L {pct:+.1f}%)"
+            else:
+                n = max(1.0, round(pos.shares * partial))
+                n = min(n, pos.shares)
+                reason = f"Trailing: vom Hoch −{giveback:.1f}% (P&L noch {pct:+.1f}%)"
+            decisions.append(Decision(t, "take_profit", sc, reason, shares=float(n)))
 
     if force_monthly_skim:
         for t, pos in list(pf.positions.items()):
@@ -186,16 +174,10 @@ def decide(
             pct = pos.unrealized_pnl_pct
             sc = scores.get(t, 0.0)
             if pct >= skim_pct:
-                n = max(1.0, round(pos.shares * skim_frac))
+                n = float(pos.shares) if skim_frac >= 0.99 else max(1.0, round(pos.shares * skim_frac))
                 n = min(n, pos.shares)
                 decisions.append(
-                    Decision(
-                        t,
-                        "take_profit",
-                        sc,
-                        f"Monats-Mitnahme: +{pct:.1f}%",
-                        shares=float(n),
-                    )
+                    Decision(t, "take_profit", sc, f"Monats-Mitnahme: +{pct:.1f}%", shares=float(n))
                 )
 
     # 2) Dip / Halten
@@ -214,12 +196,7 @@ def decide(
         if pct <= dip_tr and pos.dip_buy_count < max_dips and not risk_off:
             if sc < need or mom < -6:
                 decisions.append(
-                    Decision(
-                        t,
-                        "hold",
-                        sc,
-                        f"Dip-Zone, Score/Momentum zu schwach ({sc:.0f}/{mom:.0f})",
-                    )
+                    Decision(t, "hold", sc, f"Dip-Zone, Score/Momentum zu schwach ({sc:.0f}/{mom:.0f})")
                 )
             else:
                 budget = pf.cash * dip_frac
@@ -229,31 +206,27 @@ def decide(
                 n = int((spend - fee) // prices[t]) if prices[t] > 0 else 0
                 if n > 0:
                     decisions.append(
-                        Decision(
-                            t,
-                            "dip_buy",
-                            sc,
-                            f"Nachkauf Dip {pct:.1f}% Score {sc:.0f}",
-                            shares=float(n),
-                        )
+                        Decision(t, "dip_buy", sc, f"Nachkauf Dip {pct:.1f}% Score {sc:.0f}", shares=float(n))
                     )
                 else:
                     decisions.append(Decision(t, "hold", sc, "Dip-Zone, kein Budget"))
         elif sc < min_hold:
-            decisions.append(
-                Decision(t, "hold", sc, f"Halten (Score schwach {sc:.0f})")
-            )
+            decisions.append(Decision(t, "hold", sc, f"Halten (Score schwach {sc:.0f})"))
         else:
             tag = " · Markt schwach (kein Zukauf)" if risk_off else ""
             decisions.append(
                 Decision(t, "hold", sc, f"Halten · P&L {pct:+.1f}% · Score {sc:.0f}{tag}")
             )
 
-    # 3) Käufe nur wenn nicht risk-off
     if risk_off:
         return decisions
 
-    if cfg.get("reinvest_idle_cash", True) and pf.cash > fee * 2 + 150:
+    # 3) Cash-Druck: investierbares Cash über Reserve
+    investable = max(0.0, pf.cash - min_cash_reserve)
+    cash_pressure = pf.cash > max_cash_abs
+
+    if cfg.get("reinvest_idle_cash", True) and investable > fee * 2 + 50:
+        # 3a) Reinvest in offene Positionen (nicht nah am TP, nicht tief im Minus)
         open_ranked = []
         for t, pos in pf.positions.items():
             if t not in prices:
@@ -276,22 +249,17 @@ def decide(
         open_ranked.sort(reverse=True)
         if open_ranked:
             _, t, sc = open_ranked[0]
-            budget = pf.cash * reinvest_frac
+            budget = investable * reinvest_frac
             max_mv = equity * (max_pos_pct / 100.0)
             room = max_mv - pf.positions[t].market_value
             spend = min(budget, room) if room > 0 else 0
             n = int((spend - fee) // prices[t]) if prices[t] > 0 else 0
             if n > 0:
                 decisions.append(
-                    Decision(
-                        t,
-                        "reinvest",
-                        sc,
-                        f"Reinvestition in {t} (Score {sc:.0f})",
-                        shares=float(n),
-                    )
+                    Decision(t, "reinvest", sc, f"Reinvestition in {t} (Score {sc:.0f})", shares=float(n))
                 )
 
+        # 3b) Neukäufe – bei Cash-Druck Pflicht, solange Kandidaten da sind
         held = set(pf.positions.keys())
         cands = []
         for t, sc in scores.items():
@@ -303,11 +271,23 @@ def decide(
             if mom < -4:
                 continue
             pref = memory.prefer_ticker(t) if memory else 0.0
-            if sc + pref * 3 >= min_new:
+            thr = min_new - (5 if cash_pressure else 0)  # etwas lockerer bei viel Cash
+            if sc + pref * 3 >= thr:
                 cands.append((sc + pref * 3 + mom * 0.3, t, sc))
         cands.sort(reverse=True)
-        for _, t, sc in cands[:max_new]:
-            budget = pf.cash * 0.22
+
+        n_new = max_new if cash_pressure else max_new
+        # bei starkem Cash-Druck mehr als ein Neukauf erlauben
+        if cash_pressure and investable > max_cash_abs * 2:
+            n_new = max(n_new, 2)
+
+        for _, t, sc in cands[:n_new]:
+            # so viel einsetzen, dass Cash Richtung max_cash_abs geht
+            if cash_pressure:
+                budget = min(investable * 0.35, investable - (max_cash_abs - min_cash_reserve) * 0.5)
+                budget = max(budget, min(investable * 0.25, 2000))
+            else:
+                budget = investable * 0.22
             n = int((budget - fee) // prices[t]) if prices[t] > 0 else 0
             if n > 0:
                 decisions.append(
@@ -315,7 +295,7 @@ def decide(
                         t,
                         "new_buy",
                         sc,
-                        f"Neukauf {t} (Score {sc:.0f})",
+                        f"Neukauf {t} (Score {sc:.0f})" + (" · Cash-Druck" if cash_pressure else ""),
                         shares=float(n),
                     )
                 )
