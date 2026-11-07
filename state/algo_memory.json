@@ -1,13 +1,13 @@
 {
   "tp_success": {
-    "HNR1.DE": 2,
-    "MUV2.DE": 1
+    "HNR1.DE": 3,
+    "MUV2.DE": 2
   },
   "dip_success": {},
   "dip_fail": {},
   "bias": {
-    "HNR1.DE": 0.1,
-    "MUV2.DE": 0.05
+    "HNR1.DE": 0.15000000000000002,
+    "MUV2.DE": 0.1
   },
   "episodes": [
     {
@@ -55,6 +55,30 @@
       "price": 214.3,
       "reason": "Reinvestition in SAP.DE (Score 50)",
       "report_summary": "Umsatz YoY: +6.1% (wachsend) | Gewinn YoY: +33.9% | Nettomarge QoQ: -0.17 Prozentpunkte | Verschuldung QoQ: +0.8% | Cashflow (letzte Periode): positiv (1,753,000,000) ‖ Kurs: 5T +2.6%, 10T -0.5%, 20T +16.1%",
+      "outcome": "offen",
+      "lesson": ""
+    },
+    {
+      "id": "ep_20261107_003851_HNR1.DE",
+      "date": "2026-11-07T00:38:51",
+      "ticker": "HNR1.DE",
+      "action": "teilverkauf",
+      "score": 33.1,
+      "price": 306.4,
+      "reason": "Teilverkauf: +11.0% ≥ +6.0% → ca. 100%",
+      "report_summary": "Umsatz YoY: +9.0% (wachsend) | Gewinn YoY: +6.8% | Nettomarge QoQ: +0.43 Prozentpunkte | Cashflow (letzte Periode): positiv (1,735,400,000) ‖ Kurs: 5T +5.7%, 10T +9.4%, 20T +16.4%",
+      "outcome": "offen",
+      "lesson": ""
+    },
+    {
+      "id": "ep_20261107_003851_MUV2.DE",
+      "date": "2026-11-07T00:38:51",
+      "ticker": "MUV2.DE",
+      "action": "teilverkauf",
+      "score": 47.5,
+      "price": 594.6,
+      "reason": "Teilverkauf: +8.5% ≥ +6.0% → ca. 100%",
+      "report_summary": "Umsatz YoY: +8.4% (wachsend) | Gewinn YoY: +10.5% | Nettomarge QoQ: +1.88 Prozentpunkte | Verschuldung QoQ: -1.7% ‖ Kurs: 5T +4.9%, 10T +6.8%, 20T +13.5%",
       "outcome": "offen",
       "lesson": ""
     }

@@ -1,36 +1,18 @@
 {
   "starting_cash": 10000.0,
-  "cash": 1914.1300201416016,
+  "cash": 4662.130020141602,
   "fee_per_trade": 1.0,
   "tax_rate": 0.26375,
   "freistellung_yearly": 1000.0,
-  "freistellung_remaining": 879.0,
-  "external_profit": 121.0,
+  "freistellung_remaining": 619.60009765625,
+  "external_profit": 380.4,
   "taxes_paid_total": 0.0,
   "positions": {
     "SAP.DE": {
       "ticker": "SAP.DE",
       "shares": 14.0,
       "avg_cost": 204.03928593226843,
-      "current_price": 214.3000030517578,
-      "dip_buy_count": 0,
-      "opened_at": "2026-10-21T09:15:00",
-      "last_action_at": "2026-11-06T01:23:16.000109"
-    },
-    "HNR1.DE": {
-      "ticker": "HNR1.DE",
-      "shares": 4.0,
-      "avg_cost": 276.0,
-      "current_price": 298.79998779296875,
-      "dip_buy_count": 0,
-      "opened_at": "2026-10-21T09:15:00",
-      "last_action_at": "2026-11-06T01:23:16.000109"
-    },
-    "MUV2.DE": {
-      "ticker": "MUV2.DE",
-      "shares": 3.0,
-      "avg_cost": 548.0,
-      "current_price": 584.4000244140625,
+      "current_price": 215.75,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T09:15:00",
       "last_action_at": "2026-11-06T01:23:16.000109"
@@ -39,7 +21,7 @@
       "ticker": "ENR.DE",
       "shares": 19.0,
       "avg_cost": 130.27999877929688,
-      "current_price": 119.45999908447266,
+      "current_price": 113.83999633789062,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T09:15:00",
       "last_action_at": "2026-10-21T09:15:00"
@@ -143,6 +125,28 @@
       "fee": 1.0,
       "reason": "Algo: Reinvestition in SAP.DE (Score 50)",
       "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-11-07T00:38:51.795182",
+      "ticker": "HNR1.DE",
+      "action": "sell",
+      "shares": 4.0,
+      "price": 306.3999938964844,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +11.0% ≥ +6.0% → ca. 100%",
+      "locked_profit": 120.6,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-11-07T00:38:51.795182",
+      "ticker": "MUV2.DE",
+      "action": "sell",
+      "shares": 3.0,
+      "price": 594.5999755859375,
+      "fee": 1.0,
+      "reason": "Algo: Teilverkauf: +8.5% ≥ +6.0% → ca. 100%",
+      "locked_profit": 138.8,
       "tax_paid": 0.0
     }
   ]
