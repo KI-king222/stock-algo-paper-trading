@@ -59,7 +59,7 @@ CHART_CONFIG = {
 ACTION_MAP = {
     "buy": "kauf", "sell": "verkauf", "hold": "halten",
     "reinvest": "reinvestition", "dip_buy": "nachkauf", "new_buy": "neukauf",
-    "take_profit": "teilverkauf", "sell_tp": "teilverkauf",
+    "take_profit": "verkauf", "sell_tp": "verkauf",
 }
 
 
@@ -93,7 +93,6 @@ def last_act(trades, ticker) -> str:
 
 
 def fetch_live_prices(tickers) -> Dict[str, float]:
-    """Aktuelle Kurse – unabhängig vom Workflow (wie KI-Version)."""
     out = {}
     for t in tickers:
         try:
@@ -184,19 +183,19 @@ def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
 def rules_plaintext(cfg: dict) -> str:
     tp = cfg.get("take_profit_pct", "–")
     partial = cfg.get("partial_tp_fraction")
-    partial_pct = f"{float(partial)*100:.0f}%" if partial is not None else "–"
+    full = partial is not None and float(partial) >= 0.99
+    exit_txt = "Vollverkauf (Lohn)" if full else f"Teilverkauf (~{float(partial)*100:.0f}%)"
     dip = cfg.get("dip_trigger_pct", "–")
     max_dips = cfg.get("max_dip_buys_per_ticker", "–")
-    skim = cfg.get("min_monthly_skim_pct", "–")
-    uni = ", ".join(cfg.get("universe") or []) or "–"
+    uni = ", ".join(cfg.get("universe") or []) or "offen"
     return f"""### So entscheidet der Algorithmus
 
 1. Finanzzahlen  2. Kursverlauf + Score  3. Gehirn  4. Regeln (kein Verkauf im Minus)
 
 **Universum:** {uni}  
-**Teilverkauf** ab ca. +{tp} % (~{partial_pct})  
+**{exit_txt}** ab ca. +{tp} %  
 **Nachkauf** ab ca. {dip} %, max. {max_dips}×  
-**Monats-Mitnahme** ab ca. +{skim} %
+**Cash-Ziel** ≤ {cfg.get('max_cash_absolute', 700)} €
 """
 
 
@@ -210,7 +209,6 @@ cfg = load_json(CFG) or {}
 trades_all = (pf or {}).get("trades") or []
 positions = (pf or {}).get("positions") or {}
 
-# Live-Kurse (ohne Workflow) – wie KI
 live_ok = False
 if positions:
     live = fetch_live_prices(list(positions.keys()))
@@ -225,21 +223,68 @@ if live_ok:
 elif positions:
     st.caption("Kurse: gespeicherter Stand (Live-Abruf fehlgeschlagen)")
 
-c1, c2, c3, c4, c5 = st.columns(5)
 if pf:
     cash = float(pf.get("cash") or 0)
     ext = float(pf.get("external_profit") or 0)
-    equity = cash + sum(
-        float(p.get("shares", 0)) * float(p.get("current_price") or p.get("avg_cost") or 0)
-        for p in positions.values()
-    )
-    wealth = equity + ext
     start = float(pf.get("starting_cash") or 10_000)
-    c1.metric("Gesamtvermögen", f"{wealth:,.2f} €", f"{(wealth/start-1)*100:+.1f}%")
-    c2.metric("Depot + Cash", f"{equity:,.2f} €")
-    c3.metric("Rest-Cash", f"{cash:,.2f} €")
-    c4.metric("Realisierter Lohn", f"{ext:,.2f} €")
-    c5.metric("Steuern (sim.)", f"{float(pf.get('taxes_paid_total') or 0):,.2f} €")
+    positions_mv = 0.0
+    positions_cost = 0.0
+    for p in positions.values():
+        sh = float(p.get("shares", 0))
+        avg = float(p.get("avg_cost") or 0)
+        px = float(p.get("current_price") or avg)
+        positions_mv += sh * px
+        positions_cost += sh * avg
+    # Laufendes Depot = nur was noch im Spiel ist (Cash + offene Aktien), OHNE gesperrten Lohn
+    laufendes_depot = cash + positions_mv
+    # Gesamtvermögen = Start + alles was du „hast“ inkl. bereits mitgenommenem Lohn
+    gesamtvermoegen = laufendes_depot + ext
+    unrealisiert = positions_mv - positions_cost  # Plus/Minus nur der offenen Aktien
+    vs_start_ohne_lohn = laufendes_depot - start
+    vs_start_gesamt = gesamtvermoegen - start
+
+    st.markdown("#### Kennzahlen – kurz erklärt")
+    st.caption(
+        "**Gesamtvermögen** = Startkapital + gesamter Erfolg (inkl. gesperrtem Lohn).  \n"
+        "**Laufendes Depot** = nur Cash + offene Aktien – **ohne** gesperrten Lohn.  \n"
+        "**Offene Aktien P&L** = wie stehen die Positionen *gerade* (Plus oder Minus)."
+    )
+
+    r1 = st.columns(4)
+    r1[0].metric(
+        "Gesamtvermögen",
+        f"{gesamtvermoegen:,.2f} €",
+        f"{vs_start_gesamt:+.2f} € vs. Start",
+        help="Startkapital + laufendes Depot + bereits ausgeschütteter/gesperrter Lohn",
+    )
+    r1[1].metric(
+        "Laufendes Depot",
+        f"{laufendes_depot:,.2f} €",
+        f"{vs_start_ohne_lohn:+.2f} € vs. Start",
+        help="Nur investierbares Cash + Kurswert der offenen Aktien – Lohn zählt hier nicht",
+    )
+    r1[2].metric(
+        "Offene Aktien (Kurswert)",
+        f"{positions_mv:,.2f} €",
+        f"{unrealisiert:+.2f} € P&L",
+        help="Nur der Marktwert der noch gehaltenen Aktien",
+    )
+    r1[3].metric(
+        "Offene Aktien P&L",
+        f"{unrealisiert:+.2f} €",
+        f"{(unrealisiert/positions_cost*100) if positions_cost else 0:+.1f}%",
+        help="Unrealisiert: im Plus wenn Kurse über Einstand, sonst Minus",
+    )
+
+    r2 = st.columns(4)
+    r2[0].metric("Investierbares Cash", f"{cash:,.2f} €")
+    r2[1].metric(
+        "Gesperrter Lohn",
+        f"{ext:,.2f} €",
+        help="Bereits realisierte Gewinne – nicht wieder investieren",
+    )
+    r2[2].metric("Startkapital", f"{start:,.0f} €")
+    r2[3].metric("Steuern (sim.)", f"{float(pf.get('taxes_paid_total') or 0):,.2f} €")
 
 st.divider()
 st.subheader("Offene Positionen")
@@ -257,7 +302,7 @@ if positions:
         rows.append({
             "Ticker": t, "Kaufdatum": opened, "Letzte Aktion": last_a,
             "Stück": sh, "Ø Einstand": round(avg, 2), "Kurs": round(px, 2),
-            "Wert €": round(mv, 2), "P&L %": round(pct, 2),
+            "Wert €": round(mv, 2), "P&L €": round(pnl, 2), "P&L %": round(pct, 2),
             "Nachkäufe": p.get("dip_buy_count", 0),
         })
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
@@ -266,22 +311,27 @@ else:
 
 st.divider()
 st.subheader("Watchlist")
-st.markdown("**Skala 1–3**  \n1 = hoch · 2 = mittel · 3 = niedrig")
+st.markdown("**Skala 1–3**  ·  1 = hoch (nahe Kauf) · 2 = mittel · 3 = niedrig")
 if wl and wl.get("items"):
-    items = [i for i in wl["items"] if i.get("status", "active") == "active"]
-    if items:
-        st.dataframe(
-            pd.DataFrame([{
-                "Ticker": i.get("ticker"), "Name": i.get("title"),
-                "Priorität": i.get("priority"), "Seit": i.get("added_at"),
-                "Grund": i.get("reason"),
-            } for i in sorted(items, key=lambda x: x.get("priority") or 99)]),
-            use_container_width=True, hide_index=True,
-        )
+    items = wl["items"]
+    # support both old and new watchlist formats
+    rows_wl = []
+    for i in items:
+        if i.get("status") and i.get("status") != "active":
+            continue
+        rows_wl.append({
+            "Ticker": i.get("ticker"),
+            "Score": i.get("score", i.get("priority")),
+            "Skala": i.get("scale", i.get("priority")),
+            "Kurs": i.get("price"),
+            "Notiz": i.get("note", i.get("reason", "")),
+        })
+    if rows_wl:
+        st.dataframe(pd.DataFrame(rows_wl), use_container_width=True, hide_index=True)
     else:
         st.info("Keine aktiven Einträge")
 else:
-    st.info("Noch leer.")
+    st.info("Noch leer – wird beim nächsten Algo-Lauf befüllt.")
 
 st.divider()
 st.subheader("Letzter Lauf")
