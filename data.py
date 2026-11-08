@@ -1,10 +1,17 @@
-"""Kurse, Fundamentals und strukturierte Finanzberichts-Daten (yfinance)."""
+"""Kurse (immer EUR), Fundamentals und Finanzberichts-Daten (yfinance)."""
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import yfinance as yf
+
+# Börsen-Suffix → Notierungswährung
+_EUR_SUFFIXES = (".DE", ".PA", ".AS", ".MI", ".BR", ".MC", ".HE", ".LS", ".VI", ".AT")
+_GBP_SUFFIXES = (".L", ".IL")
+_CHF_SUFFIXES = (".SW", ".VX")
+
+_fx_cache: Dict[str, float] = {}
 
 
 def _valid(p) -> bool:
@@ -15,19 +22,88 @@ def _valid(p) -> bool:
         return False
 
 
+def native_currency(ticker: str) -> str:
+    """Währung der Börsennotiz."""
+    t = (ticker or "").upper()
+    if any(t.endswith(s) for s in _EUR_SUFFIXES):
+        return "EUR"
+    if any(t.endswith(s) for s in _GBP_SUFFIXES):
+        return "GBP"
+    if any(t.endswith(s) for s in _CHF_SUFFIXES):
+        return "CHF"
+    # US und default ohne Suffix
+    return "USD"
+
+
+def _fx_to_eur(ccy: str) -> float:
+    """
+    Faktor: 1 Einheit Fremdwährung → EUR.
+    EURUSD=X = USD pro 1 EUR → 1 USD = 1/EURUSD EUR.
+    """
+    ccy = (ccy or "EUR").upper()
+    if ccy == "EUR":
+        return 1.0
+    if ccy in _fx_cache:
+        return _fx_cache[ccy]
+    pair = {"USD": "EURUSD=X", "GBP": "EURGBP=X", "CHF": "EURCHF=X"}.get(ccy)
+    if not pair:
+        _fx_cache[ccy] = 1.0
+        return 1.0
+    try:
+        h = yf.Ticker(pair).history(period="5d")
+        if h is None or h.empty:
+            rate = 1.0
+        else:
+            # Yahoo EURXXX = Einheiten Fremdwährung pro 1 EUR
+            quote = float(h["Close"].dropna().iloc[-1])
+            rate = (1.0 / quote) if quote > 0 else 1.0
+    except Exception as e:
+        print(f"FX {pair}: {e}")
+        rate = 1.0
+    _fx_cache[ccy] = rate
+    return rate
+
+
+def to_eur(price_native: float, ticker: str) -> float:
+    """Native Kurs → EUR."""
+    if not _valid(price_native):
+        return price_native
+    ccy = native_currency(ticker)
+    if ccy == "EUR":
+        return float(price_native)
+    return float(price_native) * _fx_to_eur(ccy)
+
+
 def get_prices(tickers: List[str]) -> Dict[str, float]:
-    out = {}
+    """Schlusskurse in EUR (US/GBP/CHF umgerechnet)."""
+    out: Dict[str, float] = {}
     for t in tickers:
         try:
             hist = yf.Ticker(t).history(period="5d")
             if hist.empty:
                 continue
             p = float(hist["Close"].dropna().iloc[-1])
-            if _valid(p):
-                out[t] = p
+            if not _valid(p):
+                continue
+            out[t] = round(to_eur(p, t), 4)
         except Exception as e:
             print(f"Preis {t}: {e}")
     return out
+
+
+def get_price_native_and_eur(ticker: str) -> Tuple[Optional[float], Optional[float], str]:
+    """(native, eur, currency) für Logs."""
+    try:
+        hist = yf.Ticker(ticker).history(period="5d")
+        if hist.empty:
+            return None, None, native_currency(ticker)
+        native = float(hist["Close"].dropna().iloc[-1])
+        if not _valid(native):
+            return None, None, native_currency(ticker)
+        ccy = native_currency(ticker)
+        return native, round(to_eur(native, ticker), 4), ccy
+    except Exception:
+        return None, None, native_currency(ticker)
 
 
 def get_fundamentals(ticker: str) -> Dict[str, Any]:
@@ -52,6 +128,7 @@ def get_fundamentals(ticker: str) -> Dict[str, Any]:
         "ticker": ticker,
         "name": info.get("shortName") or info.get("longName") or ticker,
         "sector": info.get("sector"),
+        "currency": info.get("currency") or native_currency(ticker),
         "revenue_growth": g("revenueGrowth"),
         "earnings_growth": g("earningsGrowth"),
         "profit_margins": g("profitMargins"),
@@ -72,11 +149,9 @@ def get_fundamentals(ticker: str) -> Dict[str, Any]:
 
 
 def _series_last_n(df, row_names: List[str], n: int = 4) -> List[Optional[float]]:
-    """Nimmt die neuesten n Spalten eines Yahoo-Financials-DataFrames."""
     if df is None or getattr(df, "empty", True):
         return []
     try:
-        # Spalten = Perioden, neueste oft links
         cols = list(df.columns)[:n]
         out = []
         for c in cols:
@@ -97,14 +172,8 @@ def _series_last_n(df, row_names: List[str], n: int = 4) -> List[Optional[float]
 
 
 def get_financial_report(ticker: str) -> Dict[str, Any]:
-    """
-    Strukturierte 'Finanzbericht'-Analyse aus GuV / Bilanz / Cashflow.
-    Kein PDF-Parsing – dieselben Zahlen, die in Berichten stehen, als Zeitreihe.
-    """
     t = yf.Ticker(ticker)
-    quarterly_income = None
-    quarterly_bs = None
-    quarterly_cf = None
+    quarterly_income = quarterly_bs = quarterly_cf = None
     try:
         quarterly_income = t.quarterly_financials
     except Exception:
@@ -118,39 +187,13 @@ def get_financial_report(ticker: str) -> Dict[str, Any]:
     except Exception:
         pass
 
-    rev = _series_last_n(
-        quarterly_income,
-        ["Total Revenue", "Operating Revenue", "Revenue"],
-        4,
-    )
-    net_income = _series_last_n(
-        quarterly_income,
-        ["Net Income", "Net Income Common Stockholders"],
-        4,
-    )
-    op_income = _series_last_n(
-        quarterly_income,
-        ["Operating Income", "EBIT"],
-        4,
-    )
-    total_debt = _series_last_n(
-        quarterly_bs,
-        ["Total Debt", "Long Term Debt", "Net Debt"],
-        4,
-    )
-    equity = _series_last_n(
-        quarterly_bs,
-        ["Stockholders Equity", "Common Stock Equity", "Total Equity Gross Minority Interest"],
-        4,
-    )
-    fcf = _series_last_n(
-        quarterly_cf,
-        ["Free Cash Flow", "Operating Cash Flow"],
-        4,
-    )
+    rev = _series_last_n(quarterly_income, ["Total Revenue", "Operating Revenue", "Revenue"], 4)
+    net_income = _series_last_n(quarterly_income, ["Net Income", "Net Income Common Stockholders"], 4)
+    op_income = _series_last_n(quarterly_income, ["Operating Income", "EBIT"], 4)
+    total_debt = _series_last_n(quarterly_bs, ["Total Debt", "Long Term Debt", "Net Debt"], 4)
+    fcf = _series_last_n(quarterly_cf, ["Free Cash Flow", "Operating Cash Flow"], 4)
 
-    def growth(vals: List[Optional[float]]) -> Optional[float]:
-        # vals[0]=neueste, vals[1]=vorher
+    def growth(vals):
         if len(vals) >= 2 and vals[0] is not None and vals[1] not in (None, 0):
             try:
                 return (vals[0] - vals[1]) / abs(vals[1])
@@ -158,7 +201,7 @@ def get_financial_report(ticker: str) -> Dict[str, Any]:
                 return None
         return None
 
-    def yoy(vals: List[Optional[float]]) -> Optional[float]:
+    def yoy(vals):
         if len(vals) >= 4 and vals[0] is not None and vals[3] not in (None, 0):
             try:
                 return (vals[0] - vals[3]) / abs(vals[3])
@@ -166,61 +209,39 @@ def get_financial_report(ticker: str) -> Dict[str, Any]:
                 return None
         return None
 
-    def margin(ni: Optional[float], r: Optional[float]) -> Optional[float]:
+    def margin(ni, r):
         if ni is not None and r not in (None, 0):
             return ni / r
         return None
 
-    rev_q = growth(rev)
     rev_yoy = yoy(rev)
-    ni_q = growth(net_income)
     ni_yoy = yoy(net_income)
     m0 = margin(net_income[0] if net_income else None, rev[0] if rev else None)
     m1 = margin(net_income[1] if len(net_income) > 1 else None, rev[1] if len(rev) > 1 else None)
-    margin_delta = None
-    if m0 is not None and m1 is not None:
-        margin_delta = m0 - m1
-
+    margin_delta = (m0 - m1) if m0 is not None and m1 is not None else None
     debt0 = total_debt[0] if total_debt else None
     debt1 = total_debt[1] if len(total_debt) > 1 else None
-    debt_trend = None
-    if debt0 is not None and debt1 not in (None, 0):
-        debt_trend = (debt0 - debt1) / abs(debt1)
-
+    debt_trend = ((debt0 - debt1) / abs(debt1)) if debt0 is not None and debt1 not in (None, 0) else None
     fcf0 = fcf[0] if fcf else None
     fcf_pos = fcf0 is not None and fcf0 > 0
 
     findings = []
     if rev_yoy is not None:
-        findings.append(
-            f"Umsatz YoY: {rev_yoy*100:+.1f}%"
-            + (" (wachsend)" if rev_yoy > 0.03 else (" (schrumpfend)" if rev_yoy < -0.03 else ""))
-        )
+        findings.append(f"Umsatz YoY: {rev_yoy*100:+.1f}%")
     if ni_yoy is not None:
         findings.append(f"Gewinn YoY: {ni_yoy*100:+.1f}%")
     if margin_delta is not None:
-        findings.append(
-            f"Nettomarge QoQ: {margin_delta*100:+.2f} Prozentpunkte"
-        )
+        findings.append(f"Nettomarge QoQ: {margin_delta*100:+.2f} Prozentpunkte")
     if debt_trend is not None:
-        findings.append(
-            f"Verschuldung QoQ: {debt_trend*100:+.1f}%"
-        )
+        findings.append(f"Verschuldung QoQ: {debt_trend*100:+.1f}%")
     if fcf0 is not None:
-        findings.append(
-            f"Cashflow (letzte Periode): {'positiv' if fcf_pos else 'negativ'} ({fcf0:,.0f})"
-        )
+        findings.append(f"Cashflow: {'positiv' if fcf_pos else 'negativ'}")
     if not findings:
         findings.append("Zu wenige Quartalsdaten für Trend-Analyse.")
 
     return {
         "ticker": ticker,
-        "revenue_series": rev,
-        "net_income_series": net_income,
-        "operating_income_series": op_income,
-        "revenue_growth_qoq": rev_q,
         "revenue_growth_yoy": rev_yoy,
-        "earnings_growth_qoq": ni_q,
         "earnings_growth_yoy": ni_yoy,
         "net_margin_latest": m0,
         "net_margin_delta_qoq": margin_delta,
@@ -228,9 +249,5 @@ def get_financial_report(ticker: str) -> Dict[str, Any]:
         "fcf_latest": fcf0,
         "fcf_positive": fcf_pos,
         "findings": findings,
-        "data_quality": sum(
-            1
-            for x in (rev_yoy, ni_yoy, m0, debt_trend, fcf0)
-            if x is not None
-        ),
+        "data_quality": sum(1 for x in (rev_yoy, ni_yoy, m0, debt_trend, fcf0) if x is not None),
     }
