@@ -1,4 +1,4 @@
-"""Streamlit Algo – Live-Kurse beim Laden wie KI-Version."""
+"""Streamlit Algo – Live-Kurse und Charts immer in EUR."""
 from __future__ import annotations
 
 import json
@@ -10,6 +10,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 import yfinance as yf
+
+from data import get_prices, to_eur, native_currency
 
 ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "state"
@@ -34,7 +36,7 @@ st.markdown(
 
 st.title("Algo Paper Trading")
 st.caption(
-    "Kennzahlen + Charts live beim Öffnen · Trades/Log nur nach Workflow · ca. 23 Uhr Mo–Fr"
+    "Alles in **EUR** (US-Kurse via FX) · Charts live · Trades nach Workflow · ca. 22–23 Uhr Mo–Fr"
 )
 
 PERIODS = {
@@ -93,22 +95,27 @@ def last_act(trades, ticker) -> str:
 
 
 def fetch_live_prices(tickers) -> Dict[str, float]:
-    out = {}
-    for t in tickers:
-        try:
-            h = yf.Ticker(t).history(period="5d")
-            if h is None or h.empty:
-                continue
-            p = float(h["Close"].dropna().iloc[-1])
-            if math.isfinite(p) and p > 0:
-                out[t] = p
-        except Exception:
-            pass
-    return out
+    """Immer EUR (data.get_prices)."""
+    try:
+        return get_prices(list(tickers))
+    except Exception:
+        out = {}
+        for t in tickers:
+            try:
+                h = yf.Ticker(t).history(period="5d")
+                if h is None or h.empty:
+                    continue
+                p = float(h["Close"].dropna().iloc[-1])
+                if math.isfinite(p) and p > 0:
+                    out[t] = round(to_eur(p, t), 4)
+            except Exception:
+                pass
+        return out
 
 
 @st.cache_data(ttl=120)
 def fetch_history(ticker: str, period: str, interval: str) -> Optional[pd.DataFrame]:
+    """Historie in EUR."""
     try:
         df = yf.Ticker(ticker).history(period=period, interval=interval, auto_adjust=True)
         if df is None or df.empty:
@@ -120,7 +127,8 @@ def fetch_history(ticker: str, period: str, interval: str) -> Optional[pd.DataFr
             df["Date"] = pd.to_datetime(df["Date"], utc=True).dt.tz_convert(None)
         else:
             df["Date"] = pd.to_datetime(df.iloc[:, 0], utc=True).dt.tz_convert(None)
-        df["Kurs"] = df["Close"].astype(float)
+        native = df["Close"].astype(float)
+        df["Kurs"] = native.apply(lambda x: to_eur(float(x), ticker) if math.isfinite(x) and x > 0 else x)
         return df[["Date", "Kurs"]].dropna()
     except Exception:
         return None
@@ -141,6 +149,8 @@ def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
     tick_idx = [int(i * (n - 1) / max(n_ticks - 1, 1)) for i in range(n_ticks)] if n > 1 else [0]
     tick_idx = sorted(set(tick_idx))
     ticktext = [hist.loc[i, "Date"].strftime("%d.%m") for i in tick_idx]
+    ccy_note = native_currency(ticker)
+    title_extra = f"  ·  EUR" + (f" (aus {ccy_note})" if ccy_note != "EUR" else "")
     fig = go.Figure()
     fig.add_trace(
         go.Scatter(
@@ -154,11 +164,15 @@ def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
     if avg_cost and avg_cost > 0:
         fig.add_hline(
             y=avg_cost, line_dash="dot", line_color="#FF9F0A", line_width=1.4,
-            annotation_text=f"Einstand {avg_cost:.2f} €", annotation_position="top left",
+            annotation_text=f"Einstand {avg_cost:.2f} €",
+            annotation_position="top left",
             annotation_font=dict(size=11, color="#FF9F0A"),
         )
     fig.update_layout(
-        title=dict(text=f"{ticker}  ·  {period_label}", font=dict(size=17, color="#F5F5F7"), x=0.0, xanchor="left"),
+        title=dict(
+            text=f"{ticker}  ·  {period_label}{title_extra}",
+            font=dict(size=17, color="#F5F5F7"), x=0.0, xanchor="left",
+        ),
         height=380, margin=dict(l=8, r=8, t=50, b=10),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#AEAEB2", size=11), hovermode="x unified", dragmode="pan",
@@ -175,7 +189,9 @@ def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
             fixedrange=False, showspikes=True,
         ),
         showlegend=False,
-        hoverlabel=dict(bgcolor="rgba(28,28,30,0.95)", font_size=15, font_color="#FFFFFF", bordercolor="#30D158"),
+        hoverlabel=dict(
+            bgcolor="rgba(28,28,30,0.95)", font_size=15, font_color="#FFFFFF", bordercolor="#30D158"
+        ),
     )
     return fig
 
@@ -193,6 +209,7 @@ def rules_plaintext(cfg: dict) -> str:
 1. Finanzzahlen  2. Kursverlauf + Score  3. Gehirn  4. Regeln (kein Verkauf im Minus)
 
 **Universum:** {uni}  
+**Kurse:** immer **EUR** (USD/GBP via FX)  
 **{exit_txt}** ab ca. +{tp} %  
 **Nachkauf** ab ca. {dip} %, max. {max_dips}×  
 **Cash-Ziel** ≤ {cfg.get('max_cash_absolute', 700)} €
@@ -219,7 +236,7 @@ if positions:
                 positions[t]["current_price"] = p
 
 if live_ok:
-    st.caption("Kurse: **live** beim Seitenaufruf (yfinance) · Bestand/Trades: letzter Workflow")
+    st.caption("Kurse: **live in EUR** (US umgerechnet) · Bestand/Trades: letzter Workflow")
 elif positions:
     st.caption("Kurse: gespeicherter Stand (Live-Abruf fehlgeschlagen)")
 
@@ -235,54 +252,32 @@ if pf:
         px = float(p.get("current_price") or avg)
         positions_mv += sh * px
         positions_cost += sh * avg
-    # Laufendes Depot = nur was noch im Spiel ist (Cash + offene Aktien), OHNE gesperrten Lohn
     laufendes_depot = cash + positions_mv
-    # Gesamtvermögen = Start + alles was du „hast“ inkl. bereits mitgenommenem Lohn
     gesamtvermoegen = laufendes_depot + ext
-    unrealisiert = positions_mv - positions_cost  # Plus/Minus nur der offenen Aktien
+    unrealisiert = positions_mv - positions_cost
     vs_start_ohne_lohn = laufendes_depot - start
     vs_start_gesamt = gesamtvermoegen - start
 
     st.markdown("#### Kennzahlen – kurz erklärt")
     st.caption(
-        "**Gesamtvermögen** = Startkapital + gesamter Erfolg (inkl. gesperrtem Lohn).  \n"
-        "**Laufendes Depot** = nur Cash + offene Aktien – **ohne** gesperrten Lohn.  \n"
-        "**Offene Aktien P&L** = wie stehen die Positionen *gerade* (Plus oder Minus)."
+        "**Gesamtvermögen** = Start + Erfolg inkl. Lohn.  \n"
+        "**Laufendes Depot** = Cash + offene Aktien ohne Lohn.  \n"
+        "**Alle Kurse/Einstände in EUR.**"
     )
 
     r1 = st.columns(4)
-    r1[0].metric(
-        "Gesamtvermögen",
-        f"{gesamtvermoegen:,.2f} €",
-        f"{vs_start_gesamt:+.2f} € vs. Start",
-        help="Startkapital + laufendes Depot + bereits ausgeschütteter/gesperrter Lohn",
-    )
-    r1[1].metric(
-        "Laufendes Depot",
-        f"{laufendes_depot:,.2f} €",
-        f"{vs_start_ohne_lohn:+.2f} € vs. Start",
-        help="Nur investierbares Cash + Kurswert der offenen Aktien – Lohn zählt hier nicht",
-    )
-    r1[2].metric(
-        "Offene Aktien (Kurswert)",
-        f"{positions_mv:,.2f} €",
-        f"{unrealisiert:+.2f} € P&L",
-        help="Nur der Marktwert der noch gehaltenen Aktien",
-    )
+    r1[0].metric("Gesamtvermögen", f"{gesamtvermoegen:,.2f} €", f"{vs_start_gesamt:+.2f} € vs. Start")
+    r1[1].metric("Laufendes Depot", f"{laufendes_depot:,.2f} €", f"{vs_start_ohne_lohn:+.2f} € vs. Start")
+    r1[2].metric("Offene Aktien (Kurswert)", f"{positions_mv:,.2f} €", f"{unrealisiert:+.2f} € P&L")
     r1[3].metric(
         "Offene Aktien P&L",
         f"{unrealisiert:+.2f} €",
         f"{(unrealisiert/positions_cost*100) if positions_cost else 0:+.1f}%",
-        help="Unrealisiert: im Plus wenn Kurse über Einstand, sonst Minus",
     )
 
     r2 = st.columns(4)
     r2[0].metric("Investierbares Cash", f"{cash:,.2f} €")
-    r2[1].metric(
-        "Gesperrter Lohn",
-        f"{ext:,.2f} €",
-        help="Bereits realisierte Gewinne – nicht wieder investieren",
-    )
+    r2[1].metric("Gesperrter Lohn", f"{ext:,.2f} €")
     r2[2].metric("Startkapital", f"{start:,.0f} €")
     r2[3].metric("Steuern (sim.)", f"{float(pf.get('taxes_paid_total') or 0):,.2f} €")
 
@@ -300,9 +295,16 @@ if positions:
         opened = fmt_dt(p.get("opened_at")) if p.get("opened_at") else first_buy(trades_all, t)
         last_a = fmt_dt(p.get("last_action_at")) if p.get("last_action_at") else last_act(trades_all, t)
         rows.append({
-            "Ticker": t, "Kaufdatum": opened, "Letzte Aktion": last_a,
-            "Stück": sh, "Ø Einstand": round(avg, 2), "Kurs": round(px, 2),
-            "Wert €": round(mv, 2), "P&L €": round(pnl, 2), "P&L %": round(pct, 2),
+            "Ticker": t,
+            "Kaufdatum": opened,
+            "Letzte Aktion": last_a,
+            "Stück": sh,
+            "Ø Einstand €": round(avg, 2),
+            "Kurs €": round(px, 2),
+            "Wert €": round(mv, 2),
+            "P&L €": round(pnl, 2),
+            "P&L %": round(pct, 2),
+            "Notiz": "US→EUR" if native_currency(t) != "EUR" else "",
             "Nachkäufe": p.get("dip_buy_count", 0),
         })
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
@@ -311,19 +313,17 @@ else:
 
 st.divider()
 st.subheader("Watchlist")
-st.markdown("**Skala 1–3**  ·  1 = hoch (nahe Kauf) · 2 = mittel · 3 = niedrig")
+st.markdown("**Skala 1–3**  ·  1 = hoch · 2 = mittel · 3 = niedrig")
 if wl and wl.get("items"):
-    items = wl["items"]
-    # support both old and new watchlist formats
     rows_wl = []
-    for i in items:
+    for i in wl["items"]:
         if i.get("status") and i.get("status") != "active":
             continue
         rows_wl.append({
             "Ticker": i.get("ticker"),
             "Score": i.get("score", i.get("priority")),
             "Skala": i.get("scale", i.get("priority")),
-            "Kurs": i.get("price"),
+            "Kurs €": i.get("price"),
             "Notiz": i.get("note", i.get("reason", "")),
         })
     if rows_wl:
@@ -341,7 +341,7 @@ else:
     st.warning("Noch kein Lauf – Actions → Run Algo Daily.")
 
 st.divider()
-st.subheader("Kursverlauf der aktuellen Positionen")
+st.subheader("Kursverlauf (EUR)")
 if positions:
     period_label = st.radio(
         "Zeitraum", list(PERIODS.keys()), index=1, horizontal=True,
@@ -351,7 +351,9 @@ if positions:
         avg = float(p.get("avg_cost") or 0)
         fig = make_chart_ki_style(t, avg, period_label)
         if fig:
-            st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG, key=f"algo_chart_{t}_{period_label}")
+            st.plotly_chart(
+                fig, use_container_width=True, config=CHART_CONFIG, key=f"algo_chart_{t}_{period_label}"
+            )
 
 st.divider()
 st.subheader("Trade-Historie")
@@ -361,7 +363,7 @@ if trades_all:
         "Ticker": t.get("ticker"),
         "Aktion": ACTION_MAP.get(str(t.get("action")), t.get("action")),
         "Stück": t.get("shares"),
-        "Kurs": t.get("price"),
+        "Kurs €": t.get("price"),
         "Grund": t.get("reason"),
         "Mitgenommener Gewinn": t.get("locked_profit"),
     } for t in trades_all[-40:]]), use_container_width=True, hide_index=True)
@@ -399,7 +401,11 @@ if reports and reports.get("reports"):
 
 st.subheader("Gehirn (Episoden)")
 if mem and mem.get("episodes"):
-    st.dataframe(pd.DataFrame(list(reversed(mem["episodes"]))[:15]), use_container_width=True, hide_index=True)
+    st.dataframe(
+        pd.DataFrame(list(reversed(mem["episodes"]))[:15]),
+        use_container_width=True,
+        hide_index=True,
+    )
 
 st.subheader("Regeln (Klartext)")
 st.markdown(rules_plaintext(cfg))
