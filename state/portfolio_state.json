@@ -1,6 +1,6 @@
 {
   "starting_cash": 10000.0,
-  "cash": 4662.130020141602,
+  "cash": 164.81532014160166,
   "fee_per_trade": 1.0,
   "tax_rate": 0.26375,
   "freistellung_yearly": 1000.0,
@@ -12,7 +12,7 @@
       "ticker": "SAP.DE",
       "shares": 14.0,
       "avg_cost": 204.03928593226843,
-      "current_price": 215.75,
+      "current_price": 210.75,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T09:15:00",
       "last_action_at": "2026-11-06T01:23:16.000109"
@@ -21,10 +21,37 @@
       "ticker": "ENR.DE",
       "shares": 19.0,
       "avg_cost": 130.27999877929688,
-      "current_price": 113.83999633789062,
+      "current_price": 118.1,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T09:15:00",
       "last_action_at": "2026-10-21T09:15:00"
+    },
+    "ADS.DE": {
+      "ticker": "ADS.DE",
+      "shares": 9.0,
+      "avg_cost": 174.55,
+      "current_price": 174.55,
+      "dip_buy_count": 0,
+      "opened_at": "2026-11-08T09:09:54.136446",
+      "last_action_at": "2026-11-08T09:09:54.136446"
+    },
+    "MSFT": {
+      "ticker": "MSFT",
+      "shares": 3.0,
+      "avg_cost": 472.5665,
+      "current_price": 472.5665,
+      "dip_buy_count": 0,
+      "opened_at": "2026-11-08T09:09:54.136446",
+      "last_action_at": "2026-11-08T09:09:54.136446"
+    },
+    "V": {
+      "ticker": "V",
+      "shares": 4.0,
+      "avg_cost": 376.4163,
+      "current_price": 376.4163,
+      "dip_buy_count": 0,
+      "opened_at": "2026-11-08T09:09:54.136446",
+      "last_action_at": "2026-11-08T09:09:54.136446"
     }
   },
   "trades": [
@@ -147,6 +174,39 @@
       "fee": 1.0,
       "reason": "Algo: Teilverkauf: +8.5% ≥ +6.0% → ca. 100%",
       "locked_profit": 138.8,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-11-08T09:09:54.136446",
+      "ticker": "ADS.DE",
+      "action": "buy",
+      "shares": 9.0,
+      "price": 174.55,
+      "fee": 1.0,
+      "reason": "Algo: Neukauf ADS.DE (Score 64, ~40% Cash) · Cash-Druck",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-11-08T09:09:54.136446",
+      "ticker": "MSFT",
+      "action": "buy",
+      "shares": 3.0,
+      "price": 472.5665,
+      "fee": 1.0,
+      "reason": "Algo: Neukauf MSFT (Score 49, ~40% Cash) · Cash-Druck",
+      "locked_profit": 0.0,
+      "tax_paid": 0.0
+    },
+    {
+      "date": "2026-11-08T09:09:54.136446",
+      "ticker": "V",
+      "action": "buy",
+      "shares": 4.0,
+      "price": 376.4163,
+      "fee": 1.0,
+      "reason": "Algo: Neukauf V (Score 37, ~40% Cash) · Cash-Druck",
+      "locked_profit": 0.0,
       "tax_paid": 0.0
     }
   ]

@@ -81,6 +81,42 @@
       "report_summary": "Umsatz YoY: +8.4% (wachsend) | Gewinn YoY: +10.5% | Nettomarge QoQ: +1.88 Prozentpunkte | Verschuldung QoQ: -1.7% ‖ Kurs: 5T +4.9%, 10T +6.8%, 20T +13.5%",
       "outcome": "offen",
       "lesson": ""
+    },
+    {
+      "id": "ep_20261108_090954_ADS.DE",
+      "date": "2026-11-08T09:09:54",
+      "ticker": "ADS.DE",
+      "action": "neukauf",
+      "score": 64.3,
+      "price": 174.55,
+      "reason": "Neukauf ADS.DE (Score 64, ~40% Cash) · Cash-Druck",
+      "report_summary": "Umsatz YoY: +19.4% | Gewinn YoY: +771.6% | Nettomarge QoQ: +4.47 Prozentpunkte | Verschuldung QoQ: +0.1% | Cashflow: positiv ‖ Kurs: 5T +1.0%, 10T +9.2%, 20T +16.7%",
+      "outcome": "offen",
+      "lesson": ""
+    },
+    {
+      "id": "ep_20261108_090954_MSFT",
+      "date": "2026-11-08T09:09:54",
+      "ticker": "MSFT",
+      "action": "neukauf",
+      "score": 49.4,
+      "price": 472.5665,
+      "reason": "Neukauf MSFT (Score 49, ~40% Cash) · Cash-Druck",
+      "report_summary": "Umsatz YoY: +13.5% | Gewinn YoY: -4.8% | Nettomarge QoQ: -0.04 Prozentpunkte | Verschuldung QoQ: +0.7% | Cashflow: positiv ‖ Kurs: 5T +4.6%, 10T -0.4%, 20T -1.9%",
+      "outcome": "offen",
+      "lesson": ""
+    },
+    {
+      "id": "ep_20261108_090954_V",
+      "date": "2026-11-08T09:09:54",
+      "ticker": "V",
+      "action": "neukauf",
+      "score": 37.2,
+      "price": 376.4163,
+      "reason": "Neukauf V (Score 37, ~40% Cash) · Cash-Druck",
+      "report_summary": "Verschuldung QoQ: -0.5% | Cashflow: positiv ‖ Kurs: 5T -0.7%, 10T +4.6%, 20T +8.6%",
+      "outcome": "offen",
+      "lesson": ""
     }
   ]
 }
