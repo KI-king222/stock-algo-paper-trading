@@ -1,4 +1,4 @@
-"""Streamlit Algo – Einstandslinie liegt exakt auf dem Kurs zum Kauf."""
+"""Streamlit Algo – frische Charts mit Datenstand (Europe/Berlin)."""
 from __future__ import annotations
 
 import json
@@ -9,14 +9,12 @@ from typing import Dict, Optional
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-import yfinance as yf
 
-from data import get_prices, to_eur, native_currency, _fx_to_eur
+from data import get_prices, to_eur, native_currency, _fx_to_eur, _raw_live_price
 
 ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "state"
 PORTFOLIO = STATE / "portfolio_state.json"
-LOG = STATE / "decisions_log.json"
 STATUS = STATE / "last_run_status.json"
 CFG = ROOT / "config.json"
 
@@ -32,7 +30,7 @@ st.markdown(
 )
 
 st.title("Algo Paper Trading")
-st.caption("EUR · Einstand = Kaufkurs – Linie geht durch den Kaufpunkt")
+st.caption("EUR · Charts mit **Datenstand** · US-Börse ab 15:30 CET")
 
 PERIODS = {
     "1T": ("1d", "5m"),
@@ -83,7 +81,6 @@ def first_buy(trades, ticker) -> str:
 
 
 def last_buy_dt(trades, ticker) -> Optional[pd.Timestamp]:
-    """Zeitpunkt des letzten Kaufs dieser Position."""
     for tr in reversed(trades or []):
         if tr.get("ticker") == ticker and str(tr.get("action")).lower() == "buy":
             try:
@@ -93,49 +90,65 @@ def last_buy_dt(trades, ticker) -> Optional[pd.Timestamp]:
     return None
 
 
+def to_berlin(series: pd.Series) -> pd.Series:
+    s = pd.to_datetime(series, utc=True, errors="coerce")
+    try:
+        return s.dt.tz_convert("Europe/Berlin").dt.tz_localize(None)
+    except Exception:
+        return pd.to_datetime(series, errors="coerce")
+
+
 def fetch_live_prices(tickers) -> Dict[str, float]:
     try:
         return get_prices(list(tickers))
     except Exception:
-        out = {}
-        for t in tickers:
-            try:
-                h = yf.Ticker(t).history(period="5d")
-                if h is None or h.empty:
-                    continue
-                p = float(h["Close"].dropna().iloc[-1])
-                if math.isfinite(p) and p > 0:
-                    out[t] = round(to_eur(p, t), 4)
-            except Exception:
-                pass
-        return out
+        return {}
 
 
-def fetch_history_eur(ticker: str, period: str, interval: str) -> Optional[pd.DataFrame]:
+def fetch_history_eur(
+    ticker: str, period: str, interval: str, live_eur: Optional[float] = None
+) -> Optional[pd.DataFrame]:
+    """Historie in EUR (Berlin-Zeit) + optional Live-Punkt als letztes Candle."""
+    import yfinance as yf
+
     try:
         df = yf.Ticker(ticker).history(period=period, interval=interval, auto_adjust=True)
         if df is None or df.empty:
             return None
         df = df.reset_index()
         if "Datetime" in df.columns:
-            df["Date"] = pd.to_datetime(df["Datetime"], utc=True).dt.tz_convert(None)
+            raw_dt = df["Datetime"]
         elif "Date" in df.columns:
-            df["Date"] = pd.to_datetime(df["Date"], utc=True).dt.tz_convert(None)
+            raw_dt = df["Date"]
         else:
-            df["Date"] = pd.to_datetime(df.iloc[:, 0], utc=True).dt.tz_convert(None)
+            raw_dt = df.iloc[:, 0]
+        df["Date"] = to_berlin(raw_dt)
 
         ccy = native_currency(ticker)
         native = df["Close"].astype(float)
         if ccy == "EUR":
             df["Kurs"] = native
         else:
-            rate = _fx_to_eur(ccy)
-            df["Kurs"] = native * rate
+            df["Kurs"] = native * _fx_to_eur(ccy)
 
-        df = df.dropna(subset=["Kurs"])
+        df = df.dropna(subset=["Kurs", "Date"])
         df = df[df["Kurs"] > 0]
         if df.empty:
             return None
+
+        # Live-Punkt anhängen, wenn wir einen frischen Kurs haben
+        if live_eur and live_eur > 0:
+            now_b = pd.Timestamp.now(tz="Europe/Berlin").tz_localize(None)
+            last_t = df["Date"].iloc[-1]
+            # nur anhängen wenn Chart älter als ~10 Min oder Kurs weicht ab
+            gap_min = (now_b - last_t).total_seconds() / 60.0 if pd.notna(last_t) else 999
+            last_k = float(df["Kurs"].iloc[-1])
+            if gap_min > 10 or abs(last_k - live_eur) / max(live_eur, 1e-9) > 0.001:
+                df = pd.concat(
+                    [df, pd.DataFrame([{"Date": now_b, "Kurs": float(live_eur)}])],
+                    ignore_index=True,
+                )
+
         return df[["Date", "Kurs"]].reset_index(drop=True)
     except Exception:
         return None
@@ -144,28 +157,20 @@ def fetch_history_eur(ticker: str, period: str, interval: str) -> Optional[pd.Da
 def snap_series_to_einstand(
     hist: pd.DataFrame, avg: float, buy_dt: Optional[pd.Timestamp]
 ) -> pd.DataFrame:
-    """
-    Skaliert die EUR-Serie so, dass der Kurs zum Kaufzeitpunkt
-    exakt dem Einstand entspricht → orangene Linie schneidet die Kurve dort.
-    """
     if hist is None or hist.empty or not avg or avg <= 0:
         return hist
     h = hist.copy()
-
-    # Index am Kauf (oder letzter Punkt, wenn Kauf nach letztem Bar / Wochenende)
     if buy_dt is not None and not pd.isna(buy_dt):
-        buy_naive = pd.Timestamp(buy_dt).tz_localize(None) if getattr(buy_dt, "tzinfo", None) else pd.Timestamp(buy_dt)
-        # nächster Bar <= Kauf, sonst nächster
-        deltas = (h["Date"] - buy_naive).abs()
-        i = int(deltas.idxmin())
+        buy_naive = pd.Timestamp(buy_dt)
+        if getattr(buy_naive, "tzinfo", None) is not None:
+            buy_naive = buy_naive.tz_localize(None)
+        i = int((h["Date"] - buy_naive).abs().idxmin())
     else:
         i = len(h) - 1
-
     ref = float(h.loc[i, "Kurs"])
     if ref <= 0:
         return h
     scale = avg / ref
-    # nur wenn realistisch (FX/Rundung), nicht bei völlig anderen Daten
     if 0.95 <= scale <= 1.05:
         h["Kurs"] = h["Kurs"] * scale
     return h
@@ -176,9 +181,10 @@ def make_chart_ki_style(
     avg_cost: float,
     period_label: str,
     buy_dt: Optional[pd.Timestamp] = None,
+    live_eur: Optional[float] = None,
 ):
     period, interval = PERIODS[period_label]
-    hist = fetch_history_eur(ticker, period, interval)
+    hist = fetch_history_eur(ticker, period, interval, live_eur=live_eur)
     if hist is None or hist.empty:
         return None
 
@@ -187,6 +193,10 @@ def make_chart_ki_style(
     hist = hist.reset_index(drop=True)
     hist["i"] = hist.index.astype(int)
 
+    last_dt = hist["Date"].iloc[-1]
+    stand = last_dt.strftime("%d.%m. %H:%M") if pd.notna(last_dt) else "?"
+    last_px = float(hist["Kurs"].iloc[-1])
+
     y_min = min(float(hist["Kurs"].min()), avg if avg else float(hist["Kurs"].min()))
     y_max = max(float(hist["Kurs"].max()), avg if avg else float(hist["Kurs"].max()))
     pad = max((y_max - y_min) * 0.03, 0.5)
@@ -194,9 +204,10 @@ def make_chart_ki_style(
     n_ticks = min(6, n)
     tick_idx = [int(i * (n - 1) / max(n_ticks - 1, 1)) for i in range(n_ticks)] if n > 1 else [0]
     tick_idx = sorted(set(tick_idx))
-    ticktext = [hist.loc[i, "Date"].strftime("%d.%m") for i in tick_idx]
+    ticktext = [hist.loc[i, "Date"].strftime("%d.%m %H:%M") for i in tick_idx]
     ccy_note = native_currency(ticker)
-    title_extra = f"  ·  EUR" + (f" (aus {ccy_note})" if ccy_note != "EUR" else "")
+    us_note = " · US bis 15:30 CET oft Freitag" if ccy_note != "EUR" else ""
+    title = f"{ticker} · {period_label} · EUR · Stand {stand}{us_note}"
 
     fig = go.Figure()
     fig.add_trace(
@@ -223,12 +234,7 @@ def make_chart_ki_style(
             annotation_font=dict(size=11, color="#FF9F0A"),
         )
     fig.update_layout(
-        title=dict(
-            text=f"{ticker}  ·  {period_label}{title_extra}",
-            font=dict(size=17, color="#F5F5F7"),
-            x=0.0,
-            xanchor="left",
-        ),
+        title=dict(text=title, font=dict(size=15, color="#F5F5F7"), x=0.0, xanchor="left"),
         height=380,
         margin=dict(l=8, r=8, t=50, b=10),
         paper_bgcolor="rgba(0,0,0,0)",
@@ -244,11 +250,6 @@ def make_chart_ki_style(
             ticktext=ticktext,
             rangeslider=dict(visible=False),
             fixedrange=False,
-            showspikes=True,
-            spikemode="across+toaxis",
-            spikesnap="cursor",
-            spikethickness=1.5,
-            spikecolor="#0A84FF",
         ),
         yaxis=dict(
             showgrid=True,
@@ -258,38 +259,30 @@ def make_chart_ki_style(
             ticksuffix=" €",
             range=[y_min - pad, y_max + pad],
             fixedrange=False,
-            showspikes=True,
         ),
         showlegend=False,
-        hoverlabel=dict(
-            bgcolor="rgba(28,28,30,0.95)",
-            font_size=15,
-            font_color="#FFFFFF",
-            bordercolor="#30D158",
-        ),
     )
-    return fig
+    return fig, stand, last_px
 
 
 pf = load_json(PORTFOLIO)
 status = load_json(STATUS)
-cfg = load_json(CFG) or {}
 trades_all = (pf or {}).get("trades") or []
 positions = (pf or {}).get("positions") or {}
 
-live_ok = False
+live = {}
 if positions:
-    live = fetch_live_prices(list(positions.keys()))
-    if live:
-        live_ok = True
-        for t, p in live.items():
-            if t in positions:
-                positions[t]["current_price"] = p
+    live = fetch_live_prices(list(positions.keys())) or {}
+    for t, p in live.items():
+        if t in positions:
+            positions[t]["current_price"] = p
 
-if live_ok:
-    st.caption("Kurse live in EUR · Einstand schneidet die Kurve am Kaufzeitpunkt")
-elif positions:
-    st.caption("Kurse: gespeicherter Stand")
+if live:
+    st.success(
+        "Live-Kurse geladen · **DE** = heute Intraday · **US** = bis 15:30 CET oft letzter US-Schluss (Fr)"
+    )
+else:
+    st.warning("Live-Kurse nicht geladen – gespeicherter Stand")
 
 if pf:
     cash = float(pf.get("cash") or 0)
@@ -332,27 +325,35 @@ if positions:
             "Wert €": round(mv, 2),
             "P&L €": round(pnl, 2),
             "P&L %": round(pct, 2),
-            "Notiz": "US→EUR" if native_currency(t) != "EUR" else "",
+            "Notiz": "US→EUR" if native_currency(t) != "EUR" else "live DE",
         })
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 st.divider()
 st.subheader("Kursverlauf (EUR)")
+st.caption("Zeitraum **1T** = heutige 5‑Min-Kerzen (DE). Bei US vor 15:30 CET endet die Serie am Freitagsschluss – das ist Börsendaten, kein App-Bug.")
 if positions:
     period_label = st.radio(
-        "Zeitraum", list(PERIODS.keys()), index=1, horizontal=True,
-        label_visibility="collapsed", key="algo_chart_period",
+        "Zeitraum",
+        list(PERIODS.keys()),
+        index=0,  # Default 1T = heute
+        horizontal=True,
+        label_visibility="collapsed",
+        key="algo_chart_period",
     )
     for t, p in positions.items():
         avg = float(p.get("avg_cost") or 0)
+        live_px = float(p.get("current_price") or avg)
         opened = p.get("opened_at") or p.get("last_action_at")
         buy_dt = None
         try:
             buy_dt = pd.to_datetime(opened) if opened else last_buy_dt(trades_all, t)
         except Exception:
             buy_dt = last_buy_dt(trades_all, t)
-        fig = make_chart_ki_style(t, avg, period_label, buy_dt=buy_dt)
-        if fig:
+        out = make_chart_ki_style(t, avg, period_label, buy_dt=buy_dt, live_eur=live_px)
+        if out:
+            fig, stand, last_px = out
+            st.caption(f"**{t}** Datenstand Chart: **{stand}** · letzter Kurs **{last_px:.2f} €**")
             st.plotly_chart(
                 fig, use_container_width=True, config=CHART_CONFIG, key=f"algo_chart_{t}_{period_label}"
             )
@@ -369,6 +370,5 @@ if trades_all:
         "Grund": t.get("reason"),
     } for t in trades_all[-40:]]), use_container_width=True, hide_index=True)
 
-st.divider()
 if status:
     st.info(f"**{status.get('last_run', '–')}**  ·  {status.get('headline', '')}")
