@@ -6,7 +6,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import yfinance as yf
 
-# Börsen-Suffix → Notierungswährung
 _EUR_SUFFIXES = (".DE", ".PA", ".AS", ".MI", ".BR", ".MC", ".HE", ".LS", ".VI", ".AT")
 _GBP_SUFFIXES = (".L", ".IL")
 _CHF_SUFFIXES = (".SW", ".VX")
@@ -23,7 +22,6 @@ def _valid(p) -> bool:
 
 
 def native_currency(ticker: str) -> str:
-    """Währung der Börsennotiz."""
     t = (ticker or "").upper()
     if any(t.endswith(s) for s in _EUR_SUFFIXES):
         return "EUR"
@@ -31,15 +29,10 @@ def native_currency(ticker: str) -> str:
         return "GBP"
     if any(t.endswith(s) for s in _CHF_SUFFIXES):
         return "CHF"
-    # US und default ohne Suffix
     return "USD"
 
 
 def _fx_to_eur(ccy: str) -> float:
-    """
-    Faktor: 1 Einheit Fremdwährung → EUR.
-    EURUSD=X = USD pro 1 EUR → 1 USD = 1/EURUSD EUR.
-    """
     ccy = (ccy or "EUR").upper()
     if ccy == "EUR":
         return 1.0
@@ -54,7 +47,6 @@ def _fx_to_eur(ccy: str) -> float:
         if h is None or h.empty:
             rate = 1.0
         else:
-            # Yahoo EURXXX = Einheiten Fremdwährung pro 1 EUR
             quote = float(h["Close"].dropna().iloc[-1])
             rate = (1.0 / quote) if quote > 0 else 1.0
     except Exception as e:
@@ -65,7 +57,6 @@ def _fx_to_eur(ccy: str) -> float:
 
 
 def to_eur(price_native: float, ticker: str) -> float:
-    """Native Kurs → EUR."""
     if not _valid(price_native):
         return price_native
     ccy = native_currency(ticker)
@@ -74,36 +65,63 @@ def to_eur(price_native: float, ticker: str) -> float:
     return float(price_native) * _fx_to_eur(ccy)
 
 
+def _raw_live_price(ticker: str) -> Optional[float]:
+    """
+    Frischester verfügbarer Native-Kurs:
+    1) fast_info.last_price
+    2) 1d/5m Intraday letzter Close
+    3) daily history letzter Close
+    """
+    t = yf.Ticker(ticker)
+    # 1) fast_info
+    try:
+        fi = t.fast_info
+        for attr in ("last_price", "lastPrice", "regular_market_price", "regularMarketPrice"):
+            v = getattr(fi, attr, None)
+            if v is None and isinstance(fi, dict):
+                v = fi.get(attr)
+            if _valid(v):
+                return float(v)
+    except Exception:
+        pass
+    # 2) Intraday 5m
+    try:
+        hi = t.history(period="1d", interval="5m", auto_adjust=True)
+        if hi is not None and not hi.empty:
+            p = float(hi["Close"].dropna().iloc[-1])
+            if _valid(p):
+                return p
+    except Exception:
+        pass
+    # 3) Daily
+    try:
+        h = t.history(period="5d", auto_adjust=True)
+        if h is not None and not h.empty:
+            p = float(h["Close"].dropna().iloc[-1])
+            if _valid(p):
+                return p
+    except Exception as e:
+        print(f"Preis {ticker}: {e}")
+    return None
+
+
 def get_prices(tickers: List[str]) -> Dict[str, float]:
-    """Schlusskurse in EUR (US/GBP/CHF umgerechnet)."""
+    """Aktuellste Kurse in EUR."""
     out: Dict[str, float] = {}
     for t in tickers:
-        try:
-            hist = yf.Ticker(t).history(period="5d")
-            if hist.empty:
-                continue
-            p = float(hist["Close"].dropna().iloc[-1])
-            if not _valid(p):
-                continue
-            out[t] = round(to_eur(p, t), 4)
-        except Exception as e:
-            print(f"Preis {t}: {e}")
+        raw = _raw_live_price(t)
+        if raw is None:
+            continue
+        out[t] = round(to_eur(raw, t), 4)
     return out
 
 
 def get_price_native_and_eur(ticker: str) -> Tuple[Optional[float], Optional[float], str]:
-    """(native, eur, currency) für Logs."""
-    try:
-        hist = yf.Ticker(ticker).history(period="5d")
-        if hist.empty:
-            return None, None, native_currency(ticker)
-        native = float(hist["Close"].dropna().iloc[-1])
-        if not _valid(native):
-            return None, None, native_currency(ticker)
-        ccy = native_currency(ticker)
-        return native, round(to_eur(native, ticker), 4), ccy
-    except Exception:
-        return None, None, native_currency(ticker)
+    native = _raw_live_price(ticker)
+    ccy = native_currency(ticker)
+    if native is None:
+        return None, None, ccy
+    return native, round(to_eur(native, ticker), 4), ccy
 
 
 def get_fundamentals(ticker: str) -> Dict[str, Any]:
@@ -189,17 +207,8 @@ def get_financial_report(ticker: str) -> Dict[str, Any]:
 
     rev = _series_last_n(quarterly_income, ["Total Revenue", "Operating Revenue", "Revenue"], 4)
     net_income = _series_last_n(quarterly_income, ["Net Income", "Net Income Common Stockholders"], 4)
-    op_income = _series_last_n(quarterly_income, ["Operating Income", "EBIT"], 4)
     total_debt = _series_last_n(quarterly_bs, ["Total Debt", "Long Term Debt", "Net Debt"], 4)
     fcf = _series_last_n(quarterly_cf, ["Free Cash Flow", "Operating Cash Flow"], 4)
-
-    def growth(vals):
-        if len(vals) >= 2 and vals[0] is not None and vals[1] not in (None, 0):
-            try:
-                return (vals[0] - vals[1]) / abs(vals[1])
-            except Exception:
-                return None
-        return None
 
     def yoy(vals):
         if len(vals) >= 4 and vals[0] is not None and vals[3] not in (None, 0):
