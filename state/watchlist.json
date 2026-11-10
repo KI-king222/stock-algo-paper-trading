@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-08T09:09:54",
+  "updated_at": "2026-11-10T03:13:09",
   "scale": "1 = hoch (nahe Kauf), 2 = mittel, 3 = niedrig",
   "items": [
     {
@@ -7,15 +7,7 @@
       "score": 41.5,
       "scale": 1,
       "momentum": 1.0,
-      "price": 569.2,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "DHL.DE",
-      "score": 36.5,
-      "scale": 1,
-      "momentum": -2.0,
-      "price": 58.02,
+      "price": 566.0,
       "note": "Kandidat Neukauf"
     },
     {
@@ -23,7 +15,7 @@
       "score": 34.7,
       "scale": 2,
       "momentum": -5.0,
-      "price": 263.65,
+      "price": 271.0,
       "note": "Kandidat Neukauf"
     },
     {
@@ -31,7 +23,7 @@
       "score": 34.2,
       "scale": 2,
       "momentum": 0.0,
-      "price": 57.64,
+      "price": 58.6,
       "note": "Kandidat Neukauf"
     },
     {
@@ -39,7 +31,7 @@
       "score": 32.2,
       "scale": 2,
       "momentum": 5.0,
-      "price": 451.1,
+      "price": 457.0,
       "note": "Kandidat Neukauf"
     },
     {
@@ -47,15 +39,15 @@
       "score": 31.8,
       "scale": 2,
       "momentum": 5.0,
-      "price": 408.75,
+      "price": 402.45,
       "note": "Kandidat Neukauf"
     },
     {
       "ticker": "JPM",
-      "score": 29.4,
+      "score": 31.4,
       "scale": 2,
-      "momentum": -2.0,
-      "price": 297.9,
+      "momentum": 0.0,
+      "price": 304.83,
       "note": "Kandidat Neukauf"
     },
     {
@@ -63,15 +55,7 @@
       "score": 26.3,
       "scale": 2,
       "momentum": 7.0,
-      "price": 449.8,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "AI.PA",
-      "score": 26.1,
-      "scale": 2,
-      "momentum": 7.0,
-      "price": 187.78,
+      "price": 446.8,
       "note": "Kandidat Neukauf"
     },
     {
@@ -79,7 +63,23 @@
       "score": 26.1,
       "scale": 2,
       "momentum": 3.0,
-      "price": 293.0,
+      "price": 289.0,
+      "note": "Kandidat Neukauf"
+    },
+    {
+      "ticker": "AI.PA",
+      "score": 26.1,
+      "scale": 2,
+      "momentum": 7.0,
+      "price": 189.46,
+      "note": "Kandidat Neukauf"
+    },
+    {
+      "ticker": "META",
+      "score": 25.2,
+      "scale": 2,
+      "momentum": -1.0,
+      "price": 571.52,
       "note": "Kandidat Neukauf"
     },
     {
@@ -87,7 +87,7 @@
       "score": 24.9,
       "scale": 3,
       "momentum": -25.0,
-      "price": 45.76,
+      "price": 48.62,
       "note": "Beobachten"
     },
     {
@@ -95,7 +95,7 @@
       "score": 22.8,
       "scale": 3,
       "momentum": 3.0,
-      "price": 54.28,
+      "price": 53.85,
       "note": "Beobachten"
     },
     {
@@ -103,7 +103,15 @@
       "score": 19.2,
       "scale": 3,
       "momentum": -25.0,
-      "price": 166.22,
+      "price": 159.21,
+      "note": "Beobachten"
+    },
+    {
+      "ticker": "AAPL",
+      "score": 18.0,
+      "scale": 3,
+      "momentum": 4.0,
+      "price": 312.5,
       "note": "Beobachten"
     },
     {
@@ -111,15 +119,7 @@
       "score": 17.8,
       "scale": 3,
       "momentum": -25.0,
-      "price": 1283.6,
-      "note": "Beobachten"
-    },
-    {
-      "ticker": "AAPL",
-      "score": 14.0,
-      "scale": 3,
-      "momentum": 0.0,
-      "price": 304.92,
+      "price": 1343.8,
       "note": "Beobachten"
     }
   ]
