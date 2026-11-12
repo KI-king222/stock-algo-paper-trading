@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-11T01:02:40",
+  "updated_at": "2026-11-12T02:08:48",
   "scale": "1 = hoch (nahe Kauf), 2 = mittel, 3 = niedrig",
   "items": [
     {
@@ -7,95 +7,95 @@
       "score": 41.5,
       "scale": 1,
       "momentum": 1.0,
-      "price": 576.2,
+      "price": 569.4,
       "note": "Kandidat Neukauf"
     },
     {
       "ticker": "SIE.DE",
-      "score": 39.7,
+      "score": 36.3,
       "scale": 1,
-      "momentum": 0.0,
-      "price": 271.55,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "RWE.DE",
-      "score": 36.2,
-      "scale": 1,
-      "momentum": 2.0,
-      "price": 58.14,
+      "momentum": -2.0,
+      "price": 277.0,
       "note": "Kandidat Neukauf"
     },
     {
       "ticker": "ALV.DE",
-      "score": 32.2,
-      "scale": 2,
-      "momentum": 5.0,
-      "price": 463.5,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "JPM",
-      "score": 31.4,
-      "scale": 2,
-      "momentum": 0.0,
-      "price": 306.29,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "MC.PA",
-      "score": 29.8,
+      "score": 30.2,
       "scale": 2,
       "momentum": 3.0,
-      "price": 401.0,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "AI.PA",
-      "score": 27.1,
-      "scale": 2,
-      "momentum": 8.0,
-      "price": 190.34,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "OR.PA",
-      "score": 26.3,
-      "scale": 2,
-      "momentum": 7.0,
-      "price": 443.85,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "HNR1.DE",
-      "score": 25.9,
-      "scale": 2,
-      "momentum": 3.0,
-      "price": 295.8,
+      "price": 463.6,
       "note": "Kandidat Neukauf"
     },
     {
       "ticker": "ASML.AS",
-      "score": 25.8,
+      "score": 29.9,
       "scale": 2,
-      "momentum": -17.0,
-      "price": 1361.0,
+      "momentum": -9.0,
+      "price": 1403.8,
       "note": "Kandidat Neukauf"
     },
     {
-      "ticker": "META",
-      "score": 25.2,
+      "ticker": "JPM",
+      "score": 29.4,
       "scale": 2,
-      "momentum": -1.0,
-      "price": 574.3,
+      "momentum": -2.0,
+      "price": 309.33,
       "note": "Kandidat Neukauf"
+    },
+    {
+      "ticker": "HNR1.DE",
+      "score": 25.6,
+      "scale": 2,
+      "momentum": 3.0,
+      "price": 294.6,
+      "note": "Kandidat Neukauf"
+    },
+    {
+      "ticker": "AI.PA",
+      "score": 25.1,
+      "scale": 2,
+      "momentum": 6.0,
+      "price": 192.16,
+      "note": "Kandidat Neukauf"
+    },
+    {
+      "ticker": "OR.PA",
+      "score": 24.3,
+      "scale": 3,
+      "momentum": 5.0,
+      "price": 446.65,
+      "note": "Beobachten"
     },
     {
       "ticker": "BAS.DE",
+      "score": 23.9,
+      "scale": 3,
+      "momentum": 2.0,
+      "price": 54.48,
+      "note": "Beobachten"
+    },
+    {
+      "ticker": "META",
+      "score": 23.2,
+      "scale": 3,
+      "momentum": -3.0,
+      "price": 566.4,
+      "note": "Beobachten"
+    },
+    {
+      "ticker": "MC.PA",
       "score": 22.8,
       "scale": 3,
-      "momentum": 3.0,
-      "price": 54.54,
+      "momentum": -4.0,
+      "price": 403.1,
+      "note": "Beobachten"
+    },
+    {
+      "ticker": "IFX.DE",
+      "score": 20.7,
+      "scale": 3,
+      "momentum": -17.0,
+      "price": 52.12,
       "note": "Beobachten"
     },
     {
@@ -103,23 +103,23 @@
       "score": 19.2,
       "scale": 3,
       "momentum": -25.0,
-      "price": 151.22,
-      "note": "Beobachten"
-    },
-    {
-      "ticker": "AAPL",
-      "score": 18.0,
-      "scale": 3,
-      "momentum": 4.0,
-      "price": 312.06,
+      "price": 156.5,
       "note": "Beobachten"
     },
     {
       "ticker": "DHL.DE",
-      "score": 17.8,
+      "score": 15.6,
+      "scale": 3,
+      "momentum": -2.0,
+      "price": 59.92,
+      "note": "Beobachten"
+    },
+    {
+      "ticker": "AAPL",
+      "score": 14.0,
       "scale": 3,
       "momentum": 0.0,
-      "price": 58.74,
+      "price": 320.35,
       "note": "Beobachten"
     }
   ]
