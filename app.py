@@ -1,9 +1,10 @@
-"""Streamlit Algo – Einstand absolut EUR, reine Historie (kein Scale/Append)."""
+"""Streamlit Algo – Einstand trifft Kurve am Kaufzeitpunkt."""
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -28,7 +29,7 @@ st.markdown(
 )
 
 st.title("Algo Paper Trading")
-st.caption("EUR · Chart v3 · Einstand fest · Kurve = Börsenhistorie (kein Scale)")
+st.caption("EUR · Chart v5 · Einstand trifft Kurve am Kauftag")
 
 PERIODS = {
     "1T": ("1d", "5m"),
@@ -78,6 +79,16 @@ def first_buy(trades, ticker) -> str:
     return "–"
 
 
+def first_buy_dt(trades, ticker) -> Optional[pd.Timestamp]:
+    for tr in trades or []:
+        if tr.get("ticker") == ticker and str(tr.get("action")).lower() == "buy":
+            try:
+                return pd.to_datetime(tr.get("date"), errors="coerce")
+            except Exception:
+                return None
+    return None
+
+
 def to_berlin(series: pd.Series) -> pd.Series:
     s = pd.to_datetime(series, utc=True, errors="coerce")
     try:
@@ -108,14 +119,12 @@ def fetch_history_eur(ticker: str, period: str, interval: str) -> Optional[pd.Da
         else:
             raw_dt = df.iloc[:, 0]
         df["Date"] = to_berlin(raw_dt)
-
         ccy = native_currency(ticker)
         native = df["Close"].astype(float)
         if ccy == "EUR":
             df["Kurs"] = native
         else:
             df["Kurs"] = native * float(_fx_to_eur(ccy))
-
         df = df.dropna(subset=["Kurs", "Date"])
         df = df[df["Kurs"] > 0]
         if df.empty:
@@ -125,13 +134,45 @@ def fetch_history_eur(ticker: str, period: str, interval: str) -> Optional[pd.Da
         return None
 
 
-def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
+def align_to_einstand(hist: pd.DataFrame, avg: float, buy_dt: Optional[pd.Timestamp]) -> pd.DataFrame:
+    if hist is None or hist.empty or not avg or avg <= 0 or buy_dt is None or pd.isna(buy_dt):
+        return hist
+    buy_naive = pd.to_datetime(buy_dt)
+    if getattr(buy_naive, "tzinfo", None) is not None:
+        buy_naive = buy_naive.tz_localize(None)
+    t_min, t_max = hist["Date"].min(), hist["Date"].max()
+    if buy_naive < t_min - pd.Timedelta(hours=12) or buy_naive > t_max + pd.Timedelta(hours=12):
+        return hist
+    diffs = (hist["Date"] - buy_naive).abs()
+    i = int(diffs.idxmin())
+    px = float(hist.loc[i, "Kurs"])
+    if not math.isfinite(px) or px <= 0:
+        return hist
+    if abs(px - avg) / avg < 0.0015:
+        hist = hist.copy()
+        hist.attrs["aligned"] = True
+        hist.attrs["align_idx"] = i
+        return hist
+    factor = avg / px
+    if factor < 0.85 or factor > 1.15:
+        return hist
+    hist = hist.copy()
+    hist["Kurs"] = hist["Kurs"] * factor
+    hist.attrs["aligned"] = True
+    hist.attrs["align_idx"] = i
+    return hist
+
+
+def make_chart_ki_style(
+    ticker: str, avg_cost: float, period_label: str, buy_dt: Optional[pd.Timestamp] = None
+):
     period, interval = PERIODS[period_label]
     hist = fetch_history_eur(ticker, period, interval)
     if hist is None or hist.empty:
         return None
 
     avg = round(float(avg_cost), 2) if avg_cost else 0.0
+    hist = align_to_einstand(hist, avg, buy_dt)
     hist = hist.reset_index(drop=True)
     hist["i"] = hist.index.astype(int)
 
@@ -140,10 +181,20 @@ def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
     last_px = float(hist["Kurs"].iloc[-1])
     lo = float(hist["Kurs"].min())
     hi = float(hist["Kurs"].max())
+    aligned = bool(getattr(hist, "attrs", {}).get("aligned"))
+    align_idx = getattr(hist, "attrs", {}).get("align_idx")
 
     y_min = min(lo, avg if avg else lo)
     y_max = max(hi, avg if avg else hi)
-    pad = max((y_max - y_min) * 0.05, 0.5)
+    mid = (y_min + y_max) / 2
+    natural = y_max - y_min
+    ref = avg if avg else mid
+    min_span = max(ref * 0.10, natural, 1.0)
+    if natural < min_span:
+        half = min_span / 2
+        y_min, y_max = mid - half, mid + half
+    pad = max((y_max - y_min) * 0.04, 0.3)
+
     n = len(hist)
     n_ticks = min(6, n)
     tick_idx = [int(i * (n - 1) / max(n_ticks - 1, 1)) for i in range(n_ticks)] if n > 1 else [0]
@@ -179,6 +230,16 @@ def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
             annotation_position="top left",
             annotation_font=dict(size=11, color="#FF9F0A"),
         )
+    if aligned and align_idx is not None and 0 <= int(align_idx) < len(hist):
+        fig.add_trace(
+            go.Scatter(
+                x=[int(align_idx)],
+                y=[avg],
+                mode="markers",
+                marker=dict(size=10, color="#FF9F0A", symbol="diamond"),
+                hovertemplate=f"Kauf @ {avg:.2f} €<extra></extra>",
+            )
+        )
     fig.update_layout(
         title=dict(text=title, font=dict(size=15, color="#F5F5F7"), x=0.0, xanchor="left"),
         height=380,
@@ -209,7 +270,7 @@ def make_chart_ki_style(ticker: str, avg_cost: float, period_label: str):
         ),
         showlegend=False,
     )
-    return fig, stand, last_px, lo, hi
+    return fig, stand, last_px, lo, hi, aligned
 
 
 pf = load_json(PORTFOLIO)
@@ -276,7 +337,7 @@ if positions:
 
 st.divider()
 st.subheader("Kursverlauf (EUR)")
-st.caption("Chart v3 · 1T/1W gleicher Maßstab · Einstand wird nicht an die Kurve gestreckt")
+st.caption("Chart v5 · Einstand trifft die Kurve am Kauftag (orangener Diamant)")
 if positions:
     period_label = st.radio(
         "Zeitraum",
@@ -284,22 +345,23 @@ if positions:
         index=1,
         horizontal=True,
         label_visibility="collapsed",
-        key="algo_chart_period_v3",
+        key="algo_chart_period_v5",
     )
     for t, p in positions.items():
         avg = float(p.get("avg_cost") or 0)
-        out = make_chart_ki_style(t, avg, period_label)
+        bdt = first_buy_dt(trades_all, t)
+        if bdt is None and p.get("opened_at"):
+            bdt = pd.to_datetime(p.get("opened_at"), errors="coerce")
+        out = make_chart_ki_style(t, avg, period_label, buy_dt=bdt)
         if out:
-            fig, stand, last_px, lo, hi = out
-            extra = ""
-            if avg and (avg < lo * 0.98 or avg > hi * 1.02):
-                extra = f" · Einstand außerhalb {period_label}-Band ({lo:.2f}–{hi:.2f})"
+            fig, stand, last_px, lo, hi, aligned = out
+            extra = " · ✓ am Graph" if aligned else ""
             st.caption(
                 f"**{t}** Stand **{stand}** · Chart **{last_px:.2f} €** · "
                 f"Einstand **{avg:.2f} €**{extra}"
             )
             st.plotly_chart(
-                fig, use_container_width=True, config=CHART_CONFIG, key=f"algo_v3_{t}_{period_label}"
+                fig, use_container_width=True, config=CHART_CONFIG, key=f"algo_v5_{t}_{period_label}"
             )
 
 st.divider()
