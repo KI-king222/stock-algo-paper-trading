@@ -1,263 +1,21 @@
 {
-  "date": "2026-11-12T02:08:48",
+  "date": "2026-11-13T01:42:42",
   "reports": {
-    "DHL.DE": {
+    "MSFT": {
       "findings": [
-        "Umsatz YoY: +2.6%",
-        "Gewinn YoY: -14.4%",
-        "Nettomarge QoQ: -0.51 Prozentpunkte",
+        "Umsatz YoY: +13.5%",
+        "Gewinn YoY: -4.8%",
+        "Nettomarge QoQ: -0.04 Prozentpunkte",
+        "Verschuldung QoQ: +0.7%",
         "Cashflow: positiv"
       ],
       "momentum": {
-        "m5": -2.5223974201858734,
-        "m10": 1.2758649628737961,
-        "m20": 3.4519248702142846
+        "m5": -2.761552440660331,
+        "m10": -1.6995528571070007,
+        "m20": -3.3942602468719496
       },
-      "score": 15.6,
-      "path": "Umsatz YoY: +2.6% | Gewinn YoY: -14.4% | Nettomarge QoQ: -0.51 Prozentpunkte | Cashflow: positiv \u2016 Kurs: 5T -2.5%, 10T +1.3%, 20T +3.5%",
-      "lessons": ""
-    },
-    "RWE.DE": {
-      "findings": [
-        "Umsatz YoY: +7.8%",
-        "Gewinn YoY: -305.4%",
-        "Nettomarge QoQ: -82.36 Prozentpunkte",
-        "Cashflow: negativ"
-      ],
-      "momentum": {
-        "m5": 1.4659688722030495,
-        "m10": -0.2059713960554932,
-        "m20": -1.4576281531382462
-      },
-      "score": 7.0,
-      "path": "Umsatz YoY: +7.8% | Gewinn YoY: -305.4% | Nettomarge QoQ: -82.36 Prozentpunkte | Cashflow: negativ \u2016 Kurs: 5T +1.5%, 10T -0.2%, 20T -1.5%",
-      "lessons": ""
-    },
-    "JPM": {
-      "findings": [
-        "Umsatz YoY: +9.6%",
-        "Gewinn YoY: +17.5%",
-        "Nettomarge QoQ: -9.52 Prozentpunkte",
-        "Verschuldung QoQ: -0.3%",
-        "Cashflow: positiv"
-      ],
-      "momentum": {
-        "m5": -2.8513755488414727,
-        "m10": 0.8163924641636511,
-        "m20": 2.0251755457060483
-      },
-      "score": 29.4,
-      "path": "Umsatz YoY: +9.6% | Gewinn YoY: +17.5% | Nettomarge QoQ: -9.52 Prozentpunkte | Verschuldung QoQ: -0.3% | Cashflow: positiv \u2016 Kurs: 5T -2.9%, 10T +0.8%, 20T +2.0%",
-      "lessons": ""
-    },
-    "NVDA": {
-      "findings": [
-        "Umsatz YoY: +68.8%",
-        "Gewinn YoY: +87.1%",
-        "Nettomarge QoQ: -9.43 Prozentpunkte",
-        "Verschuldung QoQ: +210.6%",
-        "Cashflow: positiv"
-      ],
-      "momentum": {
-        "m5": -15.609855959108609,
-        "m10": -21.585107456218655,
-        "m20": -23.68278487996752
-      },
-      "score": 19.2,
-      "path": "Umsatz YoY: +68.8% | Gewinn YoY: +87.1% | Nettomarge QoQ: -9.43 Prozentpunkte | Verschuldung QoQ: +210.6% | Cashflow: positiv \u2016 Kurs: 5T -15.6%, 10T -21.6%, 20T -23.7%, Dauerhaft schwach",
-      "lessons": ""
-    },
-    "BAS.DE": {
-      "findings": [
-        "Umsatz YoY: +16.6%",
-        "Gewinn YoY: -72.3%",
-        "Nettomarge QoQ: -23.14 Prozentpunkte",
-        "Verschuldung QoQ: -16.9%",
-        "Cashflow: positiv"
-      ],
-      "momentum": {
-        "m5": 0.44199204758550437,
-        "m10": 3.217261086355605,
-        "m20": 3.9649292172220685
-      },
-      "score": 23.9,
-      "path": "Umsatz YoY: +16.6% | Gewinn YoY: -72.3% | Nettomarge QoQ: -23.14 Prozentpunkte | Verschuldung QoQ: -16.9% | Cashflow: positiv \u2016 Kurs: 5T +0.4%, 10T +3.2%, 20T +4.0%",
-      "lessons": ""
-    },
-    "AAPL": {
-      "findings": [
-        "Umsatz YoY: -20.4%",
-        "Gewinn YoY: -27.0%",
-        "Nettomarge QoQ: -0.40 Prozentpunkte",
-        "Verschuldung QoQ: -5.0%",
-        "Cashflow: positiv"
-      ],
-      "momentum": {
-        "m5": -0.28611483850508046,
-        "m10": 1.3611445703197056,
-        "m20": 1.6182698999378298
-      },
-      "score": 14.0,
-      "path": "Umsatz YoY: -20.4% | Gewinn YoY: -27.0% | Nettomarge QoQ: -0.40 Prozentpunkte | Verschuldung QoQ: -5.0% | Cashflow: positiv \u2016 Kurs: 5T -0.3%, 10T +1.4%, 20T +1.6%",
-      "lessons": ""
-    },
-    "SAP.DE": {
-      "findings": [
-        "Umsatz YoY: +6.1%",
-        "Gewinn YoY: +33.9%",
-        "Nettomarge QoQ: -0.17 Prozentpunkte",
-        "Verschuldung QoQ: +0.8%",
-        "Cashflow: positiv"
-      ],
-      "momentum": {
-        "m5": -2.0298674948991957,
-        "m10": -0.5918560691581476,
-        "m20": 6.606070044457657
-      },
-      "score": 44.3,
-      "path": "Umsatz YoY: +6.1% | Gewinn YoY: +33.9% | Nettomarge QoQ: -0.17 Prozentpunkte | Verschuldung QoQ: +0.8% | Cashflow: positiv \u2016 Kurs: 5T -2.0%, 10T -0.6%, 20T +6.6%",
-      "lessons": ""
-    },
-    "ALV.DE": {
-      "findings": [
-        "Umsatz YoY: +15.7%",
-        "Gewinn YoY: -8.9%",
-        "Nettomarge QoQ: -6.24 Prozentpunkte"
-      ],
-      "momentum": {
-        "m5": 1.112566791322278,
-        "m10": 6.47829381985725,
-        "m20": 8.751756622393025
-      },
-      "score": 30.2,
-      "path": "Umsatz YoY: +15.7% | Gewinn YoY: -8.9% | Nettomarge QoQ: -6.24 Prozentpunkte \u2016 Kurs: 5T +1.1%, 10T +6.5%, 20T +8.8%",
-      "lessons": ""
-    },
-    "OR.PA": {
-      "findings": [
-        "Verschuldung QoQ: +40.3%"
-      ],
-      "momentum": {
-        "m5": -0.2023595045496096,
-        "m10": 4.768089814245813,
-        "m20": 12.595127437593412
-      },
-      "score": 24.3,
-      "path": "Verschuldung QoQ: +40.3% \u2016 Kurs: 5T -0.2%, 10T +4.8%, 20T +12.6%",
-      "lessons": ""
-    },
-    "BMW.DE": {
-      "findings": [
-        "Umsatz YoY: -9.0%",
-        "Gewinn YoY: -17.5%",
-        "Nettomarge QoQ: +0.84 Prozentpunkte",
-        "Cashflow: positiv"
-      ],
-      "momentum": {
-        "m5": -4.690063351625073,
-        "m10": 1.2896442140025277,
-        "m20": 6.058393688040309
-      },
-      "score": -4.7,
-      "path": "Umsatz YoY: -9.0% | Gewinn YoY: -17.5% | Nettomarge QoQ: +0.84 Prozentpunkte | Cashflow: positiv \u2016 Kurs: 5T -4.7%, 10T +1.3%, 20T +6.1%",
-      "lessons": ""
-    },
-    "MUV2.DE": {
-      "findings": [
-        "Umsatz YoY: +8.4%",
-        "Gewinn YoY: +10.5%",
-        "Nettomarge QoQ: +1.88 Prozentpunkte",
-        "Verschuldung QoQ: -1.7%"
-      ],
-      "momentum": {
-        "m5": -1.4031505586011628,
-        "m10": 3.8572503397473312,
-        "m20": 8.023994344579254
-      },
-      "score": 41.5,
-      "path": "Umsatz YoY: +8.4% | Gewinn YoY: +10.5% | Nettomarge QoQ: +1.88 Prozentpunkte | Verschuldung QoQ: -1.7% \u2016 Kurs: 5T -1.4%, 10T +3.9%, 20T +8.0%",
-      "lessons": ""
-    },
-    "SIE.DE": {
-      "findings": [
-        "Umsatz YoY: -3.0%",
-        "Gewinn YoY: +40.2%",
-        "Nettomarge QoQ: +0.66 Prozentpunkte",
-        "Verschuldung QoQ: -7.8%",
-        "Cashflow: positiv"
-      ],
-      "momentum": {
-        "m5": -1.4873956808630684,
-        "m10": 0.5554527190536174,
-        "m20": -1.2724959663093949
-      },
-      "score": 36.3,
-      "path": "Umsatz YoY: -3.0% | Gewinn YoY: +40.2% | Nettomarge QoQ: +0.66 Prozentpunkte | Verschuldung QoQ: -7.8% | Cashflow: positiv \u2016 Kurs: 5T -1.5%, 10T +0.6%, 20T -1.3%",
-      "lessons": ""
-    },
-    "V": {
-      "findings": [
-        "Umsatz YoY: +11.4%",
-        "Gewinn YoY: +2.5%",
-        "Nettomarge QoQ: +1.06 Prozentpunkte",
-        "Verschuldung QoQ: -7.5%",
-        "Cashflow: positiv"
-      ],
-      "momentum": {
-        "m5": -2.9289741401678504,
-        "m10": 5.787069702998804,
-        "m20": 8.265331946123776
-      },
-      "score": 47.0,
-      "path": "Umsatz YoY: +11.4% | Gewinn YoY: +2.5% | Nettomarge QoQ: +1.06 Prozentpunkte | Verschuldung QoQ: -7.5% | Cashflow: positiv \u2016 Kurs: 5T -2.9%, 10T +5.8%, 20T +8.3%",
-      "lessons": ""
-    },
-    "IFX.DE": {
-      "findings": [
-        "Verschuldung QoQ: -12.7%",
-        "Cashflow: positiv"
-      ],
-      "momentum": {
-        "m5": -2.3686353536017,
-        "m10": -8.214819428259378,
-        "m20": -11.382112756527196
-      },
-      "score": 20.7,
-      "path": "Verschuldung QoQ: -12.7% | Cashflow: positiv \u2016 Kurs: 5T -2.4%, 10T -8.2%, 20T -11.4%, Dauerhaft schwach",
-      "lessons": ""
-    },
-    "MBG.DE": {
-      "findings": [
-        "Umsatz YoY: -8.9%",
-        "Gewinn YoY: +10.4%",
-        "Nettomarge QoQ: +1.62 Prozentpunkte",
-        "Verschuldung QoQ: -5.0%",
-        "Cashflow: negativ"
-      ],
-      "momentum": {
-        "m5": -2.26816082024327,
-        "m10": 3.8669199900190465,
-        "m20": 4.496659429486649
-      },
-      "score": 11.4,
-      "path": "Umsatz YoY: -8.9% | Gewinn YoY: +10.4% | Nettomarge QoQ: +1.62 Prozentpunkte | Verschuldung QoQ: -5.0% | Cashflow: negativ \u2016 Kurs: 5T -2.3%, 10T +3.9%, 20T +4.5%",
-      "lessons": ""
-    },
-    "AIR.DE": {
-      "findings": [
-        "Umsatz YoY: -32.8%",
-        "Gewinn YoY: -47.9%",
-        "Nettomarge QoQ: -0.38 Prozentpunkte",
-        "Verschuldung QoQ: -4.1%",
-        "Cashflow: negativ"
-      ],
-      "momentum": {
-        "m5": 4.070933706048185,
-        "m10": 8.51562817891438,
-        "m20": 9.47351727902257
-      },
-      "score": 7.5,
-      "path": "Umsatz YoY: -32.8% | Gewinn YoY: -47.9% | Nettomarge QoQ: -0.38 Prozentpunkte | Verschuldung QoQ: -4.1% | Cashflow: negativ \u2016 Kurs: 5T +4.1%, 10T +8.5%, 20T +9.5%",
+      "score": 42.4,
+      "path": "Umsatz YoY: +13.5% | Gewinn YoY: -4.8% | Nettomarge QoQ: -0.04 Prozentpunkte | Verschuldung QoQ: +0.7% | Cashflow: positiv \u2016 Kurs: 5T -2.8%, 10T -1.7%, 20T -3.4%",
       "lessons": ""
     },
     "ADS.DE": {
@@ -269,41 +27,103 @@
         "Cashflow: positiv"
       ],
       "momentum": {
-        "m5": 1.1341082680915937,
-        "m10": 12.844038380125822,
-        "m20": 15.511666550380987
+        "m5": -1.3919821353230222,
+        "m10": 5.952744582924296,
+        "m20": 12.33746461151306
       },
-      "score": 61.7,
-      "path": "Umsatz YoY: +19.4% | Gewinn YoY: +771.6% | Nettomarge QoQ: +4.47 Prozentpunkte | Verschuldung QoQ: +0.1% | Cashflow: positiv \u2016 Kurs: 5T +1.1%, 10T +12.8%, 20T +15.5%",
+      "score": 58.7,
+      "path": "Umsatz YoY: +19.4% | Gewinn YoY: +771.6% | Nettomarge QoQ: +4.47 Prozentpunkte | Verschuldung QoQ: +0.1% | Cashflow: positiv \u2016 Kurs: 5T -1.4%, 10T +6.0%, 20T +12.3%",
       "lessons": ""
     },
-    "HNR1.DE": {
+    "MUV2.DE": {
       "findings": [
-        "Umsatz YoY: -10.0%",
-        "Gewinn YoY: +2.7%",
-        "Nettomarge QoQ: -0.16 Prozentpunkte",
+        "Umsatz YoY: +8.4%",
+        "Gewinn YoY: +10.5%",
+        "Nettomarge QoQ: +1.88 Prozentpunkte",
+        "Verschuldung QoQ: -1.7%"
+      ],
+      "momentum": {
+        "m5": -4.238135251694586,
+        "m10": 2.336448495610721,
+        "m20": 4.5154253253107735
+      },
+      "score": 35.5,
+      "path": "Umsatz YoY: +8.4% | Gewinn YoY: +10.5% | Nettomarge QoQ: +1.88 Prozentpunkte | Verschuldung QoQ: -1.7% \u2016 Kurs: 5T -4.2%, 10T +2.3%, 20T +4.5%",
+      "lessons": ""
+    },
+    "BMW.DE": {
+      "findings": [
+        "Umsatz YoY: -9.0%",
+        "Gewinn YoY: -17.5%",
+        "Nettomarge QoQ: +0.84 Prozentpunkte",
         "Cashflow: positiv"
       ],
       "momentum": {
-        "m5": -1.0040161052746188,
-        "m10": 5.042607024743195,
-        "m20": 10.208641773312376
+        "m5": -5.477666452548591,
+        "m10": 0.5201096315417875,
+        "m20": 5.188680453143402
       },
-      "score": 25.6,
-      "path": "Umsatz YoY: -10.0% | Gewinn YoY: +2.7% | Nettomarge QoQ: -0.16 Prozentpunkte | Cashflow: positiv \u2016 Kurs: 5T -1.0%, 10T +5.0%, 20T +10.2%",
+      "score": -4.7,
+      "path": "Umsatz YoY: -9.0% | Gewinn YoY: -17.5% | Nettomarge QoQ: +0.84 Prozentpunkte | Cashflow: positiv \u2016 Kurs: 5T -5.5%, 10T +0.5%, 20T +5.2%",
       "lessons": ""
     },
-    "AI.PA": {
+    "ALV.DE": {
       "findings": [
-        "Verschuldung QoQ: +7.5%"
+        "Umsatz YoY: +15.7%",
+        "Gewinn YoY: -8.9%",
+        "Nettomarge QoQ: -6.24 Prozentpunkte"
       ],
       "momentum": {
-        "m5": 1.5905186367588087,
-        "m10": 9.2401230125984,
-        "m20": 11.741223687904467
+        "m5": -0.32251128366275195,
+        "m10": 5.459508568420857,
+        "m20": 7.864127331438664
       },
-      "score": 25.1,
-      "path": "Verschuldung QoQ: +7.5% \u2016 Kurs: 5T +1.6%, 10T +9.2%, 20T +11.7%",
+      "score": 30.2,
+      "path": "Umsatz YoY: +15.7% | Gewinn YoY: -8.9% | Nettomarge QoQ: -6.24 Prozentpunkte \u2016 Kurs: 5T -0.3%, 10T +5.5%, 20T +7.9%",
+      "lessons": ""
+    },
+    "IFX.DE": {
+      "findings": [
+        "Verschuldung QoQ: -12.7%",
+        "Cashflow: positiv"
+      ],
+      "momentum": {
+        "m5": 13.427634529925125,
+        "m10": -3.499350950534863,
+        "m20": -0.6670521834870047
+      },
+      "score": 39.7,
+      "path": "Verschuldung QoQ: -12.7% | Cashflow: positiv \u2016 Kurs: 5T +13.4%, 10T -3.5%, 20T -0.7%",
+      "lessons": ""
+    },
+    "AAPL": {
+      "findings": [
+        "Umsatz YoY: -20.4%",
+        "Gewinn YoY: -27.0%",
+        "Nettomarge QoQ: -0.40 Prozentpunkte",
+        "Verschuldung QoQ: -5.0%",
+        "Cashflow: positiv"
+      ],
+      "momentum": {
+        "m5": 3.3297472202599154,
+        "m10": 1.9259984380415984,
+        "m20": 3.9853815446820207
+      },
+      "score": 16.0,
+      "path": "Umsatz YoY: -20.4% | Gewinn YoY: -27.0% | Nettomarge QoQ: -0.40 Prozentpunkte | Verschuldung QoQ: -5.0% | Cashflow: positiv \u2016 Kurs: 5T +3.3%, 10T +1.9%, 20T +4.0%",
+      "lessons": ""
+    },
+    "OR.PA": {
+      "findings": [
+        "Verschuldung QoQ: +40.3%"
+      ],
+      "momentum": {
+        "m5": -1.9644451464291168,
+        "m10": 5.217901977970407,
+        "m20": 9.782471966546403
+      },
+      "score": 20.3,
+      "path": "Verschuldung QoQ: +40.3% \u2016 Kurs: 5T -2.0%, 10T +5.2%, 20T +9.8%",
       "lessons": ""
     },
     "AMZN": {
@@ -314,29 +134,25 @@
         "Cashflow: negativ"
       ],
       "momentum": {
-        "m5": 1.8193423148138876,
-        "m10": 6.390411871025958,
-        "m20": 6.608152221793895
+        "m5": 2.290466226653387,
+        "m10": 9.180040509429134,
+        "m20": 4.478732598101187
       },
-      "score": 1.9,
-      "path": "Umsatz YoY: -5.4% | Gewinn YoY: -2.4% | Verschuldung QoQ: +29.6% | Cashflow: negativ \u2016 Kurs: 5T +1.8%, 10T +6.4%, 20T +6.6%",
+      "score": 4.9,
+      "path": "Umsatz YoY: -5.4% | Gewinn YoY: -2.4% | Verschuldung QoQ: +29.6% | Cashflow: negativ \u2016 Kurs: 5T +2.3%, 10T +9.2%, 20T +4.5%",
       "lessons": ""
     },
-    "GOOGL": {
+    "AI.PA": {
       "findings": [
-        "Umsatz YoY: +12.1%",
-        "Gewinn YoY: -23.2%",
-        "Nettomarge QoQ: -72.91 Prozentpunkte",
-        "Verschuldung QoQ: +25.9%",
-        "Cashflow: negativ"
+        "Verschuldung QoQ: +7.5%"
       ],
       "momentum": {
-        "m5": -0.5364579075416542,
-        "m10": -11.545448636276024,
-        "m20": -17.33402578140061
+        "m5": 1.2861071187574957,
+        "m10": 8.33239281341851,
+        "m20": 11.049474756023825
       },
-      "score": -19.1,
-      "path": "Umsatz YoY: +12.1% | Gewinn YoY: -23.2% | Nettomarge QoQ: -72.91 Prozentpunkte | Verschuldung QoQ: +25.9% | Cashflow: negativ \u2016 Kurs: 5T -0.5%, 10T -11.5%, 20T -17.3%",
+      "score": 25.1,
+      "path": "Verschuldung QoQ: +7.5% \u2016 Kurs: 5T +1.3%, 10T +8.3%, 20T +11.0%",
       "lessons": ""
     },
     "META": {
@@ -348,29 +164,91 @@
         "Cashflow: negativ"
       ],
       "momentum": {
-        "m5": 1.8079388330853208,
-        "m10": 4.718448444031487,
-        "m20": -13.036576489870166
+        "m5": 3.915185061860793,
+        "m10": 0.6805226201059167,
+        "m20": -14.652779273629257
       },
       "score": 23.2,
-      "path": "Umsatz YoY: +7.9% | Gewinn YoY: -56.7% | Nettomarge QoQ: -10.80 Prozentpunkte | Verschuldung QoQ: +2.2% | Cashflow: negativ \u2016 Kurs: 5T +1.8%, 10T +4.7%, 20T -13.0%, Erholung nach Minus",
+      "path": "Umsatz YoY: +7.9% | Gewinn YoY: -56.7% | Nettomarge QoQ: -10.80 Prozentpunkte | Verschuldung QoQ: +2.2% | Cashflow: negativ \u2016 Kurs: 5T +3.9%, 10T +0.7%, 20T -14.7%, Erholung nach Minus",
       "lessons": ""
     },
-    "MSFT": {
+    "HNR1.DE": {
       "findings": [
-        "Umsatz YoY: +13.5%",
-        "Gewinn YoY: -4.8%",
-        "Nettomarge QoQ: -0.04 Prozentpunkte",
-        "Verschuldung QoQ: +0.7%",
+        "Umsatz YoY: -10.0%",
+        "Gewinn YoY: +2.7%",
+        "Nettomarge QoQ: -0.16 Prozentpunkte",
         "Cashflow: positiv"
       ],
       "momentum": {
-        "m5": -4.073410425635116,
-        "m10": 0.4048818928771514,
-        "m20": -0.09931407642083112
+        "m5": -3.8511710274234945,
+        "m10": 3.6593924876077377,
+        "m20": 8.308825773351325
       },
-      "score": 41.4,
-      "path": "Umsatz YoY: +13.5% | Gewinn YoY: -4.8% | Nettomarge QoQ: -0.04 Prozentpunkte | Verschuldung QoQ: +0.7% | Cashflow: positiv \u2016 Kurs: 5T -4.1%, 10T +0.4%, 20T -0.1%",
+      "score": 19.6,
+      "path": "Umsatz YoY: -10.0% | Gewinn YoY: +2.7% | Nettomarge QoQ: -0.16 Prozentpunkte | Cashflow: positiv \u2016 Kurs: 5T -3.9%, 10T +3.7%, 20T +8.3%",
+      "lessons": ""
+    },
+    "DHL.DE": {
+      "findings": [
+        "Umsatz YoY: +2.6%",
+        "Gewinn YoY: -14.4%",
+        "Nettomarge QoQ: -0.51 Prozentpunkte",
+        "Cashflow: positiv"
+      ],
+      "momentum": {
+        "m5": -0.7618464574901007,
+        "m10": 1.9047601129539737,
+        "m20": 3.847482455202589
+      },
+      "score": 17.6,
+      "path": "Umsatz YoY: +2.6% | Gewinn YoY: -14.4% | Nettomarge QoQ: -0.51 Prozentpunkte | Cashflow: positiv \u2016 Kurs: 5T -0.8%, 10T +1.9%, 20T +3.8%",
+      "lessons": ""
+    },
+    "V": {
+      "findings": [
+        "Umsatz YoY: +11.4%",
+        "Gewinn YoY: +2.5%",
+        "Nettomarge QoQ: +1.06 Prozentpunkte",
+        "Verschuldung QoQ: -7.5%",
+        "Cashflow: positiv"
+      ],
+      "momentum": {
+        "m5": 0.8868425949533298,
+        "m10": 3.8480248322127597,
+        "m20": 6.651081476849452
+      },
+      "score": 49.0,
+      "path": "Umsatz YoY: +11.4% | Gewinn YoY: +2.5% | Nettomarge QoQ: +1.06 Prozentpunkte | Verschuldung QoQ: -7.5% | Cashflow: positiv \u2016 Kurs: 5T +0.9%, 10T +3.8%, 20T +6.7%",
+      "lessons": ""
+    },
+    "MC.PA": {
+      "findings": [
+        "Verschuldung QoQ: +1.0%"
+      ],
+      "momentum": {
+        "m5": -3.7143169759160766,
+        "m10": 5.01497973007945,
+        "m20": 1.2051264016211372
+      },
+      "score": 22.8,
+      "path": "Verschuldung QoQ: +1.0% \u2016 Kurs: 5T -3.7%, 10T +5.0%, 20T +1.2%",
+      "lessons": ""
+    },
+    "JPM": {
+      "findings": [
+        "Umsatz YoY: +9.6%",
+        "Gewinn YoY: +17.5%",
+        "Nettomarge QoQ: -9.52 Prozentpunkte",
+        "Verschuldung QoQ: -0.3%",
+        "Cashflow: positiv"
+      ],
+      "momentum": {
+        "m5": 1.7934482647254724,
+        "m10": -0.055291906179810724,
+        "m20": 2.3425672511359297
+      },
+      "score": 31.4,
+      "path": "Umsatz YoY: +9.6% | Gewinn YoY: +17.5% | Nettomarge QoQ: -9.52 Prozentpunkte | Verschuldung QoQ: -0.3% | Cashflow: positiv \u2016 Kurs: 5T +1.8%, 10T -0.1%, 20T +2.3%",
       "lessons": ""
     },
     "ASML.AS": {
@@ -382,12 +260,96 @@
         "Cashflow: positiv"
       ],
       "momentum": {
-        "m5": 1.7494037710199528,
-        "m10": -8.633188620680022,
-        "m20": -10.821834305701937
+        "m5": 12.304003906249994,
+        "m10": -6.71185517827797,
+        "m20": -3.996852413295904
       },
-      "score": 29.9,
-      "path": "Umsatz YoY: +20.0% | Gewinn YoY: +74.7% | Nettomarge QoQ: +11.25 Prozentpunkte | Verschuldung QoQ: -1.1% | Cashflow: positiv \u2016 Kurs: 5T +1.7%, 10T -8.6%, 20T -10.8%, Erholung nach Minus",
+      "score": 38.8,
+      "path": "Umsatz YoY: +20.0% | Gewinn YoY: +74.7% | Nettomarge QoQ: +11.25 Prozentpunkte | Verschuldung QoQ: -1.1% | Cashflow: positiv \u2016 Kurs: 5T +12.3%, 10T -6.7%, 20T -4.0%",
+      "lessons": ""
+    },
+    "RWE.DE": {
+      "findings": [
+        "Umsatz YoY: +7.8%",
+        "Gewinn YoY: -305.4%",
+        "Nettomarge QoQ: -82.36 Prozentpunkte",
+        "Cashflow: negativ"
+      ],
+      "momentum": {
+        "m5": 3.7504369753663225,
+        "m10": 0.8861630113485397,
+        "m20": 2.209949299826519
+      },
+      "score": -14.7,
+      "path": "Umsatz YoY: +7.8% | Gewinn YoY: -305.4% | Nettomarge QoQ: -82.36 Prozentpunkte | Cashflow: negativ \u2016 Kurs: 5T +3.8%, 10T +0.9%, 20T +2.2%",
+      "lessons": ""
+    },
+    "AIR.DE": {
+      "findings": [
+        "Umsatz YoY: -32.8%",
+        "Gewinn YoY: -47.9%",
+        "Nettomarge QoQ: -0.38 Prozentpunkte",
+        "Verschuldung QoQ: -4.1%",
+        "Cashflow: negativ"
+      ],
+      "momentum": {
+        "m5": 5.839788232726528,
+        "m10": 7.2301490062752105,
+        "m20": 8.166414691573
+      },
+      "score": 8.5,
+      "path": "Umsatz YoY: -32.8% | Gewinn YoY: -47.9% | Nettomarge QoQ: -0.38 Prozentpunkte | Verschuldung QoQ: -4.1% | Cashflow: negativ \u2016 Kurs: 5T +5.8%, 10T +7.2%, 20T +8.2%",
+      "lessons": ""
+    },
+    "SAP.DE": {
+      "findings": [
+        "Umsatz YoY: +6.1%",
+        "Gewinn YoY: +33.9%",
+        "Nettomarge QoQ: -0.17 Prozentpunkte",
+        "Verschuldung QoQ: +0.8%",
+        "Cashflow: positiv"
+      ],
+      "momentum": {
+        "m5": -2.224798633491454,
+        "m10": 0.9813322698198013,
+        "m20": 4.819874259996126
+      },
+      "score": 44.3,
+      "path": "Umsatz YoY: +6.1% | Gewinn YoY: +33.9% | Nettomarge QoQ: -0.17 Prozentpunkte | Verschuldung QoQ: +0.8% | Cashflow: positiv \u2016 Kurs: 5T -2.2%, 10T +1.0%, 20T +4.8%",
+      "lessons": ""
+    },
+    "BAS.DE": {
+      "findings": [
+        "Umsatz YoY: +16.6%",
+        "Gewinn YoY: -72.3%",
+        "Nettomarge QoQ: -23.14 Prozentpunkte",
+        "Verschuldung QoQ: -16.9%",
+        "Cashflow: positiv"
+      ],
+      "momentum": {
+        "m5": -2.8703879585874503,
+        "m10": 2.1563804082076476,
+        "m20": 3.5347788827576387
+      },
+      "score": 19.9,
+      "path": "Umsatz YoY: +16.6% | Gewinn YoY: -72.3% | Nettomarge QoQ: -23.14 Prozentpunkte | Verschuldung QoQ: -16.9% | Cashflow: positiv \u2016 Kurs: 5T -2.9%, 10T +2.2%, 20T +3.5%",
+      "lessons": ""
+    },
+    "SIE.DE": {
+      "findings": [
+        "Umsatz YoY: +23.7%",
+        "Gewinn YoY: +6.5%",
+        "Nettomarge QoQ: -1.79 Prozentpunkte",
+        "Verschuldung QoQ: -5.4%",
+        "Cashflow: positiv"
+      ],
+      "momentum": {
+        "m5": 1.3723696248856276,
+        "m10": 1.187214611872145,
+        "m20": 2.346205892006892
+      },
+      "score": 39.5,
+      "path": "Umsatz YoY: +23.7% | Gewinn YoY: +6.5% | Nettomarge QoQ: -1.79 Prozentpunkte | Verschuldung QoQ: -5.4% | Cashflow: positiv \u2016 Kurs: 5T +1.4%, 10T +1.2%, 20T +2.3%",
       "lessons": ""
     },
     "ENR.DE": {
@@ -399,25 +361,63 @@
         "Cashflow: positiv"
       ],
       "momentum": {
-        "m5": 0.3180958114266108,
-        "m10": -10.07053783741294,
-        "m20": -11.413366780551137
+        "m5": 16.619816213616613,
+        "m10": -2.5829206809441785,
+        "m20": 0.30220149187056844
       },
-      "score": 31.5,
-      "path": "Umsatz YoY: +32.6% | Gewinn YoY: +85.7% | Nettomarge QoQ: +0.34 Prozentpunkte | Verschuldung QoQ: +0.5% | Cashflow: positiv \u2016 Kurs: 5T +0.3%, 10T -10.1%, 20T -11.4%",
+      "score": 57.2,
+      "path": "Umsatz YoY: +32.6% | Gewinn YoY: +85.7% | Nettomarge QoQ: +0.34 Prozentpunkte | Verschuldung QoQ: +0.5% | Cashflow: positiv \u2016 Kurs: 5T +16.6%, 10T -2.6%, 20T +0.3%",
       "lessons": ""
     },
-    "MC.PA": {
+    "GOOGL": {
       "findings": [
-        "Verschuldung QoQ: +1.0%"
+        "Umsatz YoY: +12.1%",
+        "Gewinn YoY: -23.2%",
+        "Nettomarge QoQ: -72.91 Prozentpunkte",
+        "Verschuldung QoQ: +25.9%",
+        "Cashflow: negativ"
       ],
       "momentum": {
-        "m5": -3.6636636636636633,
-        "m10": 4.155844155844157,
-        "m20": 2.939292148846495
+        "m5": 3.8503749870129944,
+        "m10": 3.3929971933979175,
+        "m20": -15.969872521255123
       },
-      "score": 22.8,
-      "path": "Verschuldung QoQ: +1.0% \u2016 Kurs: 5T -3.7%, 10T +4.2%, 20T +2.9%",
+      "score": -0.1,
+      "path": "Umsatz YoY: +12.1% | Gewinn YoY: -23.2% | Nettomarge QoQ: -72.91 Prozentpunkte | Verschuldung QoQ: +25.9% | Cashflow: negativ \u2016 Kurs: 5T +3.9%, 10T +3.4%, 20T -16.0%, Erholung nach Minus",
+      "lessons": ""
+    },
+    "MBG.DE": {
+      "findings": [
+        "Umsatz YoY: -8.9%",
+        "Gewinn YoY: +10.4%",
+        "Nettomarge QoQ: +1.62 Prozentpunkte",
+        "Verschuldung QoQ: -5.0%",
+        "Cashflow: negativ"
+      ],
+      "momentum": {
+        "m5": -3.4840338783523217,
+        "m10": 1.6069740455511905,
+        "m20": 3.693045416962004
+      },
+      "score": 4.4,
+      "path": "Umsatz YoY: -8.9% | Gewinn YoY: +10.4% | Nettomarge QoQ: +1.62 Prozentpunkte | Verschuldung QoQ: -5.0% | Cashflow: negativ \u2016 Kurs: 5T -3.5%, 10T +1.6%, 20T +3.7%",
+      "lessons": ""
+    },
+    "NVDA": {
+      "findings": [
+        "Umsatz YoY: +68.8%",
+        "Gewinn YoY: +87.1%",
+        "Nettomarge QoQ: -9.43 Prozentpunkte",
+        "Verschuldung QoQ: +210.6%",
+        "Cashflow: positiv"
+      ],
+      "momentum": {
+        "m5": -4.3337060085177015,
+        "m10": -18.688574019551762,
+        "m20": -20.024858838813365
+      },
+      "score": 19.2,
+      "path": "Umsatz YoY: +68.8% | Gewinn YoY: +87.1% | Nettomarge QoQ: -9.43 Prozentpunkte | Verschuldung QoQ: +210.6% | Cashflow: positiv \u2016 Kurs: 5T -4.3%, 10T -18.7%, 20T -20.0%, Dauerhaft schwach",
       "lessons": ""
     }
   }
