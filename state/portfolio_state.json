@@ -12,7 +12,7 @@
       "ticker": "SAP.DE",
       "shares": 14.0,
       "avg_cost": 204.03928593226843,
-      "current_price": 212.55,
+      "current_price": 213.45,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T09:15:00",
       "last_action_at": "2026-11-06T01:23:16.000109"
@@ -21,7 +21,7 @@
       "ticker": "ENR.DE",
       "shares": 19.0,
       "avg_cost": 130.27999877929688,
-      "current_price": 132.52,
+      "current_price": 131.28,
       "dip_buy_count": 0,
       "opened_at": "2026-10-21T09:15:00",
       "last_action_at": "2026-10-21T09:15:00"
@@ -30,7 +30,7 @@
       "ticker": "ADS.DE",
       "shares": 9.0,
       "avg_cost": 174.55,
-      "current_price": 176.95,
+      "current_price": 177.65,
       "dip_buy_count": 0,
       "opened_at": "2026-11-08T09:09:54.136446",
       "last_action_at": "2026-11-08T09:09:54.136446"
@@ -39,7 +39,7 @@
       "ticker": "MSFT",
       "shares": 3.0,
       "avg_cost": 472.5665,
-      "current_price": 472.6874,
+      "current_price": 474.0904,
       "dip_buy_count": 0,
       "opened_at": "2026-11-08T09:09:54.136446",
       "last_action_at": "2026-11-08T09:09:54.136446"
@@ -48,7 +48,7 @@
       "ticker": "V",
       "shares": 4.0,
       "avg_cost": 376.4163,
-      "current_price": 379.8762,
+      "current_price": 385.2958,
       "dip_buy_count": 0,
       "opened_at": "2026-11-08T09:09:54.136446",
       "last_action_at": "2026-11-08T09:09:54.136446"
