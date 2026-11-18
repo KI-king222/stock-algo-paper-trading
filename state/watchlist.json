@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-11-17T03:26:45",
+  "updated_at": "2026-11-18T02:45:04",
   "scale": "1 = hoch (nahe Kauf), 2 = mittel, 3 = niedrig",
   "items": [
     {
       "ticker": "SIE.DE",
-      "score": 53.8,
+      "score": 49.8,
       "scale": 1,
-      "momentum": 5.0,
-      "price": 272.55,
+      "momentum": 1.0,
+      "price": 269.8,
       "note": "Kandidat Neukauf"
     },
     {
@@ -15,55 +15,31 @@
       "score": 39.5,
       "scale": 1,
       "momentum": 5.0,
-      "price": 591.6,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "IFX.DE",
-      "score": 34.7,
-      "scale": 2,
-      "momentum": -3.0,
-      "price": 49.24,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "ASML.AS",
-      "score": 33.8,
-      "scale": 2,
-      "momentum": -9.0,
-      "price": 1306.6,
+      "price": 583.2,
       "note": "Kandidat Neukauf"
     },
     {
       "ticker": "ALV.DE",
-      "score": 31.3,
+      "score": 30.3,
       "scale": 2,
-      "momentum": 8.0,
-      "price": 475.2,
+      "momentum": 7.0,
+      "price": 466.5,
       "note": "Kandidat Neukauf"
     },
     {
-      "ticker": "JPM",
-      "score": 29.4,
+      "ticker": "IFX.DE",
+      "score": 29.7,
       "scale": 2,
-      "momentum": -2.0,
-      "price": 307.2,
+      "momentum": -8.0,
+      "price": 48.69,
       "note": "Kandidat Neukauf"
     },
     {
       "ticker": "MC.PA",
-      "score": 26.8,
+      "score": 27.8,
       "scale": 2,
-      "momentum": 0.0,
-      "price": 404.0,
-      "note": "Kandidat Neukauf"
-    },
-    {
-      "ticker": "AI.PA",
-      "score": 26.1,
-      "scale": 2,
-      "momentum": 7.0,
-      "price": 193.24,
+      "momentum": 1.0,
+      "price": 393.0,
       "note": "Kandidat Neukauf"
     },
     {
@@ -71,7 +47,7 @@
       "score": 25.6,
       "scale": 2,
       "momentum": 3.0,
-      "price": 301.0,
+      "price": 296.0,
       "note": "Kandidat Neukauf"
     },
     {
@@ -79,23 +55,47 @@
       "score": 24.3,
       "scale": 3,
       "momentum": 5.0,
-      "price": 450.15,
+      "price": 446.35,
       "note": "Beobachten"
     },
     {
-      "ticker": "BAS.DE",
-      "score": 21.9,
+      "ticker": "AI.PA",
+      "score": 24.1,
       "scale": 3,
-      "momentum": 0.0,
-      "price": 53.74,
+      "momentum": 5.0,
+      "price": 190.94,
       "note": "Beobachten"
     },
     {
       "ticker": "DHL.DE",
-      "score": 20.6,
+      "score": 22.6,
       "scale": 3,
-      "momentum": 3.0,
-      "price": 61.0,
+      "momentum": 5.0,
+      "price": 60.2,
+      "note": "Beobachten"
+    },
+    {
+      "ticker": "ASML.AS",
+      "score": 21.8,
+      "scale": 3,
+      "momentum": -21.0,
+      "price": 1236.8,
+      "note": "Beobachten"
+    },
+    {
+      "ticker": "META",
+      "score": 20.2,
+      "scale": 3,
+      "momentum": -6.0,
+      "price": 562.86,
+      "note": "Beobachten"
+    },
+    {
+      "ticker": "BAS.DE",
+      "score": 19.9,
+      "scale": 3,
+      "momentum": -2.0,
+      "price": 52.24,
       "note": "Beobachten"
     },
     {
@@ -103,23 +103,23 @@
       "score": 19.2,
       "scale": 3,
       "momentum": -25.0,
-      "price": 141.82,
+      "price": 141.39,
       "note": "Beobachten"
     },
     {
-      "ticker": "META",
-      "score": 17.2,
+      "ticker": "JPM",
+      "score": 17.4,
       "scale": 3,
-      "momentum": -9.0,
-      "price": 568.97,
+      "momentum": -14.0,
+      "price": 300.1,
       "note": "Beobachten"
     },
     {
       "ticker": "AAPL",
-      "score": 16.0,
+      "score": 14.0,
       "scale": 3,
-      "momentum": 2.0,
-      "price": 320.43,
+      "momentum": 0.0,
+      "price": 320.06,
       "note": "Beobachten"
     }
   ]
