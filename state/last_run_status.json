@@ -1,10 +1,10 @@
 {
-  "last_run": "2026-11-21T01:59:23",
-  "headline": "Algo v4.3 21.11.2026 01:59 | Vermögen 9,640 € | Cash 165 € | Lohn 380 €",
+  "last_run": "2026-11-24T05:09:41",
+  "headline": "Algo v4.3 24.11.2026 05:09 | Vermögen 9,924 € | Cash 165 € | Lohn 380 €",
   "cash": 164.82,
-  "equity": 9259.86,
+  "equity": 9543.27,
   "external_profit": 380.4,
-  "wealth": 9640.26,
+  "wealth": 9923.67,
   "hinweis": "v4.3: TP 7.0% full Lohn, Cash ≤700€, Universe 26 (DE+EU+US), Watchlist 15.",
   "n_decisions": 5,
   "actions_summary": [
